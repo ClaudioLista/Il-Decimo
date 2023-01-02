@@ -1,7 +1,7 @@
 const db = require('../util/database');
 
 module.exports = class Match {
-  constructor(id, title, placeName, address, time, description, price, totalPlayers, currentPlayers) {
+  constructor(id, title, placeName, address, time, description, price, totalPlayers, currentPlayers, listPlayers) {
     this.id = id;
     this.title = title;
     this.placeName = placeName;
