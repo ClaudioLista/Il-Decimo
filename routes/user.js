@@ -1,22 +1,23 @@
-const path = require('path');
+const path = require('path')
 
-const express = require('express');
+const express = require('express')
 
-const userController = require('../controllers/user');
+const userController = require('../controllers/user')
+const isAuth = require('../middleware/is-auth')
 
-const router = express.Router();
+const router = express.Router()
 
-router.get('/', userController.getIndex);
+router.get('/', userController.getIndex)
 
-router.get('/matches', userController.getMatches);
+router.get('/matches', userController.getMatches)
 
-router.get('/matches/:matchId', userController.getMatch);
+router.get('/matches/:matchId', userController.getMatch)
 
 // /user/add-match => GET
-router.get('/add-match', userController.getAddMatch);
+router.get('/add-match', isAuth, userController.getAddMatch)
 
 // /user/add-match => POST
-router.post('/add-match', userController.postAddMatch);
+router.post('/add-match', isAuth, userController.postAddMatch)
 
 // router.get('/edit-product/:productId', adminController.getEditProduct);
 
@@ -24,4 +25,4 @@ router.post('/add-match', userController.postAddMatch);
 
 // router.post('/delete-product', adminController.postDeleteProduct);
 
-module.exports = router;
+module.exports = router

@@ -60,18 +60,18 @@ app.use(errorController.get404)
 mongoose
   .connect(MONGODB_URI)
   .then((result) => {
-    User.findOne().then((user) => {
-      if (!user) {
-        const user = new User({
-          name: 'Claudio',
-          email: 'claudio@test.com',
-          matcheslist: {
-            matches: [],
-          },
-        })
-        user.save()
-      }
-    })
+    // User.findOne().then((user) => {
+    //   if (!user) {
+    //     const user = new User({
+    //       name: 'Claudio',
+    //       email: 'claudio@test.com',
+    //       matcheslist: {
+    //         matches: [],
+    //       },
+    //     })
+    //     user.save()
+    //   }
+    // })
 
     app.listen(3000)
     console.log('ok')

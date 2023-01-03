@@ -1,10 +1,11 @@
-const path = require('path');
+const path = require('path')
 
-const express = require('express');
+const express = require('express')
 
-const adminController = require('../controllers/admin');
+const adminController = require('../controllers/admin')
+const isAuth = require('../middleware/is-auth')
 
-const router = express.Router();
+const router = express.Router()
 
 // // /admin/add-product => GET
 // router.get('/add-product', adminController.getAddProduct);
@@ -21,4 +22,4 @@ const router = express.Router();
 
 // router.post('/delete-product', adminController.postDeleteProduct);
 
-module.exports = router;
+module.exports = router
