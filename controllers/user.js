@@ -8,7 +8,8 @@ exports.getMatches = (req, res, next) => {
       res.render('app/match-list', {
         ms: matches,
         pageTitle: 'All Matches',
-        path: '/matches'
+        path: '/matches',
+        isAuthenticated: req.isLoggedIn
       });
     })
     .catch(err => {
@@ -23,7 +24,8 @@ exports.getMatch = (req, res, next) => {
       res.render('app/match-detail', {
         m: match,
         pageTitle: match.title,
-        path: '/matches'
+        path: '/matches',
+        isAuthenticated: req.isLoggedIn
       });
 
       console.log('getSingleMatch works',match);
@@ -37,7 +39,8 @@ exports.getIndex = (req, res, next) => {
       res.render('app/index', {
         ms: matches,
         pageTitle: 'Home',
-        path: '/'
+        path: '/',
+        isAuthenticated: req.isLoggedIn
       });
       console.log('getIndex works');
       console.log(matches);
@@ -52,7 +55,8 @@ exports.getAddMatch = (req, res, next) => {
   res.render('user/add-match', {
     pageTitle: 'Add Match',
     path: '/user/add-match',
-    editing: false
+    editing: false,
+    isAuthenticated: req.isLoggedIn
   });
   console.log("getAddMatch");
 };

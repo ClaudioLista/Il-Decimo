@@ -6,6 +6,7 @@
             <li class="main-header__item">
                 <a class="<%= path === '/' ? 'active' : '' %>" href="/">Home</a>
             </li>
+            <% if (isAuthenticated) { %>
             <li class="main-header__item">
                 <a class="<%= path === '/add-match' ? 'active' : '' %>" href="/add-match">Add Match
                 </a>
@@ -14,6 +15,7 @@
                 <a class="<%= path === '/mymatches' ? 'active' : '' %>" href="/mymatches">My Matches
                 </a>
             </li>
+            <% } %>
         </ul>
         <ul>
             <li class="main-header__item">

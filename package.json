@@ -1,15 +1,15 @@
 {
-  "name": "nodejs-complete-guide",
+  "name": "Il-Decimo",
   "version": "1.0.0",
-  "description": "Complete Node.js Guide",
+  "description": "App per l'organizzazione di partite di calcio",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon app.js",
     "start-server": "node app.js"
   },
-  "author": "Maximilian Schwarzmüller",
-  "license": "ISC",
+  "author": "Marcello Donisi - Claudio Lista - Ciro Marrazzo",
+  "license": "",
   "devDependencies": {
     "nodemon": "^1.18.3"
   },
