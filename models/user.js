@@ -1,6 +1,6 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose')
 
-const Schema = mongoose.Schema;
+const Schema = mongoose.Schema
 
 const userSchema = new Schema({
   name: {
@@ -14,14 +14,18 @@ const userSchema = new Schema({
   matcheslist: {
     matches: [
       {
-        matchId: { type: Schema.Types.ObjectId, ref: 'Product', required: true },
+        matchId: {
+          type: Schema.Types.ObjectId,
+          ref: 'Product',
+          required: true,
+        },
         quantity: { type: Number, required: true },
       },
     ],
   },
-});
+})
 
-module.exports = mongoose.model('User',userSchema);
+module.exports = mongoose.model('User', userSchema)
 // const mongodb = require('mongodb');
 // const getDb = require('../util/database').getDb;
 

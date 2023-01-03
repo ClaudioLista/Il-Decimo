@@ -29,20 +29,23 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(express.static(path.join(__dirname, 'public')))
 app.use(
   session({
-    secret: 'my secret', //TODO: cambiare il segreto con una stringa molto lunga e complicata
+    secret: 'forza napoli', //TODO: cambiare il segreto con una stringa molto lunga e complicata
     resave: false,
     saveUninitialized: false,
-    store: store,
-    cookie: { 
-      maxAge: 100000 //si puo anche togliere
-    } 
-  }),
-) 
+    store: store
+    // cookie: { 
+    //   maxAge: 100000
+    // } 
+  })
+);
 
 app.use((req, res, next) => {
-  User.findById('5baa2528563f16379fc8a610')
+  if (!req.session.user) {
+    return next();
+  }
+  User.findById(req.session.user._id)
     .then((user) => {
-      req.user = user
+      req.user = user;
       next()
     })
     .catch((err) => console.log(err))

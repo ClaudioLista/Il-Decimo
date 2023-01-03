@@ -1,15 +1,15 @@
-const { match } = require('assert');
+//const { match } = require('assert');
 const Match = require('../models/match');
 
 exports.getMatches = (req, res, next) => {
   Match.find()
     .then(matches => {
-      console.log('GetMatches Works',matches);
+      console.log('GetMatches Works', matches);
       res.render('app/match-list', {
         ms: matches,
         pageTitle: 'All Matches',
         path: '/matches',
-        isAuthenticated: req.isLoggedIn
+        isAuthenticated: req.session.isLoggedIn
       });
     })
     .catch(err => {
@@ -25,7 +25,7 @@ exports.getMatch = (req, res, next) => {
         m: match,
         pageTitle: match.title,
         path: '/matches',
-        isAuthenticated: req.isLoggedIn
+        isAuthenticated: req.session.isLoggedIn
       });
 
       console.log('getSingleMatch works',match);
@@ -40,7 +40,7 @@ exports.getIndex = (req, res, next) => {
         ms: matches,
         pageTitle: 'Home',
         path: '/',
-        isAuthenticated: req.isLoggedIn
+        isAuthenticated: req.session.isLoggedIn
       });
       console.log('getIndex works');
       console.log(matches);
@@ -56,15 +56,15 @@ exports.getAddMatch = (req, res, next) => {
     pageTitle: 'Add Match',
     path: '/user/add-match',
     editing: false,
-    isAuthenticated: req.isLoggedIn
+    isAuthenticated: req.session.isLoggedIn
   });
   console.log("getAddMatch");
 };
 
-//Il controller che gestisce la post del form Add Match dove
+//Il controller che gestisce la POST del form Add Match dove
 //l'utente può creare un match
 exports.postAddMatch = (req, res, next) => {
-  console.log(req);
+  //console.log(req);
   //recupero i parametri dalla body della POST
   const title = req.body.title;
   const placeName = req.body.placeName;

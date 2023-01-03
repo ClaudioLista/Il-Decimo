@@ -1,4 +1,3 @@
-const { user } = require('assert');
 const User = require('../models/user');
 
 exports.getLogin = (req, res, next) => {
@@ -14,7 +13,10 @@ exports.postLogin = (req, res, next) => {
     .then((user) => {
       req.session.isLoggedIn = true;
       req.session.user = user;
-      res.redirect('/');
+      req.session.save(err => {
+        console.log(err);
+        res.redirect('/');
+    });
     })
     .catch((err) => console.log(err));
 };
