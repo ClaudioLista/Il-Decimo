@@ -1,4 +1,5 @@
-.login-form {
+.login-form,
+.signup-form {
     width: 20rem;
     max-width: 90%;
     margin: auto;

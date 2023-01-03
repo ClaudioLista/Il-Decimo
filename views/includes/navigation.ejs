@@ -6,6 +6,9 @@
             <li class="main-header__item">
                 <a class="<%= path === '/' ? 'active' : '' %>" href="/">Home</a>
             </li>
+            <li class="main-header__item">
+                <a class="<%= path === '/matches' ? 'active' : '' %>" href="/matches">Mathces</a>
+            </li>
             <% if (isAuthenticated) { %>
                 <li class="main-header__item">
                     <a class="<%= path === '/add-match' ? 'active' : '' %>" href="/add-match">Add Match</a>
@@ -23,6 +26,9 @@
                 <li class="main-header__item">
                     <a class="<%= path === '/login' ? 'active' : '' %>" href="/login">Login</a>
                 </li>
+                <li class="main-header__item">
+                    <a class="<%= path === '/signup' ? 'active' : '' %>" href="/signup">Signup</a>
+                </li>
             <% } else { %>
                 <li class="main-header__item">
                     <form action="/logout" method="post">
@@ -36,26 +42,29 @@
 
 <nav class="mobile-nav">
     <ul class="mobile-nav__item-list">
-        <li class="main-header__item">
+        <li class="mobile-nav__item">
             <a class="<%= path === '/' ? 'active' : '' %>" href="/">Home</a>
         </li>
-        <li class="main-header__item">
+        <li class="mobile-nav__item">
             <a class="<%= path === '/matches' ? 'active' : '' %>" href="/matches">Mathces</a>
         </li>
         <% if (isAuthenticated) { %>
-            <li class="main-header__item">
+            <li class="mobile-nav__item">
                 <a class="<%= path === '/add-match' ? 'active' : '' %>" href="/add-match">Add Match</a>
             </li>
-            <li class="main-header__item">
+            <li class="mobile-nav__item">
                 <a class="<%= path === '/mymatches' ? 'active' : '' %>" href="/mymatches">My Matches</a>
             </li>
-            <li class="main-header__item">
+            <li class="mobile-nav__item">
                 <a class="<%= path === '/joinmatch' ? 'active' : '' %>" href="/joinmatch">Join a Match</a>
             </li>
         <% } %>
         <% if (!isAuthenticated) { %>
             <li class="mobile-nav__item">
                 <a class="<%= path === '/login' ? 'active' : '' %>" href="/login">Login</a>
+            </li>
+            <li class="mobile-nav__item">
+                <a class="<%= path === '/signup' ? 'active' : '' %>" href="/signup">Signup</a>
             </li>
         <% } else { %>
             <li class="mobile-nav__item">
