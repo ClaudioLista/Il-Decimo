@@ -1,78 +1,26 @@
-const { match } = require('assert');
-const Match = require('../models/match');
-
-
-
-//TO DO
-//ritorna la pagina Add Match
-exports.getAddMatch = (req, res, next) => {
-  // res.render('admin/edit-product', {
-  //   pageTitle: 'Add Product',
-  //   path: '/admin/add-product',
-  //   editing: false
-  // });
-  console.log('getAddMatch');
-};
-
-//Il controller che gestisce la post del form Add Match dove
-//l'utente può creare un match
-exports.postAddMatch= (req, res, next) => {
-  //recupero i parametri dalla body della POST
-  const title = req.body.title;
-  const placeName = req.body.placeName;
-  const address = req.body.address;
-  const time = req.body.time;
-  const price = req.body.price;
-  const description = req.body.description;
-  const totalPlayers = req.body.totalPlayers;
-  const currentPlayers = req.body.totalPlayers;
-  const hostUserId = req.user;
-
-  //creo nuovo oggetto Match coi nuovi parametri
-  const match = new Match({
-    title: title,
-    placeName: placeName,
-    address: address,
-    time: time,
-    price: price,
-    description: description,
-    totalPlayers: totalPlayers,
-    currentPlayers: currentPlayers,
-    hostUserId: hostUserId
-  });
-  //ora salvo tramite l'operazione match.save offerta da mongoose
-  match
-    .save()
-    .then(result => {
-      // console.log(result);
-      console.log('Created Match');
-      res.redirect('/admin/products'); //da modificare
-    })
-    .catch(err => {
-      console.log(err);
-    });
-};
+const { match } = require("assert");
+const Match = require("../models/match");
 
 //TO DO
 exports.getEditProduct = (req, res, next) => {
   const editMode = req.query.edit;
   if (!editMode) {
-    return res.redirect('/');
+    return res.redirect("/");
   }
   const prodId = req.params.productId;
   Product.findById(prodId)
-    .then(product => {
+    .then((product) => {
       if (!product) {
-        return res.redirect('/');
+        return res.redirect("/");
       }
-      res.render('admin/edit-product', {
-        pageTitle: 'Edit Product',
-        path: '/admin/edit-product',
+      res.render("admin/edit-product", {
+        pageTitle: "Edit Product",
+        path: "/admin/edit-product",
         editing: editMode,
-        product: product
+        product: product,
       });
     })
-    .catch(err => console.log(err));
+    .catch((err) => console.log(err));
 };
 
 //controller che gestisce la POST per l'update
@@ -90,7 +38,7 @@ exports.postEditMatch = (req, res, next) => {
   const updatedHostUserId = req.user; //forse non serve
 
   Match.findById(matchId)
-    .then(match => {
+    .then((match) => {
       match.title = updatedTitle;
       match.placeName = updatedPlaceName;
       match.address = updatedAddress;
@@ -101,25 +49,25 @@ exports.postEditMatch = (req, res, next) => {
       match.currentPlayers = updatedCurrentPlayers;
       return product.save();
     })
-    .then(result => {
-      console.log('UPDATED MATCH!');
-      res.redirect('/admin/products'); // da modificare
+    .then((result) => {
+      console.log("UPDATED MATCH!");
+      res.redirect("/admin/products"); // da modificare
     })
-    .catch(err => console.log(err));
+    .catch((err) => console.log(err));
 };
 
-//restituisce la lista dei matches all'admin 
+//restituisce la lista dei matches all'admin
 //(da modificare la parte commentata)
 exports.getMatches = (req, res, next) => {
   Match.find()
-    .then(matches => {
+    .then((matches) => {
       // res.render('admin/products', {
       //   prods: products,
       //   pageTitle: 'Admin Products',
       //   path: '/admin/products'
       // });
     })
-    .catch(err => console.log(err));
+    .catch((err) => console.log(err));
 };
 
 //eliminazione match
@@ -127,8 +75,8 @@ exports.postDeleteMatch = (req, res, next) => {
   const matchId = req.body.matchId;
   Match.findByIdAndRemove(matchId)
     .then(() => {
-      console.log('Match eliminato');
-      res.redirect('/admin/products'); // da modificare
+      console.log("Match eliminato");
+      res.redirect("/admin/products"); // da modificare
     })
-    .catch(err => console.log(err));
+    .catch((err) => console.log(err));
 };

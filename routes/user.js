@@ -8,18 +8,20 @@ const router = express.Router();
 
 router.get('/', userController.getIndex);
 
-// router.get('/products', shopController.getProducts);
+router.get('/matches', userController.getMatches);
 
-// router.get('/products/:productId', shopController.getProduct);
+router.get('/matches/:matchId', userController.getMatch);
 
-// router.get('/cart', shopController.getCart);
+// /user/add-match => GET
+router.get('/add-match', userController.getAddMatch);
 
-// router.post('/cart', shopController.postCart);
+// /user/add-match => POST
+router.post('/add-match', userController.postAddMatch);
 
-// router.post('/cart-delete-item', shopController.postCartDeleteProduct);
+// router.get('/edit-product/:productId', adminController.getEditProduct);
 
-// router.post('/create-order', shopController.postOrder);
+// router.post('/edit-product', adminController.postEditProduct);
 
-// router.get('/orders', shopController.getOrders);
+// router.post('/delete-product', adminController.postDeleteProduct);
 
 module.exports = router;

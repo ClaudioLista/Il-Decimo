@@ -33,12 +33,12 @@ const matchSchema = new Schema({
   },
   currentPlayers: {
     type: String,
-    required: true,
+    required: false,
   },
   hostUserId: {
     type: Schema.Types.ObjectId,
     ref: 'User',
-    required: true
+    required: false
   }
 });
 

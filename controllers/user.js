@@ -5,11 +5,11 @@ exports.getMatches = (req, res, next) => {
   Match.find()
     .then(matches => {
       console.log('GetMatches Works',matches);
-      // res.render('shop/product-list', {
-      //   prods: products,
-      //   pageTitle: 'All Products',
-      //   path: '/products'
-      // });
+      res.render('app/match-list', {
+        ms: matches,
+        pageTitle: 'All Matches',
+        path: '/matches'
+      });
     })
     .catch(err => {
       console.log(err);
@@ -20,11 +20,11 @@ exports.getMatch = (req, res, next) => {
   const matchId = req.params.matchId;
   Match.findById(matchId)
     .then(match => {
-      // res.render('shop/product-detail', {
-      //   product: product,
-      //   pageTitle: product.title,
-      //   path: '/products'
-      // });
+      res.render('app/match-detail', {
+        m: match,
+        pageTitle: match.title,
+        path: '/matches'
+      });
 
       console.log('getSingleMatch works',match);
     })
@@ -34,15 +34,65 @@ exports.getMatch = (req, res, next) => {
 exports.getIndex = (req, res, next) => {
   Match.find()
     .then(matches => {
-      // res.render('shop/index', {
-      //   prods: products,
-      //   pageTitle: 'Shop',
-      //   path: '/'
-      // });
+      res.render('app/index', {
+        ms: matches,
+        pageTitle: 'Home',
+        path: '/'
+      });
       console.log('getIndex works');
       console.log(matches);
     })
     .catch(err => {
+      console.log(err);
+    });
+};
+
+//render to "Add Match" page
+exports.getAddMatch = (req, res, next) => {
+  res.render('user/add-match', {
+    pageTitle: 'Add Match',
+    path: '/user/add-match',
+    editing: false
+  });
+  console.log("getAddMatch");
+};
+
+//Il controller che gestisce la post del form Add Match dove
+//l'utente può creare un match
+exports.postAddMatch = (req, res, next) => {
+  console.log(req);
+  //recupero i parametri dalla body della POST
+  const title = req.body.title;
+  const placeName = req.body.placeName;
+  const address = req.body.address;
+  const time = req.body.time;
+  const price = req.body.price;
+  const description = req.body.description;
+  const totalPlayers = req.body.totalPlayers;
+  const currentPlayers = req.body.totalPlayers;
+  const hostUserId = req.user;
+
+  //creo nuovo oggetto Match coi nuovi parametri
+  const match = new Match({
+    title: title,
+    placeName: placeName,
+    address: address,
+    time: time,
+    price: price,
+    description: description,
+    totalPlayers: totalPlayers,
+    currentPlayers: currentPlayers,
+    hostUserId: hostUserId,
+  });
+  //ora salvo tramite l'operazione match.save offerta da mongoose
+  match
+    .save()
+    .then((result) => {
+      // console.log(result);
+      console.log("Created Match");
+      res.redirect("/"); //da modificare
+    })
+    .catch((err) => {
       console.log(err);
     });
 };
