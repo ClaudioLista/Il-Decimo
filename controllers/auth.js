@@ -33,7 +33,7 @@ exports.postLogin = (req, res, next) => {
             req.session.isLoggedIn = true;
             req.session.user = user;
             return req.session.save(() => {
-              console.log('User logged successfully')
+              console.log('Login effettuato con successo')
               res.redirect('/');
             });
           }
@@ -51,8 +51,8 @@ exports.postSignup = (req, res, next) => {
   const usrName = req.body.usrName
   const email = req.body.email
   const password = req.body.password
-  const confirmPassword = req.body.confirmPassword
-  //input validation: DA IMPLEMENTARE DOPO
+  const confirmPassword = req.body.confirmPassword //input validation: DA IMPLEMENTARE DOPO
+  
   User.findOne({ email: email })
     .then((userDoc) => {
       if (userDoc) {
@@ -71,19 +71,18 @@ exports.postSignup = (req, res, next) => {
           })
           return user.save()
         })
-        .then((result) => {
-          console.log('User Created successfully')
+        .then(() => {
+          console.log('Utente creato con successo')
           res.redirect('/login')
         })
     })
-    .catch((err) => {
-      console.log(err)
-    })
+    .catch((err) => console.log(err))
 }
 
 exports.postLogout = (req, res, next) => {
   req.session.destroy((err) => {
     console.log(err)
+    console.log('Logout effettuato con successo')
     res.redirect('/')
   })
 }

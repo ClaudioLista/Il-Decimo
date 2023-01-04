@@ -3,24 +3,24 @@
 
 <body>
     <%- include('../includes/navigation.ejs') %>
-        <main class="centered">
-            <h1><%= m.title %></h1>
-            <hr>
-            <div class="image">
-                <img src="https://cdn3.iconfinder.com/data/icons/choosesport/png/512/football.png" alt="<%= m.title %>">
-            </div>
-            <% if (!playerIn){ %>
+    <main class="centered">
+        <h1><%= m.title %></h1>
+        <hr>
+        <div class="image">
+            <img src="https://cdn3.iconfinder.com/data/icons/choosesport/png/512/football.png" alt="<%= m.title %>">
+        </div>
+        <% if (!playerIn){ %>
             <form action="/matches/:matchId/join" method="POST">
                 <input type="hidden" value="<%= m._id %>" name="matchId">
                 <button class="btn" type="submit">CONFERMA!</button>
             </form>
-            <% } else {%>
+        <% } else {%>
             <h1>Sei gia nella partita</h1>
-            <% } %>
-            <!-- <a href="/matches/<%= m._id %>/join" class="btn">CONFERMA!</a> -->
-            <h1>Players left: <%= m.totalPlayers - m.currentPlayers %></h1>
-            <h2>Where: <%= m.placeName %></h2>
-            <h3>$<%= m.price %></h3>
-            <p><%= m.description %></p>
-        </main>
-    <%- include('../includes/end.ejs') %>
+        <% } %>
+        <h1>Players left: <%= m.totalPlayers - m.currentPlayers %></h1>
+        <h2>Where: <%= m.placeName %></h2>
+        <h3>$<%= m.price %></h3>
+        <p><%= m.description %></p>
+    </main>
+    
+<%- include('../includes/end.ejs') %>
