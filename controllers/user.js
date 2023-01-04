@@ -8,7 +8,7 @@ exports.getMatches = (req, res, next) => {
       res.render('app/match-list', {
         ms: matches,
         pageTitle: 'All Matches',
-        path: '/matches',
+        path: '/Matches',
         isAuthenticated: req.session.isLoggedIn,
       })
     })

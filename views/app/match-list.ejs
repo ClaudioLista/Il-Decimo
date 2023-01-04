@@ -1,5 +1,5 @@
 <%- include('../includes/head.ejs') %>
-    <link rel="stylesheet" href="/css/product.css">
+    <link rel="stylesheet" href="/css/match.css">
     </head>
 
     <body>
@@ -9,9 +9,9 @@
                 <% if (ms.length > 0) { %>
                     <div class="grid">
                         <% for (let match of ms) { %>
-                            <article class="card product-item">
+                            <article class="card match-item">
                                 <header class="card__header">
-                                    <h1 class="product__title">
+                                    <h1 class="match__title">
                                         <%= match.title %>
                                     </h1>
                                 </header>
@@ -19,10 +19,10 @@
                                     <img src="https://cdn3.iconfinder.com/data/icons/choosesport/png/512/football.png" alt="<%= match.title %>">
                                 </div>
                                 <div class="card__content">
-                                    <h2 class="product__price">$
+                                    <h2 class="match__price">$
                                         <%= match.price %>
                                     </h2>
-                                    <p class="product__description">
+                                    <p class="match__description">
                                         <%= match.description %>
                                     </p>
                                 </div>
@@ -36,7 +36,7 @@
                             <% } %>
                     </div>
                     <% } else { %>
-                        <h1>No Products Found!</h1>
+                        <h1>No matches Found!</h1>
                         <% } %>
             </main>
             <%- include('../includes/end.ejs') %>
