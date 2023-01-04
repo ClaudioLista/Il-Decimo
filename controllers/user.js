@@ -4,7 +4,7 @@ const Match = require('../models/match')
 exports.getMatches = (req, res, next) => {
   Match.find()
     .then((matches) => {
-      console.log('GetMatches Works', matches)
+      //console.log('GetMatches Works', matches)
       res.render('app/match-list', {
         ms: matches,
         pageTitle: 'All Matches',
@@ -32,6 +32,23 @@ exports.getMatch = (req, res, next) => {
     .catch((err) => console.log(err))
 }
 
+exports.getUserMatches = (req, res, next) => {
+  const userId = req.user
+  Match.find({hostUserId: userId})
+    .then((matches) => {
+      //console.log('GetMatches Works', matches)
+      res.render('user/mymatches', {
+        ms: matches,
+        pageTitle: 'My Matches',
+        path: '/myatches',
+        isAuthenticated: req.session.isLoggedIn,
+      })
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+}
+
 exports.getIndex = (req, res, next) => {
   Match.find()
     .then((matches) => {
@@ -57,7 +74,7 @@ exports.getAddMatch = (req, res, next) => {
     editing: false,
     isAuthenticated: req.session.isLoggedIn,
   })
-  console.log('getAddMatch')
+  //console.log('getAddMatch')
 }
 
 //Il controller che gestisce la POST del form Add Match dove
@@ -97,7 +114,7 @@ exports.postAddMatch = (req, res, next) => {
     .then((result) => {
       // console.log(result);
       console.log('Created Match')
-      res.redirect('/') //da modificare
+      res.redirect('/mymatches')
     })
     .catch((err) => {
       console.log(err)
@@ -163,10 +180,11 @@ exports.postEditMatch = (req, res, next) => {
 //eliminazione match
 exports.postDeleteMatch = (req, res, next) => {
   const matchId = req.body.matchId
+  //console.log(matchId);
   Match.findByIdAndRemove(matchId)
     .then(() => {
       console.log('Match eliminato')
-      res.redirect('/') // da modificare torna a my matches
+      res.redirect('/mymatches')
     })
     .catch((err) => console.log(err))
 }

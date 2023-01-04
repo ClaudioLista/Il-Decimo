@@ -17,6 +17,10 @@ router.get('/add-match', isAuth, userController.getAddMatch)
 
 router.get('/edit-match/:matchId', isAuth, userController.getEditMatch);
 
+router.get('/mymatches', userController.getUserMatches);
+
+router.post('/delete-match', userController.postDeleteMatch);
+
 router.post('/add-match', isAuth, userController.postAddMatch)
 
 router.post('/edit-match', isAuth, userController.postEditMatch);
