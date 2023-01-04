@@ -15,20 +15,18 @@ router.get('/matches/:matchId', userController.getMatch)
 
 router.get('/add-match', isAuth, userController.getAddMatch)
 
-router.get('/edit-match/:matchId', isAuth, userController.getEditMatch);
-
-router.get('/mymatches', userController.getUserMatches);
-
-router.post('/delete-match', userController.postDeleteMatch);
-
-router.get('/join-match/:matchId', isAuth, userController.getJoinMatch);
-
 router.post('/add-match', isAuth, userController.postAddMatch)
 
-router.post('/edit-match', isAuth, userController.postEditMatch);
+router.get('/edit-match/:matchId', isAuth, userController.getEditMatch)
 
-router.post('/join-match/:matchId', isAuth, userController.postJoinMatch);
+router.post('/edit-match', isAuth, userController.postEditMatch)
 
-router.post('/delete-match', isAuth, userController.postDeleteMatch);
+router.get('/mymatches', userController.getUserMatches)
+
+router.get('/matches/:matchId/join', isAuth, userController.getJoinMatch)
+
+router.post('/matches/:matchId/join', isAuth, userController.postJoinMatch)
+
+router.post('/delete-match', isAuth, userController.postDeleteMatch)
 
 module.exports = router

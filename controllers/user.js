@@ -1,6 +1,23 @@
 //const { match } = require('assert');
 const Match = require('../models/match')
 
+exports.getIndex = (req, res, next) => {
+  Match.find()
+    .then((matches) => {
+      res.render('app/index', {
+        ms: matches,
+        pageTitle: 'Home',
+        path: '/',
+        isAuthenticated: req.session.isLoggedIn,
+      })
+      //console.log('getIndex works')
+      //console.log(matches)
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+}
+
 exports.getMatches = (req, res, next) => {
   Match.find()
     .then((matches) => {
@@ -8,7 +25,7 @@ exports.getMatches = (req, res, next) => {
       res.render('app/match-list', {
         ms: matches,
         pageTitle: 'All Matches',
-        path: '/Matches',
+        path: '/matches',
         isAuthenticated: req.session.isLoggedIn,
       })
     })
@@ -30,40 +47,6 @@ exports.getMatch = (req, res, next) => {
       console.log('getSingleMatch works', match)
     })
     .catch((err) => console.log(err))
-}
-
-exports.getUserMatches = (req, res, next) => {
-  const userId = req.user
-  Match.find({hostUserId: userId})
-    .then((matches) => {
-      //console.log('GetMatches Works', matches)
-      res.render('user/mymatches', {
-        ms: matches,
-        pageTitle: 'My Matches',
-        path: '/myatches',
-        isAuthenticated: req.session.isLoggedIn,
-      })
-    })
-    .catch((err) => {
-      console.log(err)
-    })
-}
-
-exports.getIndex = (req, res, next) => {
-  Match.find()
-    .then((matches) => {
-      res.render('app/index', {
-        ms: matches,
-        pageTitle: 'Home',
-        path: '/',
-        isAuthenticated: req.session.isLoggedIn,
-      })
-      //console.log('getIndex works')
-      //console.log(matches)
-    })
-    .catch((err) => {
-      console.log(err)
-    })
 }
 
 //render to "Add Match" page
@@ -89,12 +72,11 @@ exports.postAddMatch = (req, res, next) => {
   const price = req.body.price
   const description = req.body.description
   const totalPlayers = req.body.totalPlayers
-  const currentPlayers = 1
-  const listPlayers = [req.user._id]
+  const currentPlayers = 0
+  //const listPlayers = [req.user._id]
   const hostUserId = req.user
 
-  //listPlayers.push(hostUserId)
-
+  //listPlayers.players.push(hostUserId)
   //creo nuovo oggetto Match coi nuovi parametri
   const match = new Match({
     title: title,
@@ -105,13 +87,17 @@ exports.postAddMatch = (req, res, next) => {
     description: description,
     totalPlayers: totalPlayers,
     currentPlayers: currentPlayers,
-    listPlayers: listPlayers,
+    listPlayers: {
+      players: [],
+    },
     hostUserId: hostUserId,
   })
+  //match.listPlayers.push(hostUserId)
   //ora salvo tramite l'operazione match.save offerta da mongoose
   match
     .save()
-    .then((result) => {
+    .then(() => {
+      match.addPlayer(hostUserId)
       // console.log(result);
       console.log('Created Match')
       res.redirect('/mymatches')
@@ -134,7 +120,7 @@ exports.getEditMatch = (req, res, next) => {
       if (!match) {
         return res.redirect('/') //torna a my matches
       }
-      res.render('/edit-match', {
+      res.render('user/edit-match', {
         pageTitle: 'Edit Match',
         path: '/edit-match',
         editing: editMode,
@@ -163,7 +149,9 @@ exports.postEditMatch = (req, res, next) => {
       match.title = updatedTitle
       match.placeName = updatedPlaceName
       match.address = updatedAddress
-      match.time = updatedTime
+      if (!!updatedTime) {
+        match.time = updatedTime
+      }
       match.price = updatedPrice
       match.description = updatedDescription
       match.totalPlayers = updatedTotalPlayers
@@ -175,6 +163,65 @@ exports.postEditMatch = (req, res, next) => {
       res.redirect('/') // da modificare torna a my matches
     })
     .catch((err) => console.log(err))
+}
+
+exports.getUserMatches = (req, res, next) => {
+  const userId = req.user
+  Match.find({ hostUserId: userId })
+    .then((matches) => {
+      //console.log('GetMatches Works', matches)
+      res.render('user/mymatches', {
+        ms: matches,
+        pageTitle: 'My Matches',
+        path: '/myatches',
+        isAuthenticated: req.session.isLoggedIn,
+      })
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+}
+
+//render to "Join Match" page
+exports.getJoinMatch = (req, res, next) => {
+  const matchId = req.params.matchId
+  Match.findById(matchId)
+    .then((match) => {
+      if (!match) {
+        //match not found
+        return res.redirect('/') //torna a my matches
+      }
+      res.render('app/join-match', {
+        m: match,
+        pageTitle: 'Join Match',
+        path: '/matches/:matchId/join',
+        editing: true,
+        isAuthenticated: req.session.isLoggedIn,
+      })
+      console.log('getJoinMatch Works')
+    })
+    .catch((err) => console.log(err))
+}
+
+//aggiunta ad un match gia creato
+exports.postJoinMatch = (req, res, next) => {
+  //console.log('ok join')
+  const matchId = req.body.matchId
+  const joiningUserId = req.user._id
+  Match.findById(matchId)
+    .then((match) => {
+      //match.currentPlayers = match.currentPlayers+1
+      return match.addPlayer(joiningUserId)
+      //return match.save()
+    })
+    .then(() => {
+      console.log('Match joinato con successo')
+      res.redirect('/') // da modificare torna a my matches
+    })
+    .catch((err) => {
+      console.log(err)
+      res.redirect('/')
+    })
 }
 
 //eliminazione match
