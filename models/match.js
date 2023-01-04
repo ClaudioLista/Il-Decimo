@@ -36,13 +36,13 @@ const matchSchema = new Schema({
     required: true,
   },
   listPlayers: {
-    type: Schema.Types.ObjectId,
+    //type: Schema.Types.ObjectId,
     players: [
       {
-        userId: { type: Schema.Types.ObjectId, required: true },
-      }
+        userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+      },
     ],
-    required: true,
+    required: false,
   },
   hostUserId: {
     type: Schema.Types.ObjectId,
@@ -50,5 +50,22 @@ const matchSchema = new Schema({
     required: true,
   },
 })
+
+matchSchema.methods.addPlayer = function(user) {
+  const updatedMatchPlayers = [...this.listPlayers.players];
+
+  updatedMatchPlayers.push({
+    userId: user,
+  });
+  
+  const updatedMatch = {
+    players: updatedMatchPlayers
+  };
+  
+  this.listPlayers = updatedMatch;
+  this.currentPlayers = this.currentPlayers+1;
+
+  return this.save();
+};
 
 module.exports = mongoose.model('Match', matchSchema)

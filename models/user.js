@@ -20,7 +20,6 @@ const userSchema = new Schema({
     required: false 
   },
   matchList: {
-    type: Schema.Types.ObjectId,
     matches: [
       {
         matchId: { type: Schema.Types.ObjectId, ref: 'Match', required: true },
