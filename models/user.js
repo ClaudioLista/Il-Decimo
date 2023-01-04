@@ -15,13 +15,18 @@ const userSchema = new Schema({
     type: String,
     required: true,
   },
-  matcheslist: {
-    quantity: { type: Number, required: true },
+  matchNum: { 
+    type: Number, 
+    required: true 
+  },
+  matchList: {
+    type: Schema.Types.ObjectId,
     matches: [
       {
         matchId: { type: Schema.Types.ObjectId, ref: 'Match', required: true },
       },
     ],
+    required: true
   },
 })
 
