@@ -13,16 +13,14 @@ router.get('/matches', userController.getMatches)
 
 router.get('/matches/:matchId', userController.getMatch)
 
-// /user/add-match => GET
 router.get('/add-match', isAuth, userController.getAddMatch)
 
-// /user/add-match => POST
+router.get('/edit-match/:matchId', isAuth, userController.getEditMatch);
+
 router.post('/add-match', isAuth, userController.postAddMatch)
 
-// router.get('/edit-product/:productId', adminController.getEditProduct);
+router.post('/edit-match', isAuth, userController.postEditMatch);
 
-// router.post('/edit-product', adminController.postEditProduct);
-
-// router.post('/delete-product', adminController.postDeleteProduct);
+router.post('/delete-match', isAuth, userController.postDeleteMatch);
 
 module.exports = router

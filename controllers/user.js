@@ -27,7 +27,6 @@ exports.getMatch = (req, res, next) => {
         path: '/matches',
         isAuthenticated: req.session.isLoggedIn,
       })
-
       console.log('getSingleMatch works', match)
     })
     .catch((err) => console.log(err))
@@ -42,8 +41,8 @@ exports.getIndex = (req, res, next) => {
         path: '/',
         isAuthenticated: req.session.isLoggedIn,
       })
-      console.log('getIndex works')
-      console.log(matches)
+      //console.log('getIndex works')
+      //console.log(matches)
     })
     .catch((err) => {
       console.log(err)
@@ -73,8 +72,11 @@ exports.postAddMatch = (req, res, next) => {
   const price = req.body.price
   const description = req.body.description
   const totalPlayers = req.body.totalPlayers
-  const currentPlayers = req.body.totalPlayers
+  const currentPlayers = 1
+  const listPlayers = [req.user._id]
   const hostUserId = req.user
+
+  //listPlayers.push(hostUserId)
 
   //creo nuovo oggetto Match coi nuovi parametri
   const match = new Match({
@@ -86,6 +88,7 @@ exports.postAddMatch = (req, res, next) => {
     description: description,
     totalPlayers: totalPlayers,
     currentPlayers: currentPlayers,
+    listPlayers: listPlayers,
     hostUserId: hostUserId,
   })
   //ora salvo tramite l'operazione match.save offerta da mongoose
@@ -99,4 +102,71 @@ exports.postAddMatch = (req, res, next) => {
     .catch((err) => {
       console.log(err)
     })
+}
+
+//controller che gestisce la GET per l'update
+// di un match indicando l'iD del match
+exports.getEditMatch = (req, res, next) => {
+  const editMode = req.query.edit
+  if (!editMode) {
+    return res.redirect('/')
+  }
+  const matchId = req.params.matchId
+  Match.findById(matchId)
+    .then((match) => {
+      if (!match) {
+        return res.redirect('/') //torna a my matches
+      }
+      res.render('/edit-match', {
+        pageTitle: 'Edit Match',
+        path: '/edit-match',
+        editing: editMode,
+        match: match,
+        isAuthenticated: req.session.isLoggedIn,
+      })
+    })
+    .catch((err) => console.log(err))
+}
+
+//controller che gestisce la POST per l'update
+// di un match indicando l'iD del match
+exports.postEditMatch = (req, res, next) => {
+  const matchId = req.body.matchId
+  const updatedTitle = req.body.title
+  const updatedPlaceName = req.body.placeName
+  const updatedAddress = req.body.address
+  const updatedTime = req.body.time
+  const updatedPrice = req.body.price
+  const updatedDescription = req.body.description
+  const updatedTotalPlayers = req.body.totalPlayers
+  //const updatedCurrentPlayers = req.body.totalPlayers
+
+  Match.findById(matchId)
+    .then((match) => {
+      match.title = updatedTitle
+      match.placeName = updatedPlaceName
+      match.address = updatedAddress
+      match.time = updatedTime
+      match.price = updatedPrice
+      match.description = updatedDescription
+      match.totalPlayers = updatedTotalPlayers
+      //match.currentPlayers = updatedCurrentPlayers
+      return match.save()
+    })
+    .then((result) => {
+      console.log('Dettagli match modificati!')
+      res.redirect('/') // da modificare torna a my matches
+    })
+    .catch((err) => console.log(err))
+}
+
+//eliminazione match
+exports.postDeleteMatch = (req, res, next) => {
+  const matchId = req.body.matchId
+  Match.findByIdAndRemove(matchId)
+    .then(() => {
+      console.log('Match eliminato')
+      res.redirect('/') // da modificare torna a my matches
+    })
+    .catch((err) => console.log(err))
 }
