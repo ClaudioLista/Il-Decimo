@@ -16,9 +16,6 @@
                 <li class="main-header__item">
                     <a class="<%= path === '/mymatches' ? 'active' : '' %>" href="/mymatches">My Matches</a>
                 </li>
-                <li class="main-header__item">
-                    <a class="<%= path === '/joinmatch' ? 'active' : '' %>" href="/joinmatch">Join a Match</a>
-                </li>
             <% } %>
         </ul>
         <ul class="main-header__item-list">
@@ -54,9 +51,6 @@
             </li>
             <li class="mobile-nav__item">
                 <a class="<%= path === '/mymatches' ? 'active' : '' %>" href="/mymatches">My Matches</a>
-            </li>
-            <li class="mobile-nav__item">
-                <a class="<%= path === '/joinmatch' ? 'active' : '' %>" href="/joinmatch">Join a Match</a>
             </li>
         <% } %>
         <% if (!isAuthenticated) { %>
