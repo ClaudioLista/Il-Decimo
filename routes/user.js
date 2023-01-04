@@ -21,9 +21,13 @@ router.get('/mymatches', userController.getUserMatches);
 
 router.post('/delete-match', userController.postDeleteMatch);
 
+router.get('/join-match/:matchId', isAuth, userController.getJoinMatch);
+
 router.post('/add-match', isAuth, userController.postAddMatch)
 
 router.post('/edit-match', isAuth, userController.postEditMatch);
+
+router.post('/join-match/:matchId', isAuth, userController.postJoinMatch);
 
 router.post('/delete-match', isAuth, userController.postDeleteMatch);
 
