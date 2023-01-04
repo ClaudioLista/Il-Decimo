@@ -14,7 +14,7 @@
             <h3>$<%= m.price %></h3>
             <p><%= m.description %></p>
             <% if (isAuthenticated) { %>
-            <a href="/matches/join/<%= m._id %>" class="btn">Join</a>
+            <a href="/matches/<%= m._id %>/join" class="btn">Join</a>
             <% } %>
         </main>
     <%- include('../includes/end.ejs') %>
