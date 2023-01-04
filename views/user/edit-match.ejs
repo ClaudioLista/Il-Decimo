@@ -4,8 +4,7 @@
 </head>
 
 <body>
-   <%- include('../includes/navigation.ejs') %>
-
+    <%- include('../includes/navigation.ejs') %>
     <main>
         <form class="match-form" action="/<% if (editing) { %>edit-match<% } else { %>add-match<% } %>" method="POST">
             <div class="form-control">
@@ -43,4 +42,5 @@
             <button class="btn" type="submit"><% if (editing) { %>Update Match<% } else { %>Add Match<% } %></button>
         </form>
     </main>
+
 <%- include('../includes/end.ejs') %>

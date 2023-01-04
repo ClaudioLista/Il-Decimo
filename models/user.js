@@ -15,9 +15,9 @@ const userSchema = new Schema({
     type: String,
     required: true,
   },
-  matchNum: { 
-    type: Number, 
-    required: false 
+  matchNum: {
+    type: Number,
+    required: false,
   },
   matchList: {
     matches: [
@@ -25,7 +25,7 @@ const userSchema = new Schema({
         matchId: { type: Schema.Types.ObjectId, ref: 'Match', required: true },
       },
     ],
-    required: false
+    required: false,
   },
 })
 
