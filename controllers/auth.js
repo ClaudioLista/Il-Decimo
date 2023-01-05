@@ -3,18 +3,30 @@ const bcrypt = require('bcryptjs')
 const User = require('../models/user')
 
 exports.getLogin = (req, res, next) => {
+  let errMsg = req.flash('loginError')
+  if (errMsg.length > 0 ) {
+    errMsg = errMsg[0]
+  } else {
+    errMsg = null
+  }
   res.render('auth/login', {
     path: '/login',
     pageTitle: 'Login',
-    isAuthenticated: false,
+    errorMessage: errMsg,
   })
 }
 
 exports.getSignup = (req, res, next) => {
+  let errMsg = req.flash('signupError')
+  if (errMsg.length > 0 ) {
+    errMsg = errMsg[0]
+  } else {
+    errMsg = null
+  }
   res.render('auth/signup', {
     path: '/signup',
     pageTitle: 'Signup',
-    isAuthenticated: false,
+    errorMessage: errMsg,
   })
 }
 
@@ -24,7 +36,8 @@ exports.postLogin = (req, res, next) => {
   User.findOne({ email: email })
     .then((user) => {
       if (!user) {
-        return res.redirect('/login') //avviso Utente o pass errato
+        req.flash('loginError', 'Email o Password non validi,\n riprova ad effettuare il login!')
+        return res.redirect('/login')
       }
       bcrypt
         .compare(password, user.password)
@@ -37,11 +50,12 @@ exports.postLogin = (req, res, next) => {
               res.redirect('/')
             })
           }
+          req.flash('loginError', 'Email o Password non validi,\n riprova ad effettuare il login!')
           res.redirect('/login')
         })
         .catch((err) => {
           console.log(err)
-          res.redirect('/login') //avviso utente o Pass errato
+          res.redirect('/login')
         })
     })
     .catch((err) => console.log(err))
@@ -52,11 +66,11 @@ exports.postSignup = (req, res, next) => {
   const email = req.body.email
   const password = req.body.password
   const confirmPassword = req.body.confirmPassword //input validation: DA IMPLEMENTARE DOPO
-
   User.findOne({ email: email })
     .then((userDoc) => {
       if (userDoc) {
-        return res.redirect('/signup') //utente gia registrato [AGGIUNGERE AVVISO]
+        req.flash('signupError', 'Utente già registrato!\n Se non ricordi la password reimpostala.')
+        return res.redirect('/signup')
       }
       return bcrypt
         .hash(password, 12)
