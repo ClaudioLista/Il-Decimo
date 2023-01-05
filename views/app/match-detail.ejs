@@ -11,7 +11,7 @@
         </div>
         <h1>Players left: <%= m.totalPlayers - m.currentPlayers %></h1>
         <h2>Where: <%= m.placeName %></h2>
-        <h3>$<%= m.price %></h3>
+        <h3><%= m.price %>€</h3>
         <p><%= m.description %></p>
         <% if (isAuthenticated) { %>
             <a href="/matches/<%= m._id %>/join" class="btn">Join</a>

@@ -149,11 +149,15 @@ exports.getUserMatches = (req, res, next) => {
   const userId = req.user
   Match.find({ hostUserId: userId })
     .then((matches) => {
-      res.render('user/mymatches', {
-        ms: matches,
-        pageTitle: 'My Matches',
-        path: '/myatches',
-        isAuthenticated: req.session.isLoggedIn,
+      Match.find({"listPlayers.players.userId": userId}).find({"hostUserId": {$not: {$eq: userId}}}).then((joinedMatches) => {
+      console.log(joinedMatches);
+        res.render('user/mymatches', {
+          ms: matches,
+          jMatches: joinedMatches,
+          pageTitle: 'My Matches',
+          path: '/myatches',
+          isAuthenticated: req.session.isLoggedIn,
+        })
       })
     })
     .catch((err) => console.log(err))
@@ -193,7 +197,7 @@ exports.postJoinMatch = (req, res, next) => {
       return match.addPlayer(joiningUserId)
     })
     .then(() => {
-      res.redirect('/') // da modificare torna a my matches
+      res.redirect('/matches')
     })
     .catch((err) => console.log(err))
 }

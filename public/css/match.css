@@ -16,6 +16,32 @@
     text-align: center;
 }
 
+.match__subtitle {
+    font-size: 1rem;
+    text-align: center;
+    color: #513dff;
+}
+
+.match__subtitle:hover,
+.match__subtitle:active {
+    font-size: 1.1rem;
+}
+
+.match__place {
+    text-align: center;
+    margin-bottom: 0.5rem;
+}
+
+.match__time {
+    text-align: center;
+    margin-bottom: 0.5rem;
+}
+
+.match__playerCount {
+    text-align: center;
+    margin-bottom: 0.5rem;
+}
+
 .match__price {
     text-align: center;
     color: #4d4d4d;

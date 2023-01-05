@@ -5,6 +5,8 @@
 <body>
     <%- include('../includes/navigation.ejs') %>
         <main>
+            <div>
+            <h1 class="match__title">Matches you created:</h1>    
             <% if (ms.length > 0) { %>
                 <div class="grid">
                 <% for (let match of ms) { %>
@@ -18,12 +20,12 @@
                             <img src="https://cdn3.iconfinder.com/data/icons/choosesport/png/512/football.png" alt="<%= match.title %>">
                         </div>
                         <div class="card__content">
-                            <h2 class="match__price">$
-                                <%= match.price %>
+                            <h2 class="match__place">
+                                <%= match.placeName %>
                             </h2>
-                            <p class="match__description">
-                                <%= match.description %>
-                            </p>
+                            <h2 class="match__place">
+                                <%= match.time.getDate().toString() + "-" + (match.time.getMonth()+1).toString() + "-" + match.time.getFullYear().toString() %>
+                            </h2>
                         </div>
                         <div class="card__actions">
                             <a href="/edit-match/<%= match._id %>?edit=true" class="btn">Edit</a>
@@ -32,12 +34,55 @@
                                 <button class="btn" type="submit">Delete</button>
                             </form>
                         </div>
+                        <br>
                     </article>
                 <% } %>
                 </div>
             <% } else { %>
-                <h1>No matches Found!</h1>
+                <div class="wrapper">
+                    <a href="/add-match" style="text-decoration: none">
+                        <h1 class="match__subtitle">You have not created any games yet!</h1>
+                    </a>
+                </div>
             <% } %>
+            </div>
+            <div>
+                <h1 class="match__title">Matches you joined:</h1>
+                <% if (jMatches.length > 0) { %>
+                    <div class="grid">
+                    <% for (let match of jMatches) { %>
+                        <article class="card match-item">
+                            <header class="card__header">
+                                <h1 class="match__title">
+                                    <%= match.title %>
+                                </h1>
+                            </header>
+                            <div class="card__image">
+                                <img src="https://cdn3.iconfinder.com/data/icons/choosesport/png/512/football.png" alt="<%= match.title %>">
+                            </div>
+                            <div class="card__content">
+                                <h2 class="match__place">
+                                    <%= match.placeName %>
+                                </h2>
+                                <h2 class="match__place">
+                                    <%= match.time.getDate().toString() + "-" + (match.time.getMonth()+1).toString() + "-" + match.time.getFullYear().toString() %>
+                                </h2>
+                            </div>
+                            <div class="card__actions">
+                                <a href="#" class="btn">UnJoin</a>
+                            </div>
+                            <br>
+                        </article>
+                    <% } %>
+                    </div>
+                <% } else { %>
+                    <div class="wrapper">
+                        <a href="/matches" style="text-decoration: none">
+                            <h1 class="match__subtitle">Join in a new match!</h1>
+                        </a>
+                    </div>
+                <% } %>
+                </div>
         </main>
         
 <%- include('../includes/end.ejs') %>
