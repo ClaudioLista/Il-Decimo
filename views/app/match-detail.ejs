@@ -1,4 +1,5 @@
 <%- include('../includes/head.ejs') %>
+<link rel="stylesheet" href="/css/match.css">
 </head>
 
 <body>
@@ -19,13 +20,12 @@
 
         <!-- Da inserire stile CSS -->
         <div >
-            <h1>Lista dei giocatori</h1>
-            <ul>
+            <h1 style="text-align: center;">Players list:</h1>
+            <h2 class="player__list">
                 <% for (let players of m.listPlayers.players) { %>
                     <li> <%= players.userId.usrName %></li>
-
                 <% } %>
-            </ul>
+            </h2>
         </div>
     </main>
 

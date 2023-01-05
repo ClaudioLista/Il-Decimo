@@ -16,6 +16,12 @@
     text-align: center;
 }
 
+.player__list {
+    font-size: 1rem;
+    text-align: center;
+    color: #513dff;
+}
+
 .match__subtitle {
     font-size: 1rem;
     text-align: center;

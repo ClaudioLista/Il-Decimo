@@ -20,9 +20,9 @@
             <h3>$<%= m.price %></h3>
             <p><%= m.description %></p>
         <% } else if (!playerIn && can_unjoin) { %>
-            <h1 style="color: #513dff;"">Non sei nella partita</h1>
+            <h1 style="color: #513dff;"">You're not in this match!</h1>
         <% } else {%>
-            <h1 style="color: #513dff;"">Non puoi fare unjoin quando mancano meno di 24 ore</h1>
+            <h1 style="color: #513dff;"">You can't leave 24h before the match! </h1>
         <% } %>    
        
     </main>

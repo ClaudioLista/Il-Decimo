@@ -46,6 +46,7 @@
                 </div>
             <% } %>
             </div>
+            <hr>
             <div>
                 <h1 class="match__title">Matches you joined:</h1>
                 <% if (jMatches.length > 0) { %>
@@ -69,7 +70,7 @@
                                 </h2>
                             </div>
                             <div class="card__actions">
-                                <a href="/matches/<%= match._id %>" class="btn">Details</a>
+                                <a href="/matches/<%= match._id %>" class="btn" id="details">Details</a>
                                 <a href="/matches/<%= match._id %>/unjoin" class="btn">UnJoin</a>
                             </div>
                             <br>
