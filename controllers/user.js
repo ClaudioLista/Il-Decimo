@@ -21,20 +21,40 @@ exports.getMatches = (req, res, next) => {
         ms: matches,
         pageTitle: 'All Matches',
         path: '/matches',
+       
         isAuthenticated: req.session.isLoggedIn,
       })
     })
     .catch((err) => console.log(err))
 }
 
+//dettaglio del match
 exports.getMatch = (req, res, next) => {
   const matchId = req.params.matchId
-  Match.findById(matchId)
+  let playerIn = false;
+
+  Match.findById(matchId).populate({
+    path: 'listPlayers.players.userId',
+    model: 'User',
+  })
     .then((match) => {
+
+      const risultato = match.listPlayers.players.find(
+        (element) => element.userId._id == req.user._id.toString(),
+      )
+      if (risultato !== undefined) { playerIn = true }
+      
+    
+
+      const result = match.listPlayers.populate('players.userId')
+      
+      
+
       res.render('app/match-detail', {
         m: match,
         pageTitle: match.title,
         path: '/matches',
+        is_in: playerIn,
         isAuthenticated: req.session.isLoggedIn,
       })
     })
@@ -150,7 +170,7 @@ exports.getUserMatches = (req, res, next) => {
   Match.find({ hostUserId: userId })
     .then((matches) => {
       Match.find({"listPlayers.players.userId": userId}).find({"hostUserId": {$not: {$eq: userId}}}).then((joinedMatches) => {
-      console.log(joinedMatches);
+      //console.log(joinedMatches);
         res.render('user/mymatches', {
           ms: matches,
           jMatches: joinedMatches,
@@ -176,6 +196,7 @@ exports.getJoinMatch = (req, res, next) => {
         (element) => element.userId == req.user._id.toString(),
       )
       if (result !== undefined) { is_in = true }
+      console.log(is_in)
       res.render('app/join-match', {
         m: match,
         pageTitle: 'Join Match',
@@ -191,6 +212,7 @@ exports.getJoinMatch = (req, res, next) => {
 //aggiunta ad un match gia creato
 exports.postJoinMatch = (req, res, next) => {
   const matchId = req.body.matchId
+  
   const joiningUserId = req.user._id
   Match.findById(matchId)
     .then((match) => {
@@ -198,6 +220,58 @@ exports.postJoinMatch = (req, res, next) => {
     })
     .then(() => {
       res.redirect('/matches')
+    })
+    .catch((err) => console.log(err))
+}
+
+exports.postUnJoinMatch = (req, res, next) => {
+  const matchId = req.body.matchId
+  
+  const unjoiningUserId = req.user._id
+  Match.findById(matchId)
+    .then((match) => {
+      return match.RemovePlayer(unjoiningUserId)
+    })
+    .then(() => {
+      res.redirect('/matches')
+    })
+    .catch((err) => console.log(err))
+}
+
+exports.getUnJoinMatch = (req, res, next) => {
+  const matchId = req.params.matchId
+  let is_in = false
+  let can_unjoin = false;
+  let currentDate = new Date();
+  Match.findById(matchId)
+    .then((match) => {
+      // if (!match) { //match not found
+      //   return res.redirect('/') //torna a my matches
+      // }
+      const result = match.listPlayers.players.find(
+        (element) => element.userId == req.user._id.toString(),
+      )
+      if (result !== undefined) { is_in = true }
+      
+        
+      let matchDate = new Date(match.time)
+      let diffInSec = matchDate/60000 - currentDate/60000
+      
+      if(diffInSec > 1440){
+        can_unjoin = true;
+        
+      }
+      console.log(diffInSec)
+      console.log(can_unjoin)
+      res.render('app/unjoin-match', {
+        m: match,
+        pageTitle: 'Join Match',
+        path: '/matches/:matchId/join',
+        playerIn: is_in,
+        can_unjoin: can_unjoin,
+        editing: true,
+        isAuthenticated: req.session.isLoggedIn,
+      })
     })
     .catch((err) => console.log(err))
 }

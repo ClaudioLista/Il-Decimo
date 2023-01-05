@@ -68,4 +68,14 @@ matchSchema.methods.addPlayer = function(user) {
   return this.save();
 };
 
+matchSchema.methods.RemovePlayer = function(userId){
+
+  const updatedMatchPlayers = this.listPlayers.players.filter(player => {
+    return player.userId.toString() !== userId.toString();
+  });
+  this.listPlayers.players = updatedMatchPlayers;
+  this.currentPlayers = this.currentPlayers-1;
+  return this.save();
+}
+
 module.exports = mongoose.model('Match', matchSchema)

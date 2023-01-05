@@ -14,8 +14,19 @@
         <h3><%= m.price %>€</h3>
         <p><%= m.description %></p>
         <% if (isAuthenticated) { %>
-            <a href="/matches/<%= m._id %>/join" class="btn">Join</a>
+            <a href="/matches/<%= m._id %>/<% if (!is_in) { %>join<% } else { %>unjoin<% } %>" class="btn"><% if (!is_in) { %> JOIN <% } else { %> UNJOIN <% } %>  </a>
         <% } %>
+
+        <!-- Da inserire stile CSS -->
+        <div >
+            <h1>Lista dei giocatori</h1>
+            <ul>
+                <% for (let players of m.listPlayers.players) { %>
+                    <li> <%= players.userId.usrName %></li>
+
+                <% } %>
+            </ul>
+        </div>
     </main>
 
 <%- include('../includes/end.ejs') %>
