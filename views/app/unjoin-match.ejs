@@ -10,18 +10,21 @@
         <div class="image">
             <img src="https://cdn3.iconfinder.com/data/icons/choosesport/png/512/football.png" alt="<%= m.title %>">
         </div>
-        <% if (!playerIn ){ %>
-            <form action="/matches/:matchId/join" method="POST">
+        <% if (playerIn && can_unjoin){ %>
+            <form action="/matches/:matchId/unjoin" method="POST">
                 <input type="hidden" value="<%= m._id %>" name="matchId">
-                <button class="btn" type="submit">CONFERMA!</button>
+                <button class="btn" type="submit">CONFERMA UNJOIN!</button>
             </form>
             <h1>Players left: <%= m.totalPlayers - m.currentPlayers %></h1>
             <h2>Where: <%= m.placeName %></h2>
             <h3>$<%= m.price %></h3>
             <p><%= m.description %></p>
+        <% } else if (!playerIn && can_unjoin) { %>
+            <h1 style="color: #513dff;"">Non sei nella partita</h1>
         <% } else {%>
-            <h1 style="color: #513dff;"">You're already in!</h1>
-        <% } %>
+            <h1 style="color: #513dff;"">Non puoi fare unjoin quando mancano meno di 24 ore</h1>
+        <% } %>    
+       
     </main>
     
 <%- include('../includes/end.ejs') %>
