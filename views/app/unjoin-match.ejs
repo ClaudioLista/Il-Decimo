@@ -12,6 +12,7 @@
         </div>
         <% if (playerIn && can_unjoin){ %>
             <form action="/matches/:matchId/unjoin" method="POST">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                 <input type="hidden" value="<%= m._id %>" name="matchId">
                 <button class="btn" type="submit">Confirm UnJoin!</button>
             </form>

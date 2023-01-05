@@ -8,6 +8,7 @@
     <main>
         <h1 style="text-align: center;">CREATE A NEW MATCH!</h1>
         <form class="match-form" action="/add-match" method="POST">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
             <div class="form-control">
                 <label for="title">Title</label>
                 <input type="text" name="title" id="title">

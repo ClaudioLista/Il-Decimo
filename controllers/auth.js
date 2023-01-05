@@ -19,32 +19,32 @@ exports.getSignup = (req, res, next) => {
 }
 
 exports.postLogin = (req, res, next) => {
-  const email = req.body.email;
-  const password = req.body.password;
+  const email = req.body.email
+  const password = req.body.password
   User.findOne({ email: email })
-    .then(user => {
+    .then((user) => {
       if (!user) {
-        return res.redirect('/login'); //avviso Utente o pass errato
+        return res.redirect('/login') //avviso Utente o pass errato
       }
       bcrypt
         .compare(password, user.password)
-        .then(passOK => {
+        .then((passOK) => {
           if (passOK) {
-            req.session.isLoggedIn = true;
-            req.session.user = user;
+            req.session.isLoggedIn = true
+            req.session.user = user
             return req.session.save(() => {
               console.log('Login effettuato con successo')
-              res.redirect('/');
-            });
+              res.redirect('/')
+            })
           }
-          res.redirect('/login');
+          res.redirect('/login')
         })
         .catch((err) => {
-          console.log(err);
-          res.redirect('/login'); //avviso utente o Pass errato
-        });
+          console.log(err)
+          res.redirect('/login') //avviso utente o Pass errato
+        })
     })
-    .catch((err) => console.log(err));
+    .catch((err) => console.log(err))
 }
 
 exports.postSignup = (req, res, next) => {
@@ -52,7 +52,7 @@ exports.postSignup = (req, res, next) => {
   const email = req.body.email
   const password = req.body.password
   const confirmPassword = req.body.confirmPassword //input validation: DA IMPLEMENTARE DOPO
-  
+
   User.findOne({ email: email })
     .then((userDoc) => {
       if (userDoc) {

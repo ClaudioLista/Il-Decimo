@@ -12,6 +12,7 @@
         </div>
         <% if (!playerIn ){ %>
             <form action="/matches/:matchId/join" method="POST">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                 <input type="hidden" value="<%= m._id %>" name="matchId">
                 <button class="btn" type="submit">Confirm!</button>
             </form>
