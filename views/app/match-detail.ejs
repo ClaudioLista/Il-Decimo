@@ -15,18 +15,19 @@
         <h3><%= m.price %>€</h3>
         <p><%= m.description %></p>
         <% if (isAuthenticated) { %>
-            <a href="/matches/<%= m._id %>/<% if (!is_in) { %>join<% } else { %>unjoin<% } %>" class="btn"><% if (!is_in) { %> JOIN <% } else { %> UNJOIN <% } %>  </a>
+            <a href="/matches/<%= m._id %>/<% if (!is_in) { %>join<% } else { %>unjoin<% } %>" class="btn">
+                <% if (!is_in) { %> JOIN <% } else { %> UNJOIN <% } %> 
+            </a>
+            <!-- Da inserire stile CSS -->
+            <div >
+                <h1 style="text-align: center;">Players list:</h1>
+                <h2 class="player__list">
+                    <% for (let players of m.listPlayers.players) { %>
+                        <li><%= players.userId.usrName %></li>
+                    <% } %>
+                </h2>
+            </div>
         <% } %>
-
-        <!-- Da inserire stile CSS -->
-        <div >
-            <h1 style="text-align: center;">Players list:</h1>
-            <h2 class="player__list">
-                <% for (let players of m.listPlayers.players) { %>
-                    <li> <%= players.userId.usrName %></li>
-                <% } %>
-            </h2>
-        </div>
     </main>
 
 <%- include('../includes/end.ejs') %>

@@ -21,7 +21,6 @@ exports.getMatches = (req, res, next) => {
         ms: matches,
         pageTitle: 'All Matches',
         path: '/matches',
-       
         isAuthenticated: req.session.isLoggedIn,
       })
     })
@@ -32,24 +31,18 @@ exports.getMatches = (req, res, next) => {
 exports.getMatch = (req, res, next) => {
   const matchId = req.params.matchId
   let playerIn = false;
-
   Match.findById(matchId).populate({
     path: 'listPlayers.players.userId',
     model: 'User',
   })
     .then((match) => {
-
-      const risultato = match.listPlayers.players.find(
-        (element) => element.userId._id == req.user._id.toString(),
-      )
-      if (risultato !== undefined) { playerIn = true }
-      
-    
-
-      const result = match.listPlayers.populate('players.userId')
-      
-      
-
+      if(req.session.isLoggedIn) {
+        const risultato = match.listPlayers.players.find(
+          (element) => element.userId._id == req.user._id.toString(),
+        )
+        if (risultato !== undefined) { playerIn = true }
+        const result = match.listPlayers.populate('players.userId')
+      }
       res.render('app/match-detail', {
         m: match,
         pageTitle: match.title,
