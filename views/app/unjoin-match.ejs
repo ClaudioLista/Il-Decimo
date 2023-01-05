@@ -13,7 +13,7 @@
         <% if (playerIn && can_unjoin){ %>
             <form action="/matches/:matchId/unjoin" method="POST">
                 <input type="hidden" value="<%= m._id %>" name="matchId">
-                <button class="btn" type="submit">CONFERMA UNJOIN!</button>
+                <button class="btn" type="submit">Confirm UnJoin!</button>
             </form>
             <h1>Players left: <%= m.totalPlayers - m.currentPlayers %></h1>
             <h2>Where: <%= m.placeName %></h2>

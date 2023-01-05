@@ -13,7 +13,7 @@
         <% if (!playerIn ){ %>
             <form action="/matches/:matchId/join" method="POST">
                 <input type="hidden" value="<%= m._id %>" name="matchId">
-                <button class="btn" type="submit">CONFERMA!</button>
+                <button class="btn" type="submit">Confirm!</button>
             </form>
             <h1>Players left: <%= m.totalPlayers - m.currentPlayers %></h1>
             <h2>Where: <%= m.placeName %></h2>

@@ -196,7 +196,7 @@ exports.getJoinMatch = (req, res, next) => {
         (element) => element.userId == req.user._id.toString(),
       )
       if (result !== undefined) { is_in = true }
-      console.log(is_in)
+      //console.log(is_in)
       res.render('app/join-match', {
         m: match,
         pageTitle: 'Join Match',
@@ -233,7 +233,7 @@ exports.postUnJoinMatch = (req, res, next) => {
       return match.RemovePlayer(unjoiningUserId)
     })
     .then(() => {
-      res.redirect('/matches')
+      res.redirect('/mymatches')
     })
     .catch((err) => console.log(err))
 }
@@ -252,8 +252,6 @@ exports.getUnJoinMatch = (req, res, next) => {
         (element) => element.userId == req.user._id.toString(),
       )
       if (result !== undefined) { is_in = true }
-      
-        
       let matchDate = new Date(match.time)
       let diffInSec = matchDate/60000 - currentDate/60000
       
@@ -261,8 +259,8 @@ exports.getUnJoinMatch = (req, res, next) => {
         can_unjoin = true;
         
       }
-      console.log(diffInSec)
-      console.log(can_unjoin)
+      //console.log(diffInSec)
+      //console.log(can_unjoin)
       res.render('app/unjoin-match', {
         m: match,
         pageTitle: 'Join Match',
