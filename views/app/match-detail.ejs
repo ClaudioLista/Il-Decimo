@@ -23,7 +23,8 @@
                 <h1 style="text-align: center;">Players list:</h1>
                 <h2 class="player__list">
                     <% for (let players of m.listPlayers.players) { %>
-                        <li><%= players.userId.usrName %></li>
+                        <h2><%= players.userId.usrName %></>
+                        <i class="fa fa-futbol-o"></i>
                     <% } %>
                 </h2>
             </div>

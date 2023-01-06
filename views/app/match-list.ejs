@@ -8,7 +8,7 @@
         <% if (ms.length > 0) { %>
             <div class="grid">
             <% for (let match of ms) { %>
-                <article class="card match-item">
+                <article class="card match-item" onclick="location.assign('/matches/<%= match._id %>')">
                     <header class="card__header">
                         <h1 class="match__title">
                             <%= match.title %>
