@@ -1,34 +1,7 @@
-<%- include('../includes/head.ejs') %>
-<link rel="stylesheet" href="/css/match.css">
-<script src='/socket.io/socket.io.js'></script>
+//Variable div associated with placeholder element scrachtPad in HTML5 page
+const scratchPad = document.getElementById('scratchPad');
 
-<style>
-   
-    button {
-        background-color: #DAA520;
-        border: none;
-        color: white;
-        padding: 15px 32px;
-        text-align: center;
-        text-decoration: none;
-        display: inline-block;
-        font-size: 16px;
-        margin-top: 20px;
-        cursor: pointer;
-    }
-    #chatMessage {
-        width: calc(100% - 20px);
-        margin: auto;
-        padding: 5px 0;
-    }
-    </style>
-</head>
-
-<script> 
-const socket = io();
-var room = "<%= m._id %>" 
-var user = "<%= user %>" 
-socket.emit('create or join', room);
+// Connect to server
 
 function sendMessage() {
     let textarea = document.getElementById('chatMessage');
@@ -55,13 +28,11 @@ function sendMessage() {
 	} else {
 		socket.emit('message', {
 			room: room,
-			message: chatMessage,
-            name: user
+			message: chatMessage
 		});
 	}
     textarea.value = ''
 }
-
 
 //Handle 'created' message
 socket.on('created', (room) => {	 
@@ -113,8 +84,8 @@ socket.on('message', (message) => {
 	console.log(`Got message from other peer: ${message}`);
 	
 	// Info, concerned messages exchange, are dynamically inserted in the HTML5 page
-	scratchPad.insertAdjacentHTML( 'beforeEnd', `<p>Time: ${(performance.now() / 1000).toFixed(3)} -->${message.name}: <p style="color:blue"> ${message.message} </p></p>`);
-    scratchPad.insertAdjacentHTML( 'beforeEnd', `<p style="color:blue"> ${message.message} </p>`);	  
+	scratchPad.insertAdjacentHTML( 'beforeEnd', `<p>Time: ${(performance.now() / 1000).toFixed(3)} --> Got message from other peer: </p>`);
+    scratchPad.insertAdjacentHTML( 'beforeEnd', `<p style="color:blue"> ${message} </p>`);	  
 });
 
 //Handle 'Bye' message
@@ -145,47 +116,3 @@ socket.on('Bye', () => {
 	// not necessary, the server will disconnect the client
 	// socket.disconnect();
 });
-</script>
-
-<body>
-
-
-    <%- include('../includes/navigation.ejs') %>
-
-    
-    <main class="centered">
-        <h1><%= m.title %></h1>
-        <hr>
-        <div class="image">
-            <img src="https://cdn3.iconfinder.com/data/icons/choosesport/png/512/football.png" alt="<%= m.title %>">
-        </div>
-        <h1>Players left: <%= m.totalPlayers - m.currentPlayers %></h1>
-        <h2>Where: <%= m.placeName %></h2>
-        <h3><%= m.price %>€</h3>
-        <p><%= m.description %></p>
-        <% if (isAuthenticated) { %>
-            <a href="/matches/<%= m._id %>/<% if (!is_in) { %>join<% } else { %>unjoin<% } %>" class="btn">
-                <% if (!is_in) { %> JOIN <% } else { %> UNJOIN <% } %> 
-            </a>
-            <!-- Da inserire stile CSS -->
-            <div >
-                <h1 style="text-align: center;">Players list:</h1>
-                <h2 class="player__list">
-                    <% for (let players of m.listPlayers.players) { %>
-                        <h2><%= players.userId.usrName %></>
-                        <i class="fa fa-futbol-o"></i>
-                    <% } %>
-                </h2>
-            </div>
-
-            <div id="scratchPad"></div>
-
-    <div id="container">
-        <input type="text" id="chatMessage" name="chat-message">
-        <button onClick="sendMessage()">Send</button>
-        <button onClick="window.location.reload();">Reload page</button>
-    </div>
-        <% } %>
-    </main>
-
-<%- include('../includes/end.ejs') %>
