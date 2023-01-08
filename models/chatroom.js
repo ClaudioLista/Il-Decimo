@@ -30,7 +30,7 @@ const chatRoomSchema = new Schema({
 chatRoomSchema.methods.addMessage = function(message) {
     const updatedMessage= [...this.chat.message];
   
-    console.log(message);
+    //console.log(message);
     updatedMessage.push({
       name: message.name,
       msg: message.message

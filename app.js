@@ -77,16 +77,14 @@ mongoose
     console.log("Listening on port 3000");
 
     io.on("connection", (socket) => {
-      console.log("user connected");
+      //console.log("user connected");
+      
       socket.on("message", (message) => {
         // broadcast the message to all the clients in the room except the sender
         socket.to(message.room).emit("message", message);
-        
-        
-        
-        
+  
         ChatRoom.findOne({matchId: message.room}).then((room) => {
-          console.log(message)
+          //console.log(message)
           room.addMessage(message)
 
         }).catch((err) => console.log(err));
@@ -97,11 +95,11 @@ mongoose
         io.in(room)
           .fetchSockets()
           .then((sockets) => {
-            numClients = sockets.length;
-            console.log(`Number of client: ${numClients}`);
+            numClients = sockets.length + 1;
+            console.log(`Number of client: ${numClients} in room: ${room}`);
 
             // First client joining (the initiator)
-            if (numClients == 0) {
+            if (numClients == 1) {
               // rooms are a server-side concept, it's the server that has to join a client to a room
               // a room is created once at least a socket joins it
               socket.join(room);

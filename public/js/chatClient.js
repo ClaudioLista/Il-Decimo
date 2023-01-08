@@ -1,8 +1,6 @@
 //Variable div associated with placeholder element scrachtPad in HTML5 page
 const scratchPad = document.getElementById('scratchPad');
 
-// Connect to server
-
 function sendMessage() {
     let textarea = document.getElementById('chatMessage');
 	let chatMessage = textarea.value;

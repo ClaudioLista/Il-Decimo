@@ -3,6 +3,7 @@ const { findOne } = require("../models/match");
 const Match = require("../models/match");
 const ChatRoom = require("../models/chatroom");
 const user = require("../models/user");
+const isAuth = require("../middleware/is-auth");
 
 exports.getIndex = (req, res, next) => {
   Match.find()
@@ -34,11 +35,15 @@ exports.getMatch = (req, res, next) => {
   let nameUser = null;
   let playerIn = false;
 
-  user.findById(req.user._id).then((user) => {
-     nameUser = user.usrName
-     console.log(nameUser)
-  }).catch((err) => console.log(err));
-
+  if (req.user) {
+    user
+      .findById(req.user._id)
+      .then((user) => {
+        nameUser = user.usrName;
+        console.log(nameUser);
+      })
+      .catch((err) => console.log(err));
+  }
 
   Match.findById(matchId)
     .populate({
@@ -58,10 +63,8 @@ exports.getMatch = (req, res, next) => {
 
       ChatRoom.findOne({ matchId: match._id })
         .then((chatroom) => {
-          
           messages = chatroom.chat.message;
 
-          
           res.render("app/match-detail", {
             m: match,
             user: nameUser,
@@ -121,7 +124,6 @@ exports.postAddMatch = (req, res, next) => {
     .then(() => {
       match.addPlayer(hostUserId);
 
-      
       const chatroom = new ChatRoom({
         matchId: match._id,
         chat: {
@@ -131,10 +133,7 @@ exports.postAddMatch = (req, res, next) => {
 
       chatroom
         .save()
-        .then(() => {
-          
-
-        })
+        .then(() => {})
         .catch((err) => console.log(err));
 
       res.redirect("/mymatches");

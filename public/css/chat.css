@@ -1,0 +1,8 @@
+.chatBox {
+    font-size: 1rem;
+    text-align: center;
+    color: #513dff;
+    width: auto;
+    height: 200px;
+    overflow: scroll;
+}
