@@ -1,3 +1,10 @@
+.chat-item {
+  width: 30rem;
+  height: max-content;
+  max-width: 110%;
+  margin: 1rem;
+}
+
 .chat {
     width: calc(65% - 85px);
     font-size: 1rem;

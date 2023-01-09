@@ -27,6 +27,7 @@
 
 <script> 
 if ("<%= isAuthenticated %>") {
+    if("<%= isAuthenticated %>")
     socket = io();
     room = "<%= m._id %>"; 
     user = "<%= user %>";
@@ -42,6 +43,7 @@ function sendMessage() {
     let textarea = document.getElementById('chatMessage');
 	let chatMessage = textarea.value;
     var currentdate = new Date();
+    
     var getMinutes= currentdate.getMinutes();
     
     if(currentdate.getMinutes() < 10){
@@ -234,7 +236,7 @@ socket.on('message', (message) => {
                 </article>
                 <% if (isAuthenticated && is_in) { %>
 
-                    <article class="card match-item">
+                    <article class="card chat-item">
                         <header class="card__header">
                             <h2 class="match__title"> Chat
                             </h2>
