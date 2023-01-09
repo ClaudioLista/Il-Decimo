@@ -21,7 +21,12 @@ const chatRoomSchema = new Schema({
         msg: {
             type: String,
             required: false,
-        }
+        },
+        date: {
+          type: String,
+          required: false,
+      }
+
       },
     ],
   },
@@ -30,10 +35,11 @@ const chatRoomSchema = new Schema({
 chatRoomSchema.methods.addMessage = function(message) {
     const updatedMessage= [...this.chat.message];
   
-    //console.log(message);
+    
     updatedMessage.push({
       name: message.name,
-      msg: message.message
+      msg: message.message,
+      date: message.date
     });
     
     const updatedChat = {

@@ -64,7 +64,7 @@ exports.getMatch = (req, res, next) => {
       ChatRoom.findOne({ matchId: match._id })
         .then((chatroom) => {
           messages = chatroom.chat.message;
-
+          
           res.render("app/match-detail", {
             m: match,
             user: nameUser,
