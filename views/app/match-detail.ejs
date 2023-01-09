@@ -41,12 +41,19 @@ window.addEventListener("load", () => {
 function sendMessage() {
     let textarea = document.getElementById('chatMessage');
 	let chatMessage = textarea.value;
-    var currentdate = new Date(); 
+    var currentdate = new Date();
+    var getMinutes= currentdate.getMinutes();
+    
+    if(currentdate.getMinutes() < 10){
+        var getMinutes= '0' + currentdate.getMinutes()
+    }
+    
+
      var datetime = 
     //                 + currentdate.getDate() + "/"
     // //             + (currentdate.getMonth()+1) + " @ "  
                 + currentdate.getHours() + ":"  
-                + currentdate.getMinutes();
+                + getMinutes;
     console.log(datetime);            
 
 	console.log(`You sent a message: ${chatMessage}`);
@@ -239,9 +246,22 @@ socket.on('message', (message) => {
                                 <% if (chat.length > 0) { %>
                                     
                                     <% for (let message of chat) { %>
-                                    
-                                        <p><%= message.date %> --> <%= message.name %>: </p>
-                                        <p style="color:blue"> <%= message.msg %> </p>
+                                        <div class="messages-chat">
+                                            <% if(message.name == user){ %>
+                                            <div class="message">
+                                                <p class="text"> <%= message.msg %></p>
+                                                
+                                            </div>
+                                            <p class="time"><%= message.date %></p>
+                                            <% } else {%>
+                                                <div class="receive-message">
+                                                    <p class="receive-text"> <%= message.msg %></p>
+                                                    
+                                                </div>
+                                                <p class="receive-time"><%= message.date %> <%= message.name %></p>
+                                            <% } %>
+                                        </div>
+                                        
 
                                     <% } %>
 
