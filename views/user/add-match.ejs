@@ -4,27 +4,29 @@
     <link rel="stylesheet" href="/css/add-match.css">
 </head>
 
-
+<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+<script>
+    function showDate() {
+        let matchDate = document.getElementById("time");
+        matchDate.type = "datetime-local"
+    }
+</script>
 
 <body>
    <%- include('../includes/navigation.ejs') %>
     <main>
-    
         
         <div class="container">
-            <!-- code here -->
             <div class="card">
-                <div class="card-image">	
-                    <h2 class="card-heading">
-                        Crea un match
-                        <small>Crea il tuo mattch</small>
-                    </h2>
-                </div>
+                <h2 class="card-heading">
+                    Create your match!
+                </h2>
+                <lottie-player src="https://assets1.lottiefiles.com/packages/lf20_VB3ALHSv6V.json"  background="transparent"  speed="0.2"  style="width: auto; height: auto;"  loop  autoplay></lottie-player>
                 <form class="card-form" action="/add-match" method="POST">
                     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-
+        
                     <div class="input">
-                        <input type="text" class="input-field"  name="title" id="title" required/>
+                        <input type="text" class="input-field" name="title" id="title" required/>
                         <label class="input-label">Titolo della partita</label>
                     </div>
                     <div class="input">
@@ -37,7 +39,7 @@
                         <label class="input-label">Indirizzo</label>
                     </div>
                     <div class="input">
-                        <input type="datetime-local" class="input-field" name="time" id="time" required/>
+                        <input onclick="showDate()" class="input-field" name="time" id="time" required/>
                         <label class="input-label">Quando?</label>
                     </div>
 
@@ -54,22 +56,22 @@
                     <div class="input">
                         
                         <!-- <textarea class="input-field" name="description" id="description" rows="5"></textarea> -->
-                        <input type="text" class="input-field" name="description" id="description"  />
+                        <input type="text" class="input-field" name="description" id="description" required/>
                         <label class="input-label">Descrizione</label>
                     </div>
-                    
-                    
-                    
+
                     <div class="action">
-                        <button class="action-button" type="submit" >Crea il match</button>
+                        <button class="action-button" type="submit" >Create the match</button>
                     </div>
+
+                    <br>
                 </form>
                 
-            </div>
+            </>
         </div>
         
         <script>today = new Date().toISOString().split(":")[0]+":00";
-            document.getElementById("time").setAttribute("min","2023-01-07T00:00")
+            document.getElementById("time").setAttribute("min",today)
         </script>
     </main>
     

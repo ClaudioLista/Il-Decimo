@@ -3,8 +3,6 @@
  body {
 	 font-family: "DM Sans", sans-serif;
 	 line-height: 1.5;
-	 background-color: #f1f3fb;
-	 padding: 0 2rem;
 }
  img {
 	 max-width: 100%;
@@ -22,24 +20,21 @@
 	 max-width: 800px;
 	 background-color: #fff;
 	 border-radius: 10px;
-	 box-shadow: 0 10px 20px 0 #000000;
+	 box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
 	 padding: 0.75rem;
 }
  .card-image {
 	 border-radius: 8px;
 	 overflow: hidden;
 	 padding-bottom: 65%;
-	 background-image: url("https://cdn.pixabay.com/photo/2016/05/27/14/33/football-1419954_960_720.jpg");
 	 background-repeat: no-repeat;
 	 background-size: 125%;
 	 background-position: 0 5%;
 	 position: relative;
 }
  .card-heading {
-	 position: absolute;
-	 left: 10%;
-	 top: 15%;
-	 right: 10%;
+	 margin: auto;
+	 padding-top: 1rem;
 	 font-size: 1.75rem;
 	 font-weight: 700;
 	 color: #0421a3;
@@ -95,13 +90,20 @@
 	 padding: 1em;
 	 width: 100%;
 	 font-weight: 500;
-	 background-color: #6658d3;
-	 border-radius: 6px;
-	 color: #fff;
-	 border: 0;
+	 border: 1px solid #513dff;
+  	 color: #513dff;
+  	 background: white;
+     border-radius: 6px;
+     cursor: pointer;
 }
  .action-button:focus {
 	 outline: 0;
+}
+
+.action-button:hover,
+.action-button:active {
+  background-color: #513dff;
+  color: white;
 }
  .card-info {
 	 padding: 1rem 1rem;
