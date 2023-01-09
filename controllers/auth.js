@@ -1,51 +1,67 @@
 const bcrypt = require('bcryptjs')
-// const nodemailer = require('nodemailer')
-// const sendgridTransport = require('nodemailer-sendgrid-transport')
+const { validationResult } = require('express-validator/check')
 
 const User = require('../models/user')
 
-// const transporter = nodemailer.createTransport(sendgridTransport({
-//   auth: {
-//     api_key: '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'
-//   }
-// }))
-
 exports.getLogin = (req, res, next) => {
-  let errMsg = req.flash('loginError')
-  if (errMsg.length > 0 ) {
-    errMsg = errMsg[0]
-  } else {
-    errMsg = null
-  }
   res.render('auth/login', {
     path: '/login',
-    pageTitle: 'Login',
-    errorMessage: errMsg,
+    pageTitle: 'login',
+    errorMessage: '',
+    oldInput: {
+      email: '',
+      password: ''
+    },
+    validationErrors: []
   })
 }
 
 exports.getSignup = (req, res, next) => {
-  let errMsg = req.flash('signupError')
-  if (errMsg.length > 0 ) {
-    errMsg = errMsg[0]
-  } else {
-    errMsg = null
-  }
   res.render('auth/signup', {
     path: '/signup',
     pageTitle: 'Signup',
-    errorMessage: errMsg,
+    errorMessage: '',
+    oldInput: {
+      usrName: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
+    },
+    validationErrors: []
   })
 }
 
 exports.postLogin = (req, res, next) => {
   const email = req.body.email
   const password = req.body.password
+
+  const errMsg = 'Email o Password non validi, riprova ad effettuare il login!'
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    return res.status(422).render('auth/login', {
+      path: '/login',
+      pageTitle: 'login',
+      errorMessage: errMsg,
+      oldInput: {
+        email: email,
+        password: password
+      },
+      validationErrors: errors.array()
+    })
+  }
   User.findOne({ email: email })
     .then((user) => {
       if (!user) {
-        req.flash('loginError', 'Email o Password non validi,\n riprova ad effettuare il login!')
-        return res.redirect('/login')
+        return res.status(422).render('auth/login', {
+          path: '/login',
+          pageTitle: 'login',
+          errorMessage: errMsg,
+          oldInput: {
+            email: email,
+            password: password
+          },
+          validationErrors: []
+        })
       }
       bcrypt
         .compare(password, user.password)
@@ -58,8 +74,16 @@ exports.postLogin = (req, res, next) => {
               res.redirect('/')
             })
           }
-          req.flash('loginError', 'Email o Password non validi,\n riprova ad effettuare il login!')
-          res.redirect('/login')
+          return res.status(422).render('auth/login', {
+            path: '/login',
+            pageTitle: 'login',
+            errorMessage: errMsg,
+            oldInput: {
+              email: email,
+              password: password
+            },
+            validationErrors: []
+          })
         })
         .catch((err) => {
           console.log(err)
@@ -73,44 +97,45 @@ exports.postSignup = (req, res, next) => {
   const usrName = req.body.usrName
   const email = req.body.email
   const password = req.body.password
-  const confirmPassword = req.body.confirmPassword //input validation: DA IMPLEMENTARE DOPO
-  User.findOne({ email: email })
-    .then((userDoc) => {
-      if (userDoc) {
-        req.flash('signupError', 'Utente già registrato!\n Se non ricordi la password reimpostala.')
-        return res.redirect('/signup')
-      }
-      return bcrypt
-        .hash(password, 12)
-        .then((hashedPassword) => {
-          const user = new User({
-            usrName: usrName,
-            email: email,
-            password: hashedPassword,
-            matcheslist: {
-              matches: [],
-            },
-          })
-          return user.save()
-        })
-        .then(() => {
-          console.log('Utente creato con successo')
-          res.redirect('/login')
-          // transporter.sendMail({
-          //   to: email,
-          //   from: 'marcello.donisi@live.it',
-          //   subject: 'Registrazione effettuata!',
-          //   html: '<h1>Ti sei registrato con successo, benvenuto nella famiglia di il-Decimo!</h1>'
-          // })
-        })
-        // .catch((err) => console.log(err))
+
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    return res.status(422).render('auth/signup', {
+      path: '/signup',
+      pageTitle: 'Signup',
+      errorMessage: errors.array()[0].msg,
+      oldInput: {
+        usrName: usrName,
+        email: email,
+        password: password,
+        confirmPassword: req.body.confirmPassword,
+      },
+      validationErrors: errors.array()
+    })
+  }
+  bcrypt
+    .hash(password, 12)
+    .then((hashedPassword) => {
+      const user = new User({
+        usrName: usrName,
+        email: email,
+        password: hashedPassword,
+        matcheslist: {
+          matches: [],
+        },
+      })
+      return user.save()
+    })
+    .then(() => {
+      console.log('Utente creato con successo')
+      res.redirect('/login')
     })
     .catch((err) => console.log(err))
 }
 
 exports.postLogout = (req, res, next) => {
   req.session.destroy((err) => {
-    //console.log(err)
+    console.log(err)
     console.log('Logout effettuato con successo')
     res.redirect('/')
   })
