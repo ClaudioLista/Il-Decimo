@@ -1,45 +1,78 @@
 <%- include('../includes/head.ejs') %>
     <link rel="stylesheet" href="/css/forms.css">
     <link rel="stylesheet" href="/css/match.css">
+    <link rel="stylesheet" href="/css/add-match.css">
 </head>
+
+<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+<script>
+    function showDate() {
+        let matchDate = document.getElementById("time");
+        matchDate.type = "datetime-local"
+    }
+</script>
 
 <body>
    <%- include('../includes/navigation.ejs') %>
     <main>
-        <h1 style="text-align: center;">CREATE A NEW MATCH!</h1>
-        <form class="match-form" action="/add-match" method="POST">
-            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-            <div class="form-control">
-                <label for="title">Title</label>
-                <input type="text" name="title" id="title" required>
-            </div>
-            <div class="form-control">
-                <label for="title">Place</label>
-                <input type="text" name="placeName" id="placeName" required>
-            </div>
-            <div class="form-control">
-                <label for="title">Address</label>
-                <input type="text" name="address" id="address" required>
-            </div>
-            <div class="form-control">
-                <label for="title">When?</label>
-                <input type="datetime-local" name="time" id="time" required>
-            </div>
-            <div class="form-control">
-                <label for="title">N. of players</label>
-                <input type="text" name="totalPlayers" id="totalPlayers" required>
-            </div>
-            <div class="form-control">
-                <label for="price">Price</label>
-                <input type="number" name="price" id="price" step="0.01" required>
-            </div>
-            <div class="form-control">
-                <label for="description">Description</label>
-                <textarea name="description" id="description" rows="5"></textarea>
-            </div>
+        
+        <div class="container">
+            <div class="card">
+                <h2 class="card-heading">
+                    Create your match!
+                </h2>
+                <lottie-player src="https://assets1.lottiefiles.com/packages/lf20_VB3ALHSv6V.json"  background="transparent"  speed="0.2"  style="width: auto; height: auto;"  loop  autoplay></lottie-player>
+                <form class="card-form" action="/add-match" method="POST">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        
+                    <div class="input">
+                        <input type="text" class="input-field" name="title" id="title" required/>
+                        <label class="input-label">Titolo della partita</label>
+                    </div>
+                    <div class="input">
+                        <input type="text" class="input-field" name="placeName" id="placeName" required />
+                        <label class="input-label">Luogo</label>
+                    </div>
 
-            <button class="btn" type="submit">Create match!</button>
-        </form>
+                    <div class="input">
+                        <input type="text" class="input-field" name="address" id="address" required />
+                        <label class="input-label">Indirizzo</label>
+                    </div>
+                    <div class="input">
+                        <input onclick="showDate()" class="input-field" name="time" id="time" required/>
+                        <label class="input-label">Quando?</label>
+                    </div>
+
+                    <div class="input">
+                        <input type="text" class="input-field" name="totalPlayers" id="totalPlayers" required />
+                        <label class="input-label">Numero di giocatori</label>
+                    </div>
+                    <div class="input">
+                        
+                        <input type="number" class="input-field" name="price" id="price" step="0.50" required>
+                        <label class="input-label">Prezzo</label>
+                    </div>
+                    
+                    <div class="input">
+                        
+                        <!-- <textarea class="input-field" name="description" id="description" rows="5"></textarea> -->
+                        <input type="text" class="input-field" name="description" id="description" required/>
+                        <label class="input-label">Descrizione</label>
+                    </div>
+
+                    <div class="action">
+                        <button class="action-button" type="submit" >Create the match</button>
+                    </div>
+
+                    <br>
+                </form>
+                
+            </>
+        </div>
+        
+        <script>today = new Date().toISOString().split(":")[0]+":00";
+            document.getElementById("time").setAttribute("min",today)
+        </script>
     </main>
     
 <%- include('../includes/end.ejs') %>

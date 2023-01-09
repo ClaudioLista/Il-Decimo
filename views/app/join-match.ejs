@@ -16,10 +16,6 @@
                 <input type="hidden" value="<%= m._id %>" name="matchId">
                 <button class="btn" type="submit">Confirm!</button>
             </form>
-            <h1>Players left: <%= m.totalPlayers - m.currentPlayers %></h1>
-            <h2>Where: <%= m.placeName %></h2>
-            <h3>$<%= m.price %></h3>
-            <p><%= m.description %></p>
         <% } else {%>
             <h1 style="color: #513dff;"">You're already in!</h1>
         <% } %>
