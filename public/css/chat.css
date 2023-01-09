@@ -1,8 +1,110 @@
-.chatBox {
+.chat {
+    width: calc(65% - 85px);
     font-size: 1rem;
     text-align: center;
-    color: #513dff;
+    color: #000000;
     width: auto;
     height: 200px;
     overflow: scroll;
-}
+  }
+  
+  .chat .messages-chat {
+    margin-left: auto; 
+    margin-right: 0;
+  }
+  
+  .chat .messages-chat .message {
+    display:flex;
+    align-items: center;
+    margin-bottom: 8px;
+    margin-left: auto; 
+    margin-right: 0;
+  }
+
+  .chat .messages-chat .receive-message {
+    display:flex;
+    align-items: center;
+    margin-bottom: 8px;
+    margin-left: 0; 
+    margin-right: auto;
+  }
+  
+  .chat .messages-chat .text {
+    margin: 0 35px;
+    background-color: #f6f6f6;
+    padding: 15px;
+    border-radius: 12px;
+    margin-left: auto; 
+    margin-right: 0;
+    text-align: left;
+  }
+
+  .chat .messages-chat .receive-text {
+    margin: 0 35px;
+    background-color: #b7d7ff;
+    padding: 15px;
+    border-radius: 12px;
+    margin-left: 0; 
+    margin-right: auto;
+    text-align: left;
+  }
+  
+  .text-only {
+    margin-left: 45px;
+  }
+  
+  .time {
+    font-size: 12px;
+    color:rgb(77, 77, 77);
+    margin-bottom:10px;
+    text-align: right;
+    padding-right: 8pt;
+    padding-bottom: 8pt;
+  }
+
+  .receive-time {
+    font-size: 12px;
+    color:rgb(77, 77, 77);
+    margin-bottom:10px;
+    text-align: left;
+    padding-left: 8pt;
+    padding-bottom: 8pt;
+  }
+
+/* Chat containers */
+.otherMessages {
+    border: 2px solid #dedede;
+    background-color: #f1f1f1;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 10px 0;
+    text-align: left;
+  }
+  
+  /* Darker chat container */
+  .myMessages {
+    border-color: #ccc;
+    background-color: #ddd;
+    text-align: right;
+  }
+  
+  /* Clear floats */
+  .otherMessages::after {
+    content: "";
+    clear: both;
+    display: table;
+  }
+  
+  /* Style time text */
+  .time-right {
+    float: right;
+    color: #aaa;
+  }
+  
+  /* Style time text */
+  .time-left {
+    float: left;
+    color: #999;
+  }
+
+  
