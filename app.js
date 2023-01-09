@@ -37,9 +37,9 @@ app.use(
     resave: false,
     saveUninitialized: false,
     store: store,
-    // cookie: {
-    //   maxAge: 100000
-    // }
+    cookie: {
+      expires: 86400*1000/2 //la sessione si cancella dopo 12h
+    }
   })
 );
 app.use(csrfProtection);
