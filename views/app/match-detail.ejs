@@ -158,8 +158,12 @@ socket.on('message', (message) => {
     pText.className = "receive-text"
 
     let pTime = document.createElement('p')
-    let pElementTime = document.createTextNode(message.date + " " + message.name)
+    let pElementTime = document.createTextNode(message.date + " ")
+    let sName = document.createElement('strong')
+    let pElementName = document.createTextNode(message.name)
+    sName.appendChild(pElementName)
     pTime.appendChild(pElementTime)
+    pTime.appendChild(sName)
     pTime.className = "receive-time"
 
     divMessage.appendChild(pText)
@@ -259,7 +263,7 @@ socket.on('message', (message) => {
                                                     <p class="receive-text"> <%= message.msg %></p>
                                                     
                                                 </div>
-                                                <p class="receive-time"><%= message.date %> <%= message.name %></p>
+                                                <p class="receive-time"><%= message.date %> <strong><%= message.name %></strong></p>
                                             <% } %>
                                         </div>
                                         
