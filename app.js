@@ -9,6 +9,7 @@ const session = require("express-session");
 const MongoDBStore = require("connect-mongodb-session")(session);
 const csrf = require("csurf");
 const flash = require("connect-flash");
+const passport = require('passport');
 
 const errorController = require("./controllers/error");
 const User = require("./models/user");
@@ -43,6 +44,23 @@ app.use(
   })
 );
 app.use(csrfProtection);
+app.use(passport.authenticate('session'));
+
+passport.serializeUser(function(req, user, cb) {
+  req.session.user = user;
+  req.session.isLoggedIn = true;
+  console.log("SERIALIZE")
+  process.nextTick(function() {
+    cb(null, { id: user.id, username: user.usrName, email: user.email });
+  });
+});
+
+passport.deserializeUser(function(user, cb) {
+  console.log("DESERIALIZE")
+  process.nextTick(function() {
+    return cb(null, user);
+  });
+});
 
 app.use(flash());
 
@@ -60,6 +78,9 @@ app.use((req, res, next) => {
 
 app.use((req, res, next) => {
   res.locals.isAuthenticated = req.session.isLoggedIn;
+  if(!!req.session.passport) {
+    res.locals.isAuthenticated = true;
+  }
   res.locals.csrfToken = req.csrfToken();
   next();
 });

@@ -5,15 +5,15 @@ const Schema = mongoose.Schema
 const userSchema = new Schema({
   usrName: {
     type: String,
-    required: true,
+    required: false,
   },
   email: {
     type: String,
-    required: true,
+    required: false,
   },
   password: {
     type: String,
-    required: true,
+    required: false,
   },
   matchNum: {
     type: Number,
@@ -22,7 +22,7 @@ const userSchema = new Schema({
   matchList: {
     matches: [
       {
-        matchId: { type: Schema.Types.ObjectId, ref: 'Match', required: true },
+        matchId: { type: Schema.Types.ObjectId, ref: 'Match', required: false },
       },
     ],
     required: false,
