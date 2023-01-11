@@ -12,26 +12,41 @@ const router = express.Router();
 
 var passport = require("passport");
 var GoogleStrategy = require("passport-google-oidc");
+var FacebookStrategy = require("passport-facebook");
 
 router.get("/login", authController.getLogin);
 
-router.get("/login/federated/google", passport.authenticate("google", {
-  scope: [
-    'https://www.googleapis.com/auth/userinfo.profile',
-    'https://www.googleapis.com/auth/userinfo.email'
-  ]
-}));
+router.get(
+  "/login/federated/google",
+  passport.authenticate("google", {
+    scope: [
+      "https://www.googleapis.com/auth/userinfo.profile",
+      "https://www.googleapis.com/auth/userinfo.email",
+    ],
+  })
+);
 
-router.get("/oauth2/redirect/google", passport.authenticate("google", {
+router.get("/login/federated/facebook", passport.authenticate("facebook"));
+
+router.get(
+  "/oauth2/redirect/google",
+  passport.authenticate("google", {
     successRedirect: "/",
     failureRedirect: "/login",
   })
 );
 
+
+router.get('/oauth2/redirect/facebook', passport.authenticate('facebook', {
+  successRedirect: '/',
+  failureRedirect: '/login'
+}));
+
 passport.use(
   new GoogleStrategy(
     {
-      clientID: "368248899535-vgc9fj94cfkk9sojps8pct6bjgu2d4j0.apps.googleusercontent.com",
+      clientID:
+        "368248899535-vgc9fj94cfkk9sojps8pct6bjgu2d4j0.apps.googleusercontent.com",
       clientSecret: "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",
       callbackURL: "/oauth2/redirect/google",
       scope: ["profile"],
@@ -74,6 +89,112 @@ passport.use(
         .catch((err) => {
           return cb(err);
         });
+    }
+  )
+);
+
+passport.use(
+  new FacebookStrategy(
+    {
+      clientID: "846393583262405",
+      clientSecret: "b0bdd9d16238229f41cdd8f7bc5ab6c6",
+      callbackURL: "/oauth2/redirect/facebook",
+      state: true,
+      profileFields: ['id', 'displayName', 'photos', 'email']
+    },
+    function verify(accessToken, refreshToken, profile, cb) {
+
+      FederateUser.findOne({ subject: profile.id, provider: "https://www.facebook.com" })
+      .then((fUser) => {
+        
+        if (!fUser) {
+          const user = new User({
+            usrName: profile.displayName,
+            email: profile.emails[0].value,
+            password: null,
+            matcheslist: {
+              matches: [],
+            },
+          });
+          user
+            .save()
+            .then(() => {
+              const federateUser = new FederateUser({
+                userId: user._id,
+                provider: "https://www.facebook.com",
+                subject: profile.id,
+              });
+              federateUser.save().then(() => {
+                return cb(null, user);
+              });
+            })
+            .catch((err) => {
+              return cb(err);
+            });
+        } else {
+          User.findOne({ _id: fUser.userId }).then((user) => {
+            return cb(null, user);
+          });
+        }
+      })
+      .catch((err) => {
+        return cb(err);
+      });
+
+
+
+
+
+      // db.get(
+      //   "SELECT * FROM federated_credentials WHERE provider = ? AND subject = ?",
+      //   ["https://www.facebook.com", profile.id],
+      //   function (err, row) {
+      //     if (err) {
+      //       return cb(err);
+      //     }
+      //     if (!row) {
+      //       db.run(
+      //         "INSERT INTO users (name) VALUES (?)",
+      //         [profile.displayName],
+      //         function (err) {
+      //           if (err) {
+      //             return cb(err);
+      //           }
+
+      //           var id = this.lastID;
+      //           db.run(
+      //             "INSERT INTO federated_credentials (user_id, provider, subject) VALUES (?, ?, ?)",
+      //             [id, "https://www.facebook.com", profile.id],
+      //             function (err) {
+      //               if (err) {
+      //                 return cb(err);
+      //               }
+      //               var user = {
+      //                 id: id,
+      //                 name: profile.displayName,
+      //               };
+      //               return cb(null, user);
+      //             }
+      //           );
+      //         }
+      //       );
+      //     } else {
+      //       db.get(
+      //         "SELECT * FROM users WHERE id = ?",
+      //         [row.user_id],
+      //         function (err, row) {
+      //           if (err) {
+      //             return cb(err);
+      //           }
+      //           if (!row) {
+      //             return cb(null, false);
+      //           }
+      //           return cb(null, row);
+      //         }
+      //       );
+      //     }
+      //   }
+      // );
     }
   )
 );
