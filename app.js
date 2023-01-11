@@ -49,14 +49,12 @@ app.use(passport.authenticate('session'));
 passport.serializeUser(function(req, user, cb) {
   req.session.user = user;
   req.session.isLoggedIn = true;
-  console.log("SERIALIZE")
   process.nextTick(function() {
     cb(null, { id: user.id, username: user.usrName, email: user.email });
   });
 });
 
 passport.deserializeUser(function(user, cb) {
-  console.log("DESERIALIZE")
   process.nextTick(function() {
     return cb(null, user);
   });

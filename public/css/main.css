@@ -259,10 +259,16 @@ form {
   text-align: center;
 }
 
-.user-message--error {
+.error-message {
+  margin: auto;
+  width: 90%;
+  padding: 1rem;
   color: black;
   border-color: red;
   background: rgb(255, 176, 176);
+  border: 1px solid rgb(255, 0, 0);
+  border-radius: 25px;
+  text-align: center;
 }
 
 @media (min-width: 768px) {
@@ -277,4 +283,19 @@ form {
   .user-message {
     width: 30rem;
   }
+}
+
+.popout {
+  animation: popout 0.5s ease;
+  -webkit-animation: popout 0.5s ease;
+}
+@keyframes popout {
+  from{transform:scale(0)}
+  80%{transform:scale(1.2)}
+  to{transform:scale(1)}
+}
+@-webkit-keyframes popout {
+  from{-webkit-transform:scale(0)}
+  80%{-webkit-transform:scale(1.2)}
+  to{-webkit-transform:scale(1)}
 }

@@ -6,7 +6,7 @@
 }
 
 .footer-chat {
-  width: calc(100% - 50px);
+  width: calc(100% - 6px);
   height: 80px;
   display:flex;
   align-items: center;
@@ -15,23 +15,22 @@
 }
 
 .footer-chat .icon {
-  margin: auto;
   color:#C0C0C0;
   font-size: 14pt;
 }
 
-.footer-chat .icon:hover {
-  font-size: 18pt;
-}
-
 .footer-chat .send {
+  margin-top: 7px;
+  margin-left: 20px;
   color:#fff;
   background-color: #4f6ebd;
-  position: absolute;
-  right: 50px;
   padding: 12px 12px 12px 12px;
   border-radius: 50px;
   font-size: 14pt;
+}
+
+.footer-chat .send:hover {
+  background-color: #1237f3;
 }
 
 .footer-chat .name {
@@ -48,11 +47,14 @@
 }
 
 .write-message {
+  text-indent: 12px;
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  box-sizing: border-box;
   border:none !important;
-  width:60%;
   height: 50px;
-  margin-left: 20px;
-  padding: 10px;
+  border-radius: 20px;
 }
 
 .footer-chat *::-webkit-input-placeholder {

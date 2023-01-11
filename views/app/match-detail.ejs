@@ -214,21 +214,19 @@ socket.on('message', (message) => {
                         </p>
                     </div>
                     <div class="card__actions">
-                        <% if (isAuthenticated && !is_full) { %>
-                            <a href="/matches/<%= m._id %>/<% if (!is_in) { %>join<% } else { %>unjoin<% } %>" class="btn">
-                                <% if (!is_in) { %> Join <% } else { %> UnJoin <% } %> 
-                            </a>
-                        <% } else if(isAuthenticated && is_full) { %>
-                            <% if (is_full && !is_in) { %>                            
-                                <h1> Mi dispiace la partita è piena</h1>
-                            <% } %>
-                             
-                             
-                        <!-- aggiungere else unjoin      -->
-                            
-
+                        <% if (isAuthenticated) { %>
+                            <% if (is_full && is_in) { %>
+                                <a href="/matches/<%= m._id %>/unjoin" class="btn">
+                                    UnJoin
+                                </a>
+                            <% } else if(is_full && !is_in) { %>  
+                                <h1 style="color: #513dff;">The Match is full!</h1>
+                            <% } else { %>
+                                <a href="/matches/<%= m._id %>/<% if (!is_in) { %>join<% } else { %>unjoin<% } %>" class="btn">
+                                    <% if (!is_in) { %> Join <% } else { %> UnJoin <% } %> 
+                                </a>
+                            <% }%>
                         <% } %>
-
                     </div>
                     <br>
                 </article>
@@ -276,7 +274,6 @@ socket.on('message', (message) => {
                                                 <p class="receive-time"><%= message.date %> <strong><%= message.name %></strong></p>
                                             <% } %>
                                         </div>
-                                        
 
                                     <% } %>
 

@@ -15,7 +15,12 @@ var GoogleStrategy = require("passport-google-oidc");
 
 router.get("/login", authController.getLogin);
 
-router.get("/login/federated/google", passport.authenticate("google"));
+router.get("/login/federated/google", passport.authenticate("google", {
+  scope: [
+    'https://www.googleapis.com/auth/userinfo.profile',
+    'https://www.googleapis.com/auth/userinfo.email'
+  ]
+}));
 
 router.get("/oauth2/redirect/google", passport.authenticate("google", {
     successRedirect: "/",
@@ -26,8 +31,7 @@ router.get("/oauth2/redirect/google", passport.authenticate("google", {
 passport.use(
   new GoogleStrategy(
     {
-      clientID:
-        "368248899535-vgc9fj94cfkk9sojps8pct6bjgu2d4j0.apps.googleusercontent.com",
+      clientID: "368248899535-vgc9fj94cfkk9sojps8pct6bjgu2d4j0.apps.googleusercontent.com",
       clientSecret: "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",
       callbackURL: "/oauth2/redirect/google",
       scope: ["profile"],
@@ -40,7 +44,7 @@ passport.use(
           if (!fUser) {
             const user = new User({
               usrName: profile.displayName,
-              email: profile.email,
+              email: profile.emails[0].value,
               password: null,
               matcheslist: {
                 matches: [],
@@ -49,7 +53,6 @@ passport.use(
             user
               .save()
               .then(() => {
-                console.log(user._id)
                 const federateUser = new FederateUser({
                   userId: user._id,
                   provider: issuer,

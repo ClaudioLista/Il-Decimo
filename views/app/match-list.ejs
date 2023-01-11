@@ -44,9 +44,13 @@
                         <img src="https://cdn3.iconfinder.com/data/icons/choosesport/png/512/football.png" alt="<%= match.title %>">
                     </div>
                     <div class="card__content">
-                        <h2 class="match__playerCount">We search:</h2>
-                            <h2 class="match__playerCount__in" style="color: #513dff;"><%= match.totalPlayers - match.currentPlayers %></h2>
-                        <h2 class="match__playerCount"> players!</h2>
+                        <% if (match.currentPlayers == match.totalPlayers) { %>
+                            <h2 class="match__playerCount" style="color: #513dff;">The match is full!</h2>
+                        <% } else { %>
+                            <h2 class="match__playerCount">We search:</h2>
+                                <h2 class="match__playerCount__in" style="color: #513dff;"><%= match.totalPlayers - match.currentPlayers %></h2>
+                            <h2 class="match__playerCount"> players!</h2>
+                        <% } %>
                         <br>
                         <h2 class="match__place">
                             <%= match.placeName %>
@@ -65,7 +69,9 @@
                     <div class="card__actions">
                         <a href="/matches/<%= match._id %>" class="btn">Details</a>
                         <% if (isAuthenticated) { %>
-                            <a href="/matches/<%= match._id %>/join" class="btn">Join</a>
+                            <% if (match.currentPlayers != match.totalPlayers) { %>
+                                <a href="/matches/<%= match._id %>/join" class="btn">Join</a>
+                            <% } %>
                         <% } %>
                     </div>
                     <br>
@@ -75,6 +81,7 @@
         <% } else { %>
             <h1>No matches Found!</h1>
         <% } %>
+
     </main>
 
 <%- include('../includes/end.ejs') %>
