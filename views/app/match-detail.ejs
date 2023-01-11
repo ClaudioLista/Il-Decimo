@@ -214,11 +214,21 @@ socket.on('message', (message) => {
                         </p>
                     </div>
                     <div class="card__actions">
-                        <% if (isAuthenticated) { %>
+                        <% if (isAuthenticated && !is_full) { %>
                             <a href="/matches/<%= m._id %>/<% if (!is_in) { %>join<% } else { %>unjoin<% } %>" class="btn">
                                 <% if (!is_in) { %> Join <% } else { %> UnJoin <% } %> 
                             </a>
+                        <% } else if(isAuthenticated && is_full) { %>
+                            <% if (is_full && !is_in) { %>                            
+                                <h1> Mi dispiace la partita è piena</h1>
+                            <% } %>
+                             
+                             
+                        <!-- aggiungere else unjoin      -->
+                            
+
                         <% } %>
+
                     </div>
                     <br>
                 </article>

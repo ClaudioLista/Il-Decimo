@@ -34,6 +34,7 @@ exports.getMatch = (req, res, next) => {
   const matchId = req.params.matchId;
   let nameUser = null;
   let playerIn = false;
+  let is_full = false;
 
   if (req.user) {
     user
@@ -58,6 +59,11 @@ exports.getMatch = (req, res, next) => {
         if (risultato !== undefined) {
           playerIn = true;
         }
+        if(match.currentPlayers==match.totalPlayers)
+      {
+        is_full= true
+      }
+        
         const result = match.listPlayers.populate("players.userId");
       }
 
@@ -72,6 +78,7 @@ exports.getMatch = (req, res, next) => {
             pageTitle: match.title,
             path: "/matches",
             is_in: playerIn,
+            is_full:is_full
           });
         })
         .catch((err) => console.log(err));
@@ -217,6 +224,7 @@ exports.getUserMatches = (req, res, next) => {
 exports.getJoinMatch = (req, res, next) => {
   const matchId = req.params.matchId;
   let is_in = false;
+  let is_full = false;
   Match.findById(matchId)
     .then((match) => {
       const result = match.listPlayers.players.find(
@@ -225,11 +233,16 @@ exports.getJoinMatch = (req, res, next) => {
       if (result !== undefined) {
         is_in = true;
       }
+      if(match.currentPlayers==match.totalPlayers)
+      {
+        is_full= true
+      }
       res.render("app/join-match", {
         m: match,
         pageTitle: "Join Match",
         path: "/matches/:matchId/join",
         playerIn: is_in,
+        is_full: is_full,
         editing: true,
       });
     })
@@ -243,7 +256,11 @@ exports.postJoinMatch = (req, res, next) => {
   const joiningUserId = req.user._id;
   Match.findById(matchId)
     .then((match) => {
+      console.log(match.currentPlayers)
+      console.log(match.totalPlayers)
+      if(match.currentPlayers != match.totalPlayers){
       return match.addPlayer(joiningUserId);
+      }
     })
     .then(() => {
       res.redirect("/mymatches");

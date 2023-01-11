@@ -10,7 +10,7 @@
         <div class="image">
             <img src="https://cdn3.iconfinder.com/data/icons/choosesport/png/512/football.png" alt="<%= m.title %>">
         </div>
-        <% if (!playerIn ){ %>
+        <% if (!playerIn && !is_full){ %>
             <form action="/matches/:matchId/join" method="POST">
                 <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                 <input type="hidden" value="<%= m._id %>" name="matchId">
