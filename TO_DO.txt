@@ -1,0 +1,9 @@
+1)  Modifica in "Chat": adesso compare solo l'orario, necessaria anche la data del messaggio;
+2)  Creazione vista "My Profile";
+3)  Implementazione "Modifica Password";
+4)  Decidere se lasciare le cose in inglese o passare tutto in italiano (Marcello vota italiano);
+5)  ...
+6)  ...
+7)  ...
+8)
+9)
