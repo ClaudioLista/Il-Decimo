@@ -53,6 +53,8 @@
   border:none !important;
   height: 50px;
   border-radius: 20px;
+  margin-top: 10px;
+  margin-left: 8px;
 }
 
 .footer-chat *::-webkit-input-placeholder {

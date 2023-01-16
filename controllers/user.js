@@ -35,13 +35,13 @@ exports.getMatch = (req, res, next) => {
   let nameUser = null;
   let playerIn = false;
   let is_full = false;
+  let is_over = false;
 
   if (req.user) {
     user
       .findById(req.user._id)
       .then((user) => {
         nameUser = user.usrName;
-        console.log(nameUser);
       })
       .catch((err) => console.log(err));
   }
@@ -59,10 +59,15 @@ exports.getMatch = (req, res, next) => {
         if (risultato !== undefined) {
           playerIn = true;
         }
-        if(match.currentPlayers==match.totalPlayers)
-      {
-        is_full= true
-      }
+        if(match.currentPlayers==match.totalPlayers) {
+          is_full= true
+        }
+
+        const today = new Date();
+        if (match.time < today) {
+          is_over = true;
+        }
+        //console.log(today, match.time, is_over)
         
         const result = match.listPlayers.populate("players.userId");
       }
@@ -78,7 +83,8 @@ exports.getMatch = (req, res, next) => {
             pageTitle: match.title,
             path: "/matches",
             is_in: playerIn,
-            is_full:is_full
+            is_full: is_full,
+            isOver: is_over
           });
         })
         .catch((err) => console.log(err));
@@ -256,8 +262,6 @@ exports.postJoinMatch = (req, res, next) => {
   const joiningUserId = req.user._id;
   Match.findById(matchId)
     .then((match) => {
-      console.log(match.currentPlayers)
-      console.log(match.totalPlayers)
       if(match.currentPlayers != match.totalPlayers){
       return match.addPlayer(joiningUserId);
       }
