@@ -91,7 +91,7 @@ app.use(errorController.get404);
 mongoose
   .connect(MONGODB_URI)
   .then((result) => {
-    const server = app.listen(8080);
+    const server = app.listen(process.env.PORT || 5000);
     const io = require("socket.io")(server);
     console.log("Listening on port 8080");
 
