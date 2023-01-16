@@ -5,29 +5,19 @@
 
 <body>
     <%- include('../includes/navigation.ejs') %>
-    <body class="body">
-      <div class="section center wf-section">
-        <div data-w-id="6b220cb1-4b9c-7fb0-75b9-53ff4a6c35a2" 
-         style="transform: translate3d(0px, 0px, 0px) scale3d(1, 1, 1) rotateX(0deg) rotateY(0deg) rotateZ(0deg) skew(0deg, 0deg); opacity: 1; transform-style: preserve-3d;" 
-         class="hero-content">
-          <h1 class="heading-3" style="text-shadow: 1px 1px 2px black;">Il Decimo</h1>
-          <h3 class="hero-subhead" style="text-shadow: 1px 1px 2px black;">
-            Mancano poche ore alla partita di calcetto e ti mancano dei giocatori?<br> 
-            Non riesci mai a trovare degli amici con cui giocare?
-          </h3>
-          <h2 style="text-shadow: 1px 1px 2px black;">Questo è il posto giusto!</h2>
-          <% if (!isAuthenticated) { %>
-            <a href="/signup" class="button w-button" style="border-radius: 25px;">Registrati subito!</a>
-          <% } else { %>
-            <a href="/add-match" class="button w-button" style="border-radius: 25px;">Crea una nuova partita!</a>
-            <a href="/matches" class="button w-button" style="border-radius: 25px;">Partecipa ad una partita!</a>
-          <% } %>
-        </div>
-        <img src="https://cdn3.iconfinder.com/data/icons/choosesport/png/512/football.png" 
-         style="transform: translate3d(0px, 0px, 0px) scale3d(1, 1, 1) rotateX(0deg) rotateY(0deg) rotateZ(0deg) skew(0deg, 0deg); opacity: 1; transform-style: preserve-3d;" 
-         data-w-id="77e69727-c455-8e07-0990-833a661c94ea" sizes="(max-width: 479px) 80vw, (max-width: 991px) 70vw, 100vw" 
-         srcset="https://cdn3.iconfinder.com/data/icons/choosesport/png/512/football.png 500w, https://cdn3.iconfinder.com/data/icons/choosesport/png/512/football.png 731w" 
-         alt="" class="hero-image">
-      </div>
+    <div class="section center wf-section">
+      <h1 class="heading-3" style="text-shadow: 1px 1px 2px black;">Il Decimo</h1>
+      <h3 class="hero-subhead" style="text-shadow: 1px 1px 2px black;">
+        Mancano poche ore alla partita di calcetto e ti mancano dei giocatori?<br> 
+        Non riesci mai a trovare degli amici con cui giocare?
+      </h3>
+      <h2 style="text-shadow: 1px 1px 2px black;">Questo è il posto giusto!</h2>
+      <% if (!isAuthenticated) { %>
+        <a href="/signup" class="button w-button" style="border-radius: 25px;">Registrati subito!</a>
+      <% } else { %>
+        <a href="/add-match" class="button w-button" style="border-radius: 25px;">Crea una nuova partita!</a>
+        <a href="/matches" class="button w-button" style="border-radius: 25px;">Partecipa ad una partita!</a>
+      <% } %>
+    </div>
 
 <%- include('../includes/end.ejs') %>
