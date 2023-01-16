@@ -3,7 +3,7 @@
 3)  Implementazione "Modifica Password";
 4)  Decidere se lasciare le cose in inglese o passare tutto in italiano (Marcello vota italiano);
 5)  Chiudere connessione socket quando l'user si disconnette;
-6)  ...
+6)  Implementazione votazione partita (lato server)
 7)  ...
 8)
 9)
