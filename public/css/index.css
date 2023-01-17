@@ -50,7 +50,7 @@ a {
     padding-top: 0vh;
     justify-content: center;
     align-items: flex-start;
-    background-image: url('https://img.freepik.com/free-vector/gradient-style-football-field-background_23-2148995842.jpg?w=1060&t=st=1673892912~exp=1673893512~hmac=24d121fca1e26a529ad0e20a5b96c4dd30c96ae2dabed086fd2f703897af5c37');
+    background-image: url('../img/background.jpg');
     background-repeat: no-repeat;
     background-attachment: fixed;
     background-size: cover;
