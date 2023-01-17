@@ -1,6 +1,6 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose')
 
-const Schema = mongoose.Schema;
+const Schema = mongoose.Schema
 
 const federateuserSchema = new Schema({
   userId: { 
@@ -13,7 +13,7 @@ const federateuserSchema = new Schema({
   subject: {
     type: String,
     required: false,
-  },
-});
+  }
+})
 
-module.exports = mongoose.model("FederateUser", federateuserSchema);
+module.exports = mongoose.model("FederateUser", federateuserSchema)
