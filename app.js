@@ -38,7 +38,8 @@ app.use(
     saveUninitialized: false,
     store: store,
     cookie: {
-      expires: 86400*1000/2 //la sessione si cancella dopo 12h
+      maxAge: 7200000, //la sessione si cancella dopo 2h
+      //secure: true  solo in fase di deploy va bene
     }
   })
 );
@@ -95,7 +96,6 @@ mongoose
 
     io.on("connection", (socket) => {       // TODO : modificare i nomi
       socket.on("message", (message) => {
-        //invia il messaggio a tutti gli utenti nella stanza eccetto al sender      togliere
         socket.to(message.room).emit("message", message);   // TODO : modificare i nomi
   
         ChatRoom.findOne({matchId: message.room}).then((room) => {
@@ -108,9 +108,8 @@ mongoose
           .fetchSockets()
           .then((sockets) => {
             numClients = sockets.length + 1;
-            console.log(`Number of client: ${numClients} in room: ${room}`);      // TODO : modificare i nomi e/o togliere
+            //console.log(`Number of client: ${numClients} in room: ${room}`);      // TODO : modificare i nomi e/o togliere
 
-            // Creazione della stanza o aggiunta di un client                   togliere
             if (numClients == 1) {
               socket.join(room);
               socket.emit("created", room);             // TODO : modificare i nomi

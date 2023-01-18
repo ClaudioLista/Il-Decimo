@@ -260,9 +260,10 @@ form {
 }
 
 .error-message {
-  margin: auto;
+  /* margin: auto; */
   width: 90%;
   padding: 1rem;
+  margin-bottom: 10%;
   color: black;
   border-color: red;
   background: rgb(255, 176, 176);

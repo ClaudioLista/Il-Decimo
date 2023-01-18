@@ -1,8 +1,7 @@
-const chatroom = require("../models/chatroom"); //togliere
-const { findOne } = require("../models/match"); //togliere
 const Match = require("../models/match");
 const ChatRoom = require("../models/chatroom");
 const user = require("../models/user");
+const { validationResult } = require("express-validator");
 
 exports.getIndex = (req, res, next) => {
   Match.find()
@@ -28,7 +27,6 @@ exports.getMatches = (req, res, next) => {
     .catch((err) => console.log(err));
 };
 
-//dettaglio del match    togliere
 exports.getMatch = (req, res, next) => {
   const matchId = req.params.matchId;
   let nameUser = null;
@@ -39,9 +37,7 @@ exports.getMatch = (req, res, next) => {
   if (req.user) {
     user
       .findById(req.user._id)
-      .then((user) => {
-        nameUser = user.usrName;
-      })
+      .then((user) => { nameUser = user.usrName; })
       .catch((err) => console.log(err));
   }
 
@@ -61,13 +57,10 @@ exports.getMatch = (req, res, next) => {
         if(match.currentPlayers==match.totalPlayers) {
           is_full= true
         }
-
         const today = new Date();
         if (match.time < today) {
           is_over = true;
         }
-        //console.log(today, match.time, is_over)   togliere
-        
         const result = match.listPlayers.populate("players.userId");
       }
 
@@ -91,19 +84,19 @@ exports.getMatch = (req, res, next) => {
     .catch((err) => console.log(err));
 };
 
-//render to "Add Match" page      togliere
 exports.getAddMatch = (req, res, next) => {
   res.render("user/add-match", {
     pageTitle: "Add Match",
-    path: "/user/add-match",
+    path: "/add-match",
     editing: false,
+    hasError: false,
+    match: null,
+    errorMessage: null,
+    validationErrors: [],
   });
 };
 
-//Il controller che gestisce la POST del form Add Match dove    togliere
-//l'utente può creare un match
 exports.postAddMatch = (req, res, next) => {
-  //recupero i parametri dalla body della POST                  togliere
   const title = req.body.title;
   const placeName = req.body.placeName;
   const address = req.body.address;
@@ -112,9 +105,29 @@ exports.postAddMatch = (req, res, next) => {
   const description = req.body.description;
   const totalPlayers = req.body.totalPlayers;
   const currentPlayers = 0;
-  const hostUserId = req.user;
 
-  //creo nuovo oggetto Match coi nuovi parametri                togliere
+  const hostUserId = req.user;
+  const errors = validationResult(req);
+  if(!errors.isEmpty()) {
+    return res.status(422).render("user/add-match", {
+      pageTitle: "Add Match",
+      path: "/add-match",
+      hasError: true,
+      editing: false,
+      match: {
+        title: title,
+        placeName: placeName,
+        address: address,
+        time: time,
+        price: price,
+        description: description,
+        totalPlayers: totalPlayers
+      },
+      errorMessage: errors.array()[0].msg,
+      validationErrors: errors.array()
+    });
+  }
+
   const match = new Match({
     title: title,
     placeName: placeName,
@@ -130,31 +143,23 @@ exports.postAddMatch = (req, res, next) => {
     hostUserId: hostUserId,
   });
 
-  //ora salvo tramite l'operazione match.save offerta da mongoose   togliere
-  match
-    .save()
+  match.save()
     .then(() => {
       match.addPlayer(hostUserId);
-
       const chatroom = new ChatRoom({
         matchId: match._id,
         chat: {
           message: [],
         },
       });
-
-      chatroom
-        .save()
+      chatroom.save()
         .then(() => {})
         .catch((err) => console.log(err));
-
       res.redirect("/mymatches");
     })
     .catch((err) => console.log(err));
 };
-
-//controller che gestisce la GET per l'update       togliere
-// di un match indicando l'iD del match           
+       
 exports.getEditMatch = (req, res, next) => {
   const editMode = req.query.edit;
   if (!editMode) {
@@ -168,16 +173,17 @@ exports.getEditMatch = (req, res, next) => {
       }
       res.render("user/edit-match", {
         pageTitle: "Edit Match",
-        path: "/edit-match",
+        path: "/edit-match/:matchId",
         editing: editMode,
         match: match,
+        hasError: false,
+        errorMessage: null,
+        validationErrors: []
       });
     })
     .catch((err) => console.log(err));
 };
 
-//controller che gestisce la POST per l'update      togliere
-// di un match indicando l'iD del match
 exports.postEditMatch = (req, res, next) => {
   const matchId = req.body.matchId;
   const updatedTitle = req.body.title;
@@ -187,6 +193,28 @@ exports.postEditMatch = (req, res, next) => {
   const updatedPrice = req.body.price;
   const updatedDescription = req.body.description;
   const updatedTotalPlayers = req.body.totalPlayers;
+
+  const errors = validationResult(req);
+  if(!errors.isEmpty()) {
+    return res.status(422).render("user/edit-match", {
+      pageTitle: "Edit Match",
+      path: "/edit-match",
+      hasError: true,
+      editing: true,
+      match: {
+        title: updatedTitle,
+        placeName: updatedPlaceName,
+        address: updatedAddress,
+        time: updatedTime,
+        price: updatedPrice,
+        description: updatedDescription,
+        totalPlayers: updatedTotalPlayers,
+        _id: matchId
+      },
+      errorMessage: errors.array()[0].msg,
+      validationErrors: errors.array(),
+    });
+  }
 
   Match.findById(matchId)
     .then((match) => {
@@ -218,14 +246,13 @@ exports.getUserMatches = (req, res, next) => {
             ms: matches,
             jMatches: joinedMatches,
             pageTitle: "My Matches",
-            path: "/myatches",
+            path: "/mymatches",
           });
         });
     })
     .catch((err) => console.log(err));
 };
 
-//render to "Join Match" page                   togliere
 exports.getJoinMatch = (req, res, next) => {
   const matchId = req.params.matchId;
   let is_in = false;
@@ -238,8 +265,7 @@ exports.getJoinMatch = (req, res, next) => {
       if (result !== undefined) {
         is_in = true;
       }
-      if(match.currentPlayers==match.totalPlayers)
-      {
+      if(match.currentPlayers==match.totalPlayers) {
         is_full= true
       }
       res.render("app/join-match", {
@@ -254,10 +280,8 @@ exports.getJoinMatch = (req, res, next) => {
     .catch((err) => console.log(err));
 };
 
-//aggiunta ad un match gia creato                 togliere
 exports.postJoinMatch = (req, res, next) => {
   const matchId = req.body.matchId;
-
   const joiningUserId = req.user._id;
   Match.findById(matchId)
     .then((match) => {
@@ -286,7 +310,6 @@ exports.getUnJoinMatch = (req, res, next) => {
       }
       let matchDate = new Date(match.time);
       let diffInSec = matchDate / 60000 - currentDate / 60000;
-
       if (diffInSec > 1440) {
         can_unjoin = true;
       }
@@ -304,7 +327,6 @@ exports.getUnJoinMatch = (req, res, next) => {
 
 exports.postUnJoinMatch = (req, res, next) => {
   const matchId = req.body.matchId;
-
   const unjoiningUserId = req.user._id;
   Match.findById(matchId)
     .then((match) => {
@@ -316,7 +338,6 @@ exports.postUnJoinMatch = (req, res, next) => {
     .catch((err) => console.log(err));
 };
 
-//eliminazione match                              togliere
 exports.postDeleteMatch = (req, res, next) => {
   const matchId = req.body.matchId;
   Match.findByIdAndRemove(matchId)

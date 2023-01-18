@@ -4,6 +4,7 @@ const { Promise, Error } = require('sequelize')
 
 const authController = require('../controllers/auth')
 const isAuth = require('../middleware/is-auth')
+const isLog = require('../middleware/is-logged')
 const User = require('../models/user')
 const FederateUser = require('../models/federateUser')
 
@@ -13,7 +14,7 @@ var passport = require('passport')
 var GoogleStrategy = require('passport-google-oidc')
 var FacebookStrategy = require('passport-facebook')
 
-router.get('/login', authController.getLogin)
+router.get('/login', isLog, authController.getLogin)
 
 router.get('/login/federated/google', passport.authenticate('google', {
     scope: [
@@ -38,6 +39,58 @@ router.get('/oauth2/redirect/facebook', passport.authenticate('facebook', {
     failureRedirect: '/login'
   })
 )
+
+router.post('/login', isLog,
+  [
+    body('email').isEmail().normalizeEmail(),
+    body('password').isLength({ min: 6, max: 16 }).isAlphanumeric().trim() // TODO : modificare il controllo password
+  ],
+  authController.postLogin
+)
+
+router.get('/signup', isLog, authController.getSignup)
+
+router.post('/signup', isLog,
+  [
+    body('usrName', 'Perfavore inserisci un username con almeno 6 caratteri, composto solo da lettere o numeri!')
+      .isLength({ min: 6, max: 16 })
+      .isAlphanumeric()
+      .custom((value, { req }) => {
+        return User.findOne({ usrName: value }).then((userDoc) => {
+          if (userDoc) {
+            return Promise.reject('Username già utilizzato!')
+          }
+        })
+      }),
+    body('email', 'Inserisci una E-mail valida!')
+      .isEmail()
+      .custom((value, { req }) => {
+        return User.findOne({ email: value }).then((userDoc) => {
+          if (userDoc) {
+            return Promise.reject(
+              'E-mail già registrata! Se non ricordi la password reimpostala.',
+            )
+          }
+        })
+      })
+      .normalizeEmail(),
+    body('password', 'Perfavore inserisci una password con almeno 6 caratteri!')    // TODO : modificare il controllo password
+      .isLength({ min: 6, max: 16 })
+      .isAlphanumeric()
+      .trim(),
+    body('confirmPassword')
+      .trim()
+      .custom((value, { req }) => {
+        if (value !== req.body.password) {
+          throw new Error('Le password devono essere uguali!')
+        }
+        return true
+      })
+  ],
+  authController.postSignup
+)
+
+router.post('/logout', isAuth, authController.postLogout)
 
 passport.use(
   new GoogleStrategy(
@@ -103,7 +156,6 @@ passport.use(
         provider: 'https://www.facebook.com'
       })
         .then((fUser) => {
-          //console.log(profile);
           if (!fUser) {
             const user = new User({
               usrName: profile.displayName,
@@ -140,57 +192,5 @@ passport.use(
     },
   )
 )
-
-router.get('/signup', authController.getSignup)
-
-router.post('/login',
-  [
-    body('email').isEmail().normalizeEmail(),
-    body('password').isLength({ min: 6, max: 16 }).isAlphanumeric().trim() // TODO : modificare il controllo password
-  ],
-  authController.postLogin
-)
-
-router.post('/signup',
-  [
-    body('usrName', 'Perfavore inserisci un username con almeno 6 caratteri, composto solo da lettere o numeri!')
-      .isLength({ min: 6, max: 16 })
-      .isAlphanumeric()
-      .custom((value, { req }) => {
-        return User.findOne({ usrName: value }).then((userDoc) => {
-          if (userDoc) {
-            return Promise.reject('Username già utilizzato!')
-          }
-        })
-      }),
-    body('email', 'Inserisci una E-mail valida!')
-      .isEmail()
-      .custom((value, { req }) => {
-        return User.findOne({ email: value }).then((userDoc) => {
-          if (userDoc) {
-            return Promise.reject(
-              'E-mail già registrata! Se non ricordi la password reimpostala.',
-            )
-          }
-        })
-      })
-      .normalizeEmail(),
-    body('password', 'Perfavore inserisci una password con almeno 6 caratteri!')    // TODO : modificare il controllo password
-      .isLength({ min: 6, max: 16 })
-      .isAlphanumeric()
-      .trim(),
-    body('confirmPassword')
-      .trim()
-      .custom((value, { req }) => {
-        if (value !== req.body.password) {
-          throw new Error('Le password devono essere uguali!')
-        }
-        return true
-      })
-  ],
-  authController.postSignup
-)
-
-router.post('/logout', isAuth, authController.postLogout)
 
 module.exports = router

@@ -1,5 +1,5 @@
 const bcrypt = require("bcryptjs");
-const { validationResult } = require("express-validator/check");
+const { validationResult } = require("express-validator");
 
 const User = require("../models/user");
 
@@ -11,21 +11,6 @@ exports.getLogin = (req, res, next) => {
     oldInput: {
       email: "",
       password: "",
-    },
-    validationErrors: [],
-  });
-};
-
-exports.getSignup = (req, res, next) => {
-  res.render("auth/signup", {
-    path: "/signup",
-    pageTitle: "Signup",
-    errorMessage: "",
-    oldInput: {
-      usrName: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
     },
     validationErrors: [],
   });
@@ -70,7 +55,6 @@ exports.postLogin = (req, res, next) => {
             req.session.isLoggedIn = true;
             req.session.user = user;
             return req.session.save(() => {
-              //console.log("Login effettuato con successo");         togliere
               res.redirect("/");
             });
           }
@@ -91,6 +75,21 @@ exports.postLogin = (req, res, next) => {
         });
     })
     .catch((err) => console.log(err));
+};
+
+exports.getSignup = (req, res, next) => {
+  res.render("auth/signup", {
+    path: "/signup",
+    pageTitle: "Signup",
+    errorMessage: "",
+    oldInput: {
+      usrName: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
+    validationErrors: [],
+  });
 };
 
 exports.postSignup = (req, res, next) => {
@@ -127,7 +126,6 @@ exports.postSignup = (req, res, next) => {
       return user.save();
     })
     .then(() => {
-      //console.log("Utente creato con successo");      togliere
       res.redirect("/login");
     })
     .catch((err) => console.log(err));
@@ -135,8 +133,6 @@ exports.postSignup = (req, res, next) => {
 
 exports.postLogout = (req, res, next) => {
   req.session.destroy((err) => {
-    //console.log(err)
-    console.log("Logout effettuato con successo");
     res.redirect("/");
   });
 };

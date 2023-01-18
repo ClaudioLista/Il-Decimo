@@ -2,6 +2,8 @@
     <link rel="stylesheet" href="/css/forms.css">
     <link rel="stylesheet" href="/css/match.css">
     <link rel="stylesheet" href="/css/add-match.css">
+    <link rel="stylesheet" href="/css/login.css">
+    <link rel="stylesheet" href="/css/util.css">
 </head>
 
 <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
@@ -15,64 +17,88 @@
 <body>
    <%- include('../includes/navigation.ejs') %>
     <main>
-        
+        <% if (errorMessage) { %>
+            <div class="flex-c-m">
+                <div class="popout error-message"><%= errorMessage %></div>
+            </div>
+        <% } %>
         <div class="container">
             <div class="card">
-                <h2 class="card-heading">
-                    Create your match!
-                </h2>
+                <h2 class="card-heading">Create your match!</h2>
                 <lottie-player src="https://assets1.lottiefiles.com/packages/lf20_VB3ALHSv6V.json"  background="transparent"  speed="0.2"  style="width: auto; height: auto;"  loop  autoplay></lottie-player>
                 <form class="card-form" action="/add-match" method="POST">
                     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-        
-                    <div class="input">
-                        <input type="text" class="input-field" name="title" id="title" required/>
-                        <label class="input-label">Titolo della partita</label>
+                    <div class="wrap-input100 validate-input m-b-23">
+                        <span class="label-input100">Titolo della partita</span>
+                        <input
+							class="<%= validationErrors.find(e => e.param == 'title') ? 'input100-invalid' : 'input100' %>"
+                            placeholder="Nome della partita"
+                            value="<% if (hasError) { %><%= match.title %><% } %>"
+                            type="text" name="title" id="title" required>
+                        <span class="focus-input100" data-symbol="&#xf187;"></span>
                     </div>
-                    <div class="input">
-                        <input type="text" class="input-field" name="placeName" id="placeName" required />
-                        <label class="input-label">Luogo</label>
+                    <div class="wrap-input100 validate-input m-b-23">
+                        <span class="label-input100">Luogo</span>
+                        <input
+							class="<%= validationErrors.find(e => e.param == 'placeName') ? 'input100-invalid' : 'input100' %>"
+                            placeholder="Nome Centro Sportivo"
+                            value="<% if (hasError) { %><%= match.placeName %><% } %>"
+                            type="text" name="placeName" id="placeName" required>
+                        <span class="focus-input100" data-symbol="&#xf299;"></span>
                     </div>
-
-                    <div class="input">
-                        <input type="text" class="input-field" name="address" id="address" required />
-                        <label class="input-label">Indirizzo</label>
+                    <div class="wrap-input100 validate-input m-b-23">
+                        <span class="label-input100">Indirizzo</span>
+                        <input
+							class="<%= validationErrors.find(e => e.param == 'address') ? 'input100-invalid' : 'input100' %>"
+                            placeholder="Indirizzo"
+                            value="<% if (hasError) { %><%= match.address %><% } %>"
+                            type="text" name="address" id="address" required>
+                        <span class="focus-input100" data-symbol="&#xf196;"></span>
                     </div>
-                    <div class="input">
-                        <input onclick="showDate()" class="input-field" name="time" id="time" required/>
-                        <label class="input-label">Quando?</label>
+                    <div class="wrap-input100 validate-input m-b-23">
+                        <span class="label-input100">Quando?</span>
+                        <input
+							class="<%= validationErrors.find(e => e.param == 'time') ? 'input100-invalid' : 'input100' %>"
+                            onfocus="showDate()"
+                            placeholder="Giorno e Ora"
+                            value="<% if (hasError) { %><%= match.time %><% } %>"
+                            name="time" id="time" required>
+                        <span class="focus-input100" data-symbol="&#xf32e;"></span>
                     </div>
-
-                    <div class="input">
-                        <input type="text" class="input-field" name="totalPlayers" id="totalPlayers" required />
-                        <label class="input-label">Numero di giocatori</label>
+                    <div class="wrap-input100 validate-input m-b-23">
+                        <span class="label-input100">Numero di giocatori</span>
+                        <input
+							class="<%= validationErrors.find(e => e.param == 'totalPlayers') ? 'input100-invalid' : 'input100' %>"
+                            placeholder="Quanti giocatori servono?"
+                            value="<% if (hasError) { %><%= match.totalPlayers %><% } %>"
+                            type="number" name="totalPlayers" id="totalPlayers" step="1" required>
+                        <span class="focus-input100" data-symbol="&#xf212;"></span>
                     </div>
-                    <div class="input">
-                        
-                        <input type="number" class="input-field" name="price" id="price" step="0.50" required>
-                        <label class="input-label">Prezzo</label>
+                    <div class="wrap-input100 validate-input m-b-23">
+                        <span class="label-input100">Prezzo</span>
+                        <input
+							class="<%= validationErrors.find(e => e.param == 'price') ? 'input100-invalid' : 'input100' %>"
+                            placeholder="Quanto costa a persona?"
+                            value="<% if (hasError) { %><%= match.price %><% } %>"
+                            type="number" name="price" id="price" step="0.50" required>
+                        <span class="focus-input100" data-symbol="&#xf19a;"></span>
                     </div>
-                    
-                    <div class="input">
-                        
-                        <!-- <textarea class="input-field" name="description" id="description" rows="5"></textarea> -->
-                        <input type="text" class="input-field" name="description" id="description" required/>
-                        <label class="input-label">Descrizione</label>
+                    <div class="wrap-input100 validate-input m-b-23">
+                        <span class="label-input100">Descrizione</span>
+                        <input
+							class="<%= validationErrors.find(e => e.param == 'description') ? 'input100-invalid' : 'input100' %>"
+                            placeholder="Descrivi brevemente la partita"
+                            value="<% if (hasError) { %><%= match.description %><% } %>"
+                            type="text" name="description" id="description" required>
+                        <span class="focus-input100" data-symbol="&#xf262;"></span>
                     </div>
-
                     <div class="action">
-                        <button class="action-button" type="submit" >Create the match</button>
+                        <button class="action-button" type="submit">Create the match</button>
                     </div>
-
                     <br>
                 </form>
-                
-            </>
+            <div/>
         </div>
-        
-        <script>today = new Date().toISOString().split(":")[0]+":00";
-            document.getElementById("time").setAttribute("min",today)
-        </script>
     </main>
     
 <%- include('../includes/end.ejs') %>
