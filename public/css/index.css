@@ -1,3 +1,5 @@
+
+
 h1 {
     margin-top: 20px;
     margin-bottom: 10px;
@@ -20,7 +22,7 @@ h3 {
     margin-top: 10px;
     margin-bottom: 25px;
     color: #6b6b6b;
-    font-size: 24px;
+    font-size: 24vh;
     line-height: 40px;
     font-weight: 400;
 }
@@ -46,8 +48,9 @@ a {
 .section.center {
     position: absolute;
     display: flex;
-    height: 100vh;
-    padding-top: 0vh;
+    height: auto;
+    padding-top: 20%;
+    padding-bottom: 25%;
     justify-content: center;
     align-items: flex-start;
     background-image: url('../img/background.jpg');
