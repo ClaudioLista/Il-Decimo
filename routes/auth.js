@@ -23,7 +23,9 @@ router.get('/login/federated/google', passport.authenticate('google', {
   })
 )
 
-router.get('/login/federated/facebook', passport.authenticate('facebook'))
+router.get('/login/federated/facebook', passport.authenticate('facebook', {
+  scope:['email']
+}))
 
 router.get('/oauth2/redirect/google', passport.authenticate('google', {
     successRedirect: '/',
@@ -93,7 +95,7 @@ passport.use(
       clientSecret: 'b0bdd9d16238229f41cdd8f7bc5ab6c6',
       callbackURL: '/oauth2/redirect/facebook',
       state: true,
-      profileFields: ['id', 'displayName', 'photos', 'email']
+      profileFields: ['id', 'email', 'gender', 'name'],
     },
     function verify(accessToken, refreshToken, profile, cb) {
       FederateUser.findOne({
@@ -101,6 +103,7 @@ passport.use(
         provider: 'https://www.facebook.com'
       })
         .then((fUser) => {
+          //console.log(profile);
           if (!fUser) {
             const user = new User({
               usrName: profile.displayName,
