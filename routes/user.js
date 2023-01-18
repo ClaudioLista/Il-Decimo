@@ -11,7 +11,7 @@ router.get('/', userController.getIndex)
 
 router.get('/matches', userController.getMatches)
 
-router.get('/matches/:matchId', userController.getMatch)
+router.get('/matches/:matchId', isAuth, userController.getMatch)
 
 router.get('/add-match', isAuth, userController.getAddMatch)
 
