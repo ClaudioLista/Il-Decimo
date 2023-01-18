@@ -98,7 +98,7 @@ passport.use(
       clientID:
         '368248899535-vgc9fj94cfkk9sojps8pct6bjgu2d4j0.apps.googleusercontent.com',
       clientSecret: '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',
-      callbackURL: '/oauth2/redirect/google',
+      callbackURL: 'oauth2/redirect/google',
       scope: ['profile']
     },
     function verify(issuer, profile, cb) {
@@ -146,7 +146,7 @@ passport.use(
     {
       clientID: '846393583262405',
       clientSecret: 'b0bdd9d16238229f41cdd8f7bc5ab6c6',
-      callbackURL: '/oauth2/redirect/facebook',
+      callbackURL: 'oauth2/redirect/facebook',
       state: true,
       profileFields: ['id', 'email', 'gender', 'name'],
     },
