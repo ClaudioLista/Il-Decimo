@@ -49,12 +49,12 @@
 .write-message {
   text-indent: 12px;
   width: 100%;
-  padding: 12px 20px;
-  margin: 8px 0;
   box-sizing: border-box;
   border:none !important;
   height: 50px;
   border-radius: 20px;
+  margin-top: 10px;
+  margin-left: 8px;
 }
 
 .footer-chat *::-webkit-input-placeholder {

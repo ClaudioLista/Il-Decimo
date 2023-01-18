@@ -8,7 +8,6 @@ const mongoose = require("mongoose");
 const session = require("express-session");
 const MongoDBStore = require("connect-mongodb-session")(session);
 const csrf = require("csurf");
-const flash = require("connect-flash");
 const passport = require('passport');
 
 const errorController = require("./controllers/error");
@@ -60,8 +59,6 @@ passport.deserializeUser(function(user, cb) {
   });
 });
 
-app.use(flash());
-
 app.use((req, res, next) => {
   if (!req.session.user) {
     return next();
@@ -91,57 +88,41 @@ app.use(errorController.get404);
 mongoose
   .connect(MONGODB_URI)
   .then((result) => {
-    const server = app.listen(3000);
+    const port = process.env.PORT || 5000
+    const server = app.listen(port);
     const io = require("socket.io")(server);
-    console.log("Listening on port 3000");
+    console.log("Listening on port ", port);
 
-    io.on("connection", (socket) => {
-      //console.log("user connected");
-      
+    io.on("connection", (socket) => {       // TODO : modificare i nomi
       socket.on("message", (message) => {
-        // broadcast the message to all the clients in the room except the sender
-        socket.to(message.room).emit("message", message);
+        //invia il messaggio a tutti gli utenti nella stanza eccetto al sender      togliere
+        socket.to(message.room).emit("message", message);   // TODO : modificare i nomi
   
         ChatRoom.findOne({matchId: message.room}).then((room) => {
-          //console.log(message)
           room.addMessage(message)
-
         }).catch((err) => console.log(err));
       });
 
-      socket.on("create or join", (room) => {
-        // The fetchSockets returns a promise
+      socket.on("create or join", (room) => {     // TODO : modificare i nomi
         io.in(room)
           .fetchSockets()
           .then((sockets) => {
             numClients = sockets.length + 1;
-            console.log(`Number of client: ${numClients} in room: ${room}`);
+            console.log(`Number of client: ${numClients} in room: ${room}`);      // TODO : modificare i nomi e/o togliere
 
-            // First client joining (the initiator)
+            // Creazione della stanza o aggiunta di un client                   togliere
             if (numClients == 1) {
-              // rooms are a server-side concept, it's the server that has to join a client to a room
-              // a room is created once at least a socket joins it
               socket.join(room);
-              // send the message directly to the initiator
-              socket.emit("created", room);
-              
-              // Second client joining
+              socket.emit("created", room);             // TODO : modificare i nomi
             } else {
-              // Inform initiator that another client has joined the same room
-              // The client hasn't joined the room yet, so we need to bradcast to all the clients currently in the room (in this case only the initiator)
-              io.to(room).emit("remotePeerJoining", room);
-              // Let the new peer join room
+              io.to(room).emit("remotePeerJoining", room);      // TODO : modificare i nomi
               socket.join(room);
-              // broadcast the message to all the clients in the room except the sender (in this case only to the initiator)
-              socket
-                .to(room)
-                .emit(
-                  "broadcast: joined",
-                  `client ${socket.id} joined room ${room}`
+              socket.to(room).emit(
+                  "broadcast: joined",                          // TODO : modificare i nomi
+                  `client ${socket.id} joined room ${room}`     // TODO : modificare i nomi
                 );
-              // send the message directly to the joiner
-              socket.emit("joined", room);
-            } 
+              socket.emit("joined", room);                      // TODO : modificare i nomi
+            }
           });
       });
     });

@@ -1,0 +1,14 @@
+0)  Modificare utilizzo di MATCHES e MYMATCHES durante la creazione dell'utente IMPORTANTE
+1)  Modifica in "Chat": adesso compare solo l'orario, necessaria anche la data del messaggio;
+2)  Creazione vista "My Profile";
+3)  Implementazione "Modifica Password";
+4)  Decidere se lasciare le cose in inglese o passare tutto in italiano (Marcello vota italiano);
+5)  Chiudere connessione socket quando l'user si disconnette;
+6)  Implementazione votazione partita (lato server)
+7)  Aggiustare MONGODB_URI in app.js
+8)  Linee di codoice/commenti/consolelog da rimuovere cercando "togliere"
+9)  Aggiustare i dove sta scritto "TODO"
+10) Migliorare la user experience durante la signup
+11) Implementazione verifica con OTP message per la creazione dell account
+12) Implementazione utilizzo di notifiche e/o messaggi cellulare
+13) Miglioramento user experience generale del sistema

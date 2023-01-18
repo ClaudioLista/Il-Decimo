@@ -70,7 +70,7 @@ exports.postLogin = (req, res, next) => {
             req.session.isLoggedIn = true;
             req.session.user = user;
             return req.session.save(() => {
-              console.log("Login effettuato con successo");
+              //console.log("Login effettuato con successo");         togliere
               res.redirect("/");
             });
           }
@@ -127,7 +127,7 @@ exports.postSignup = (req, res, next) => {
       return user.save();
     })
     .then(() => {
-      console.log("Utente creato con successo");
+      //console.log("Utente creato con successo");      togliere
       res.redirect("/login");
     })
     .catch((err) => console.log(err));

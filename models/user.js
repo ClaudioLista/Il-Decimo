@@ -4,29 +4,27 @@ const Schema = mongoose.Schema
 
 const userSchema = new Schema({
   usrName: {
-    type: String,
-    required: false,
+    type: String
   },
   email: {
-    type: String,
-    required: false,
+    type: String
   },
   password: {
-    type: String,
-    required: false,
+    type: String
   },
   matchNum: {
-    type: Number,
-    required: false,
+    type: Number
   },
   matchList: {
     matches: [
       {
-        matchId: { type: Schema.Types.ObjectId, ref: 'Match', required: false },
-      },
-    ],
-    required: false,
-  },
+        matchId: { 
+          type: Schema.Types.ObjectId, 
+          ref: 'Match'
+        }
+      }
+    ]
+  }
 })
 
 module.exports = mongoose.model('User', userSchema)
