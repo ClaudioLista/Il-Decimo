@@ -103,7 +103,7 @@ mongoose
         }).catch((err) => console.log(err));
       });
 
-      socket.on("create or join", (room) => {     // TODO : modificare i nomi
+      socket.on("create or join", (room) => {     // TODO : modificare i nomi del cazzo
         io.in(room)
           .fetchSockets()
           .then((sockets) => {
