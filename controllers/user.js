@@ -338,6 +338,20 @@ exports.postUnJoinMatch = (req, res, next) => {
     .catch((err) => console.log(err));
 };
 
+exports.getUserProfile = (req, res, next) => {
+  const userId = req.user;
+  user.find({ hostUserId: userId })
+    .then((info) => {
+      res.render("user/my-profile", {
+        pageTitle: "My Profile",
+        path: "/myprofile",
+        usrName: info.usrName,
+        email: info.email,
+      });
+    })
+    .catch((err) => console.log(err));
+};
+
 exports.postDeleteMatch = (req, res, next) => {
   const matchId = req.body.matchId;
   Match.findByIdAndRemove(matchId)

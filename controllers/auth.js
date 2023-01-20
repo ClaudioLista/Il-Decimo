@@ -48,31 +48,43 @@ exports.postLogin = (req, res, next) => {
           validationErrors: [],
         });
       }
-      bcrypt
-        .compare(password, user.password)
-        .then((passOK) => {
-          if (passOK) {
-            req.session.isLoggedIn = true;
-            req.session.user = user;
-            return req.session.save(() => {
-              res.redirect("/");
-            });
-          }
-          return res.status(422).render("auth/login", {
-            path: "/login",
-            pageTitle: "login",
-            errorMessage: errMsg,
-            oldInput: {
-              email: email,
-              password: password,
-            },
-            validationErrors: [],
-          });
-        })
-        .catch((err) => {
-          console.log(err);
-          res.redirect("/login");
-        });
+      if (!!user.password) {
+        bcrypt
+                .compare(password, user.password)
+                .then((passOK) => {
+                  if (passOK) {
+                    req.session.isLoggedIn = true;
+                    req.session.user = user;
+                    return req.session.save(() => {
+                      res.redirect("/");
+                    });
+                  }
+                  return res.status(422).render("auth/login", {
+                    path: "/login",
+                    pageTitle: "login",
+                    errorMessage: errMsg,
+                    oldInput: {
+                      email: email,
+                      password: password,
+                    },
+                    validationErrors: [],
+                  });
+                })
+                .catch((err) => {
+                  console.log(err);
+                  res.redirect("/login");
+                });
+      }
+      return res.status(422).render("auth/login", {
+        path: "/login",
+        pageTitle: "login",
+        errorMessage: "Effettua l'accesso con Google o Facebook!",
+        oldInput: {
+          email: email,
+          password: password,
+        },
+        validationErrors: [],
+      });
     })
     .catch((err) => console.log(err));
 };

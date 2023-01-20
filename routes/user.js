@@ -46,6 +46,8 @@ router.post('/matches/:matchId/join', isAuth, userController.postJoinMatch)
 router.get('/matches/:matchId/unjoin', isAuth, userController.getUnJoinMatch)
 router.post('/matches/:matchId/unjoin', isAuth, userController.postUnJoinMatch)
 
+router.get('/myprofile', isAuth, userController.getUserProfile)
+
 router.post('/delete-match', isAuth, userController.postDeleteMatch)
 
 module.exports = router

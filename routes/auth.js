@@ -43,7 +43,7 @@ router.get('/oauth2/redirect/facebook', passport.authenticate('facebook', {
 router.post('/login', isLog,
   [
     body('email').isEmail().normalizeEmail(),
-    body('password').isLength({ min: 6, max: 16 }).isAlphanumeric().trim() // TODO : modificare il controllo password
+    body('password').isLength({ min: 6 }).isAlphanumeric().trim() // TODO : modificare il controllo password
   ],
   authController.postLogin
 )
@@ -75,7 +75,7 @@ router.post('/signup', isLog,
       })
       .normalizeEmail(),
     body('password', 'Perfavore inserisci una password con almeno 6 caratteri!')    // TODO : modificare il controllo password
-      .isLength({ min: 6, max: 16 })
+      .isLength({ min: 6 })
       .isAlphanumeric()
       .trim(),
     body('confirmPassword')
