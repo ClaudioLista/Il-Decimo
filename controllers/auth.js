@@ -1,5 +1,6 @@
 const bcrypt = require("bcryptjs");
 const { validationResult } = require("express-validator");
+const jwt = require('jsonwebtoken');
 
 const User = require("../models/user");
 
@@ -54,6 +55,11 @@ exports.postLogin = (req, res, next) => {
           if (passOK) {
             req.session.isLoggedIn = true;
             req.session.user = user;
+
+            const accessToken = jwt.sign({ userId: user._id }, "process.env.JWT_SECRET", {
+              expiresIn: "1d"
+             });
+            User.findByIdAndUpdate(user._id, {accessToken})
             return req.session.save(() => {
               res.redirect("/");
             });
@@ -97,6 +103,8 @@ exports.postSignup = (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
 
+  
+
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(422).render("auth/signup", {
@@ -115,6 +123,9 @@ exports.postSignup = (req, res, next) => {
   bcrypt
     .hash(password, 12)
     .then((hashedPassword) => {
+
+      
+      
       const user = new User({
         usrName: usrName,
         email: email,
@@ -122,7 +133,13 @@ exports.postSignup = (req, res, next) => {
         matcheslist: {
           matches: [],
         },
+        role: "user",
       });
+      const Token = jwt.sign({ userId: user._id }, "process.env.JWT_SECRET", {
+        expiresIn: "1d"
+       });
+       user.accessToken = Token;
+       console.log(user)
       return user.save();
     })
     .then(() => {
