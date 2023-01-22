@@ -100,5 +100,10 @@
             <div/>
         </div>
     </main>
+
+    <script>
+        today = new Date().toISOString().split(":")[0]+":00";
+        document.getElementById("time").setAttribute("min",today)
+    </script>
     
 <%- include('../includes/end.ejs') %>

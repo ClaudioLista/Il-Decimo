@@ -2,53 +2,89 @@ const Match = require("../models/match");
 const ChatRoom = require("../models/chatroom");
 const user = require("../models/user");
 const { validationResult } = require("express-validator");
-const { roles } = require('../roles')
- 
-exports.grantAccess = function(action, resource) {
- return async (req, res, next) => {
-  try {
-    
-   const permission = roles.can(req.user.role)[action](resource);
-   
-   if (!permission.granted) {
-    return res.status(401).json({
-     error: "You don't have enough permission to perform this action"
-    });
-   }
-   next()
-  } catch (error) {
-   next(error)
-  }
- }
-}
- 
+const { roles } = require("../roles");
+
+exports.grantAccess = function (action, resource) {
+  return async (req, res, next) => {
+    try {
+      const permission = roles.can(req.user.role)[action](resource);
+
+      if (!permission.granted) {
+        return res.status(401).json({
+          error: "You don't have enough permission to perform this action",
+        });
+      }
+      next();
+    } catch (error) {
+      next(error);
+    }
+  };
+};
+
+exports.grantIfOwnMatch = function (action, resource) {
+  return async (req, res, next) => {
+    try {
+      const permission = roles.can(req.user.role)[action](resource);
+      const matchId = req.body.matchId || req.params.matchId;
+      console.log(matchId)
+      Match.findById(matchId)
+      .then((match) => {
+        console.log(match)
+        if (!permission.granted || (!(match.hostUserId.equals(req.user._id)) && !(req.user.role=="admin"))) {
+          return res.status(401).json({
+            error: "You don't have enough permission to perform this action",
+          });
+        }
+        next();
+      })
+      .catch((err) => console.log(err));
+    } catch (error) {
+      next(error);
+    }
+  };
+};
+
+exports.grantIfOwnProfile = function (action, resource) {
+  return async (req, res, next) => {
+    try {
+      const permission = roles.can(req.user.role)[action](resource);
+      const username = req.params.username;
+      user.findOne({usrName: username})
+      .then((user) => {
+        if (!permission.granted || (!(user._id.equals(req.user._id)) && !(req.user.role=="admin"))) {
+          return res.status(401).json({
+            error: "You don't have enough permission to perform this action",
+          });
+        }
+        next();
+      })
+      .catch((err) => console.log(err));
+    } catch (error) {
+      next(error);
+    }
+  };
+};
+
+//TO-DO
 exports.allowIfLoggedin = async (req, res, next) => {
- try {
-  const user = res.locals.loggedInUser;
-  if (!user)
-   return res.status(401).json({
-    error: "You need to be logged in to access this route"
-   });
-   req.user = user;
-   next();
+  try {
+    const user = res.locals.loggedInUser;
+    if (!user)
+      return res.status(401).json({
+        error: "You need to be logged in to access this route",
+      });
+    req.user = user;
+    next();
   } catch (error) {
-   next(error);
+    next(error);
   }
-}
-
-
-
+};
 
 exports.getIndex = (req, res, next) => {
-  Match.find()
-    .then((matches) => {
-      res.render("app/index", {
-        ms: matches,
-        pageTitle: "Home",
-        path: "/",
-      });
-    })
-    .catch((err) => console.log(err));
+  res.render("app/index", {
+    pageTitle: "Home",
+    path: "/",
+  });
 };
 
 exports.getMatches = (req, res, next) => {
@@ -69,11 +105,21 @@ exports.getMatch = (req, res, next) => {
   let playerIn = false;
   let is_full = false;
   let is_over = false;
+  let userVote = "";
 
   if (req.user) {
     user
       .findById(req.user._id)
-      .then((user) => { nameUser = user.usrName; })
+      .then((user) => {
+        nameUser = user.usrName;
+        if (!(user.matchList.length === 0)) {
+          userMatch = user.matchList.find(element => element.matchId.equals(matchId))
+          userVote = userMatch.vote
+        }
+        //console.log(userMatch.vote)
+        // console.log(user.matchList)
+        // console.log(user.matchList.find(element => element.matchId.equals(matchId)))
+      })
       .catch((err) => console.log(err));
   }
 
@@ -90,8 +136,8 @@ exports.getMatch = (req, res, next) => {
         if (risultato !== undefined) {
           playerIn = true;
         }
-        if(match.currentPlayers==match.totalPlayers) {
-          is_full= true
+        if (match.currentPlayers == match.totalPlayers) {
+          is_full = true;
         }
         const today = new Date();
         if (match.time < today) {
@@ -103,16 +149,17 @@ exports.getMatch = (req, res, next) => {
       ChatRoom.findOne({ matchId: match._id })
         .then((chatroom) => {
           messages = chatroom.chat.message;
-          
+
           res.render("app/match-detail", {
             m: match,
+            m_vote: userVote,
             user: nameUser,
             chat: messages,
             pageTitle: match.title,
             path: "/matches",
             is_in: playerIn,
             is_full: is_full,
-            isOver: is_over
+            isOver: is_over,
           });
         })
         .catch((err) => console.log(err));
@@ -144,7 +191,7 @@ exports.postAddMatch = (req, res, next) => {
 
   const hostUserId = req.user;
   const errors = validationResult(req);
-  if(!errors.isEmpty()) {
+  if (!errors.isEmpty()) {
     return res.status(422).render("user/add-match", {
       pageTitle: "Add Match",
       path: "/add-match",
@@ -157,10 +204,10 @@ exports.postAddMatch = (req, res, next) => {
         time: time,
         price: price,
         description: description,
-        totalPlayers: totalPlayers
+        totalPlayers: totalPlayers,
       },
       errorMessage: errors.array()[0].msg,
-      validationErrors: errors.array()
+      validationErrors: errors.array(),
     });
   }
 
@@ -176,11 +223,17 @@ exports.postAddMatch = (req, res, next) => {
     listPlayers: {
       players: [],
     },
+
     hostUserId: hostUserId,
   });
 
-  match.save()
+  match
+    .save()
     .then(() => {
+      user.findById(req.user._id).then((user) => {
+        user.matchList.push({ matchId: match._id, vote: ""})
+        user.save();
+      })
       match.addPlayer(hostUserId);
       const chatroom = new ChatRoom({
         matchId: match._id,
@@ -188,14 +241,55 @@ exports.postAddMatch = (req, res, next) => {
           message: [],
         },
       });
-      chatroom.save()
+      chatroom
+        .save()
         .then(() => {})
         .catch((err) => console.log(err));
       res.redirect("/mymatches");
     })
     .catch((err) => console.log(err));
 };
-       
+
+exports.postVoteMatch = (req, res, next) => {
+  const matchId = req.body.matchId;
+  const updatedVote = req.body.newVote;
+  const oldVote = req.body.oldVote;
+  Match.findById(matchId)
+    .then((match) => {
+      if(req.body.op == "add") {
+        match.votes[updatedVote] = match.votes[updatedVote] + 1;
+        if(oldVote != "noneVote") {
+          match.votes[oldVote] = match.votes[oldVote] - 1;
+        }
+        user
+       .findById(req.user._id)
+       .then((user) => {
+        const voteIndex = user.matchList.findIndex(element => element.matchId.equals(matchId))
+        // console.log(user.matchList[voteIndex].vote)
+        // console.log(updatedVote.toString())
+        user.matchList[voteIndex].vote = '' + updatedVote + ''
+        user.markModified('matchList')
+        user.save().then().catch((err) => console.log(err));
+       }).catch((err) => console.log(err));
+      } else {
+        match.votes[updatedVote] = match.votes[updatedVote] - 1;
+        user
+       .findById(req.user._id)
+       .then((user) => {
+        const voteIndex = user.matchList.findIndex(element => element.matchId.equals(matchId))
+        user.matchList[voteIndex].vote = ''
+        user.markModified('matchList')
+        user.save().then().catch((err) => console.log(err));
+       }).catch((err) => console.log(err));
+      }
+      return match.save();
+    })
+    .then(() => {
+      res.redirect("/mymatches");
+    })
+    .catch((err) => console.log(err));
+}
+
 exports.getEditMatch = (req, res, next) => {
   const editMode = req.query.edit;
   if (!editMode) {
@@ -204,9 +298,6 @@ exports.getEditMatch = (req, res, next) => {
   const matchId = req.params.matchId;
   Match.findById(matchId)
     .then((match) => {
-      if (!match) {
-        return res.redirect("/mymatches");
-      }
       res.render("user/edit-match", {
         pageTitle: "Edit Match",
         path: "/edit-match/:matchId",
@@ -214,7 +305,7 @@ exports.getEditMatch = (req, res, next) => {
         match: match,
         hasError: false,
         errorMessage: null,
-        validationErrors: []
+        validationErrors: [],
       });
     })
     .catch((err) => console.log(err));
@@ -231,7 +322,7 @@ exports.postEditMatch = (req, res, next) => {
   const updatedTotalPlayers = req.body.totalPlayers;
 
   const errors = validationResult(req);
-  if(!errors.isEmpty()) {
+  if (!errors.isEmpty()) {
     return res.status(422).render("user/edit-match", {
       pageTitle: "Edit Match",
       path: "/edit-match",
@@ -245,7 +336,7 @@ exports.postEditMatch = (req, res, next) => {
         price: updatedPrice,
         description: updatedDescription,
         totalPlayers: updatedTotalPlayers,
-        _id: matchId
+        _id: matchId,
       },
       errorMessage: errors.array()[0].msg,
       validationErrors: errors.array(),
@@ -301,8 +392,8 @@ exports.getJoinMatch = (req, res, next) => {
       if (result !== undefined) {
         is_in = true;
       }
-      if(match.currentPlayers==match.totalPlayers) {
-        is_full= true
+      if (match.currentPlayers == match.totalPlayers) {
+        is_full = true;
       }
       res.render("app/join-match", {
         m: match,
@@ -321,12 +412,16 @@ exports.postJoinMatch = (req, res, next) => {
   const joiningUserId = req.user._id;
   Match.findById(matchId)
     .then((match) => {
-      if(match.currentPlayers != match.totalPlayers){
-      return match.addPlayer(joiningUserId);
+      if (match.currentPlayers != match.totalPlayers) {
+        user.findById(req.user._id).then((user) => {
+          user.matchList.push({ matchId: match._id, vote: ""})
+          user.save();
+        })
+        return match.addPlayer(joiningUserId);
       }
     })
     .then(() => {
-      res.redirect("/mymatches");
+      res.redirect("/matches/" + matchId.toString());
     })
     .catch((err) => console.log(err));
 };
@@ -375,14 +470,16 @@ exports.postUnJoinMatch = (req, res, next) => {
 };
 
 exports.getUserProfile = (req, res, next) => {
-  const userId = req.user;
-  user.find({ hostUserId: userId })
-    .then((info) => {
-      res.render("user/my-profile", {
+  const userName = req.params.username;
+  console.log(userName)
+  user
+    .findOne({usrName: userName})
+    .then((user) => {
+      console.log(user)
+      res.render("user/profile", {
         pageTitle: "My Profile",
-        path: "/myprofile",
-        usrName: info.usrName,
-        email: info.email,
+        path: "/profile",
+        user: user,
       });
     })
     .catch((err) => console.log(err));

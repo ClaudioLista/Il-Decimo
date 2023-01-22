@@ -12,3 +12,5 @@
 11) Implementazione verifica con OTP message per la creazione dell account
 12) Implementazione utilizzo di notifiche e/o messaggi cellulare
 13) Miglioramento user experience generale del sistema
+14) Implementare eliminazione/archivio dei match passati
+15) Dare un username random se si registra qualcuno con lo stesso nome tramite Google

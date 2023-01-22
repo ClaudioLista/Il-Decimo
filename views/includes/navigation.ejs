@@ -1,4 +1,5 @@
 <div class="backdrop"></div>
+
 <header class="main-header">
     <button id="side-menu-toggle">Menù</button>
     <nav class="main-header__nav">
@@ -28,7 +29,7 @@
                 </li>
             <% } else { %>
                 <li class="main-header__item">
-                    <a class="<%= path === '/myprofile' ? 'active' : '' %>" href="/myprofile">My Profile</a>
+                    <a class="<%= path === '/profile' ? 'active' : '' %>" href="/profile/<%= user.usrName %> ">My Profile</a>
                 </li>
                 <li class="main-header__item">
                     <form action="/logout" method="POST">
@@ -66,7 +67,7 @@
             </li>
         <% } else { %>
             <li class="mobile-nav__item">
-                <a class="<%= path === '/myprofile' ? 'active' : '' %>" href="/myprofile">My Profile</a>
+                <a class="<%= path === '/profile' ? 'active' : '' %>" href="/profile/<%= user.usrName %> ">My Profile</a>
             </li>
             <li class="mobile-nav__item">
                 <form action="/logout" method="POST">

@@ -16,14 +16,15 @@ const userSchema = new Schema({
     type: Number
   },
   matchList: {
-    matches: [
-      {
-        matchId: { 
-          type: Schema.Types.ObjectId, 
-          ref: 'Match'
-        }
-      }
-    ]
+    matchId: { 
+      type: Schema.Types.ObjectId, 
+      ref: 'Match'
+    },
+    vote: {
+      type: String,
+      default: ""
+    },
+    type: Array,
   },
   role: {
     type: String,

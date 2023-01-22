@@ -1,181 +1,209 @@
 <h2>Vote the match!</h2>
+
 <ul class="feedback">
-    <li id="noneVote" class="active" hidden></li>
-    <li class="angry">
-        <div>
-            <svg class="eye left">
-                <use xlink:href="#eye">
-            </use></svg>
-            <svg class="eye right">
-                <use xlink:href="#eye">
-            </use></svg>
-            <svg class="mouth">
-                <use xlink:href="#mouth">
-            </use></svg>
-        </div>
-    </li>
-    <li class="sad">
-        <div>
-            <svg class="eye left">
-                <use xlink:href="#eye">
-            </use></svg>
-            <svg class="eye right">
-                <use xlink:href="#eye">
-            </use></svg>
-            <svg class="mouth">
-                <use xlink:href="#mouth">
-            </use></svg>
-        </div>
-    </li>
-    <li class="ok">
-        <div></div>
-    </li>
-    <li class="good">
-        <div>
-            <svg class="eye left">
-                <use xlink:href="#eye">
-            </use></svg>
-            <svg class="eye right">
-                <use xlink:href="#eye">
-            </use></svg>
-            <svg class="mouth">
-                <use xlink:href="#mouth">
-            </use></svg>
-        </div>
-    </li>
-    <li class="happy">
-        <div>
-            <svg class="eye left">
-                <use xlink:href="#eye">
-            </use></svg>
-            <svg class="eye right">
-                <use xlink:href="#eye">
-            </use></svg>
-        </div>
-    </li>
+  <li id="noneVote" class="noneVote <% if(m_vote === "") { %> active <% } %>"" hidden></li>
+  <li class="angry <% if(m_vote === "angry") { %> active <% } %>">
+    <div>
+      <svg class="eye left">
+        <use xlink:href="#eye"></use>
+      </svg>
+      <svg class="eye right">
+        <use xlink:href="#eye"></use>
+      </svg>
+      <svg class="mouth">
+        <use xlink:href="#mouth"></use>
+      </svg>
+    </div>
+  </li>
+  <li class="sad <% if(m_vote === "sad") { %> active <% } %>">
+    <div>
+      <svg class="eye left">
+        <use xlink:href="#eye"></use>
+      </svg>
+      <svg class="eye right">
+        <use xlink:href="#eye"></use>
+      </svg>
+      <svg class="mouth">
+        <use xlink:href="#mouth"></use>
+      </svg>
+    </div>
+  </li>
+  <li class="ok <% if(m_vote === "ok") { %> active <% } %>">
+    <div></div>
+  </li>
+  <li class="good <% if(m_vote === "good") { %> active <% } %>">
+    <div>
+      <svg class="eye left">
+        <use xlink:href="#eye"></use>
+      </svg>
+      <svg class="eye right">
+        <use xlink:href="#eye"></use>
+      </svg>
+      <svg class="mouth">
+        <use xlink:href="#mouth"></use>
+      </svg>
+    </div>
+  </li>
+  <li class="happy <% if(m_vote === "happy") { %> active <% } %>">
+    <div>
+      <svg class="eye left">
+        <use xlink:href="#eye"></use>
+      </svg>
+      <svg class="eye right">
+        <use xlink:href="#eye"></use>
+      </svg>
+    </div>
+  </li>
 </ul>
 
 <ul class="counter">
-    <li><div id="counterAngry">0</div></li>
-    <li><div id="counterSad">0</div></li>
-    <li><div id="counterOk">0</div></li>
-    <li><div id="counterGood">0</div></li>
-    <li><div id="counterHappy">0</div></li>
+  <li><div id="counterAngry"><%= m.votes.angry %></div></li>
+  <li><div id="counterSad"><%= m.votes.sad %></div></li>
+  <li><div id="counterOk"><%= m.votes.ok %></div></li>
+  <li><div id="counterGood"><%= m.votes.good %></div></li>
+  <li><div id="counterHappy"><%= m.votes.happy %></div></li>
 </ul>
-        
-<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
-    <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 7 4" id="eye">
-        <path d="M1,1 C1.83333333,2.16666667 2.66666667,2.75 3.5,2.75 C4.33333333,2.75 5.16666667,2.16666667 6,1"></path>
-    </symbol>
-    <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 7" id="mouth">
-        <path d="M1,5.5 C3.66666667,2.5 6.33333333,1 9,1 C11.6666667,1 14.3333333,2.5 17,5.5"></path>
-    </symbol>
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none">
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 7 4" id="eye">
+    <path
+      d="M1,1 C1.83333333,2.16666667 2.66666667,2.75 3.5,2.75 C4.33333333,2.75 5.16666667,2.16666667 6,1"
+    ></path>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 7" id="mouth">
+    <path
+      d="M1,5.5 C3.66666667,2.5 6.33333333,1 9,1 C11.6666667,1 14.3333333,2.5 17,5.5"
+    ></path>
+  </symbol>
 </svg>
 
 <script id="rendered-js">
-    document.querySelectorAll('.feedback li').forEach(entry => entry.addEventListener('click', e => {
-        console.log(entry)
-        if (!entry.classList.contains('active')) {
-            let activeNOW = document.querySelector('.feedback li.active')
-            activeNOW.classList.remove('active')
+  document.querySelectorAll(".feedback li").forEach((entry) =>
+    entry.addEventListener("click", (e) => {
+      //console.log(entry);
+      if (!entry.classList.contains("active")) {
+        let activeNOW = document.querySelector(".feedback li.active");
+        activeNOW.classList.remove("active");
+        const old = activeNOW.classList[0]
 
-            switch (activeNOW.classList[0]) {
-                case 'angry':
-                    let counter1 = document.getElementById("counterAngry").innerHTML
-                    counter1 = parseInt(counter1) - 1
-                    document.getElementById("counterAngry").innerHTML = counter1
-                    break;
-                case 'sad':
-                    let counter2 = document.getElementById("counterSad").innerHTML
-                    counter2 = parseInt(counter2) - 1
-                    document.getElementById("counterSad").innerHTML = counter2
-                    break;
-                case 'ok':
-                let counter3 = document.getElementById("counterOk").innerHTML
-                    counter3 = parseInt(counter3) - 1
-                    document.getElementById("counterOk").innerHTML = counter3
-                    break;
-                case 'good':
-                    let counter4 = document.getElementById("counterGood").innerHTML
-                    counter4 = parseInt(counter4) - 1
-                    document.getElementById("counterGood").innerHTML = counter4
-                    break;
-                case 'happy':
-                    let counter5 = document.getElementById("counterHappy").innerHTML
-                    counter5 = parseInt(counter5) - 1
-                    document.getElementById("counterHappy").innerHTML = counter5
-                    break;
-                default:
-                    break;
-            }
-
-            entry.classList.add('active');
-
-            switch (entry.classList[0]) {
-                case 'angry':
-                    let counter1 = document.getElementById("counterAngry").innerHTML
-                    counter1 = parseInt(counter1) + 1
-                    document.getElementById("counterAngry").innerHTML = counter1
-                    break;
-                case 'sad':
-                    let counter2 = document.getElementById("counterSad").innerHTML
-                    counter2 = parseInt(counter2) + 1
-                    document.getElementById("counterSad").innerHTML = counter2
-                    break;
-                case 'ok':
-                let counter3 = document.getElementById("counterOk").innerHTML
-                    counter3 = parseInt(counter3) + 1
-                    document.getElementById("counterOk").innerHTML = counter3
-                    break;
-                case 'good':
-                    let counter4 = document.getElementById("counterGood").innerHTML
-                    counter4 = parseInt(counter4) + 1
-                    document.getElementById("counterGood").innerHTML = counter4
-                    break;
-                case 'happy':
-                    let counter5 = document.getElementById("counterHappy").innerHTML
-                    counter5 = parseInt(counter5) + 1
-                    document.getElementById("counterHappy").innerHTML = counter5
-                    break;
-                default:
-                    break;
-            }
-
-        } else {
-            entry.classList.remove('active');
-            document.getElementById('noneVote').classList.add('active');
-
-            switch (entry.classList[0]) {
-                case 'angry':
-                    let counter1 = document.getElementById("counterAngry").innerHTML
-                    counter1 = parseInt(counter1) - 1
-                    document.getElementById("counterAngry").innerHTML = counter1
-                    break;
-                case 'sad':
-                    let counter2 = document.getElementById("counterSad").innerHTML
-                    counter2 = parseInt(counter2) - 1
-                    document.getElementById("counterSad").innerHTML = counter2
-                    break;
-                case 'ok':
-                let counter3 = document.getElementById("counterOk").innerHTML
-                    counter3 = parseInt(counter3) - 1
-                    document.getElementById("counterOk").innerHTML = counter3
-                    break;
-                case 'good':
-                    let counter4 = document.getElementById("counterGood").innerHTML
-                    counter4 = parseInt(counter4) - 1
-                    document.getElementById("counterGood").innerHTML = counter4
-                    break;
-                case 'happy':
-                    let counter5 = document.getElementById("counterHappy").innerHTML
-                    counter5 = parseInt(counter5) - 1
-                    document.getElementById("counterHappy").innerHTML = counter5
-                    break;
-                default:
-                    break;
-            }
-
+        switch (activeNOW.classList[0]) {
+          case "angry":
+            let counter1 = document.getElementById("counterAngry").innerHTML;
+            counter1 = parseInt(counter1) - 1;
+            document.getElementById("counterAngry").innerHTML = counter1;
+            break;
+          case "sad":
+            let counter2 = document.getElementById("counterSad").innerHTML;
+            counter2 = parseInt(counter2) - 1;
+            document.getElementById("counterSad").innerHTML = counter2;
+            break;
+          case "ok":
+            let counter3 = document.getElementById("counterOk").innerHTML;
+            counter3 = parseInt(counter3) - 1;
+            document.getElementById("counterOk").innerHTML = counter3;
+            break;
+          case "good":
+            let counter4 = document.getElementById("counterGood").innerHTML;
+            counter4 = parseInt(counter4) - 1;
+            document.getElementById("counterGood").innerHTML = counter4;
+            break;
+          case "happy":
+            let counter5 = document.getElementById("counterHappy").innerHTML;
+            counter5 = parseInt(counter5) - 1;
+            document.getElementById("counterHappy").innerHTML = counter5;
+            break;
+          default:
+            break;
         }
-        e.preventDefault();
-    }));
+
+        entry.classList.add("active");
+
+        switch (entry.classList[0]) {
+          case "angry":
+            let counter1 = document.getElementById("counterAngry").innerHTML;
+            counter1 = parseInt(counter1) + 1;
+            document.getElementById("counterAngry").innerHTML = counter1;
+            break;
+          case "sad":
+            let counter2 = document.getElementById("counterSad").innerHTML;
+            counter2 = parseInt(counter2) + 1;
+            document.getElementById("counterSad").innerHTML = counter2;
+            break;
+          case "ok":
+            let counter3 = document.getElementById("counterOk").innerHTML;
+            counter3 = parseInt(counter3) + 1;
+            document.getElementById("counterOk").innerHTML = counter3;
+            break;
+          case "good":
+            let counter4 = document.getElementById("counterGood").innerHTML;
+            counter4 = parseInt(counter4) + 1;
+            document.getElementById("counterGood").innerHTML = counter4;
+            break;
+          case "happy":
+            let counter5 = document.getElementById("counterHappy").innerHTML;
+            counter5 = parseInt(counter5) + 1;
+            document.getElementById("counterHappy").innerHTML = counter5;
+            break;
+          default:
+            break;
+        }
+        
+        fetch("/vote-match/", {
+            method: "POST",
+            headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            'X-CSRF-TOKEN': "<%= csrfToken %>"
+            },
+            body: JSON.stringify({ matchId: "<%= m._id %>", op: "add", oldVote: old, newVote: entry.classList[0]}),
+        })
+
+      } else {
+        entry.classList.remove("active");
+        document.getElementById("noneVote").classList.add("active");
+
+        switch (entry.classList[0]) {
+          case "angry":
+            let counter1 = document.getElementById("counterAngry").innerHTML;
+            counter1 = parseInt(counter1) - 1;
+            document.getElementById("counterAngry").innerHTML = counter1;
+            break;
+          case "sad":
+            let counter2 = document.getElementById("counterSad").innerHTML;
+            counter2 = parseInt(counter2) - 1;
+            document.getElementById("counterSad").innerHTML = counter2;
+            break;
+          case "ok":
+            let counter3 = document.getElementById("counterOk").innerHTML;
+            counter3 = parseInt(counter3) - 1;
+            document.getElementById("counterOk").innerHTML = counter3;
+            break;
+          case "good":
+            let counter4 = document.getElementById("counterGood").innerHTML;
+            counter4 = parseInt(counter4) - 1;
+            document.getElementById("counterGood").innerHTML = counter4;
+            break;
+          case "happy":
+            let counter5 = document.getElementById("counterHappy").innerHTML;
+            counter5 = parseInt(counter5) - 1;
+            document.getElementById("counterHappy").innerHTML = counter5;
+            break;
+          default:
+            break;
+        }
+
+        fetch("/vote-match/", {
+            method: "POST",
+            headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            'X-CSRF-TOKEN': "<%= csrfToken %>"
+            },
+            body: JSON.stringify({ matchId: "<%= m._id %>", op: "sub", newVote: entry.classList[0]}),
+        })
+
+      }
+      e.preventDefault();
+    })
+  );
 </script>

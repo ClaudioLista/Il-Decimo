@@ -56,7 +56,7 @@ exports.postLogin = (req, res, next) => {
             req.session.isLoggedIn = true;
             req.session.user = user;
 
-            const accessToken = jwt.sign({ userId: user._id }, "process.env.JWT_SECRET", {
+            const accessToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
               expiresIn: "1d"
              });
             User.findByIdAndUpdate(user._id, {accessToken})
@@ -103,8 +103,6 @@ exports.postSignup = (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
 
-  
-
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(422).render("auth/signup", {
@@ -123,9 +121,6 @@ exports.postSignup = (req, res, next) => {
   bcrypt
     .hash(password, 12)
     .then((hashedPassword) => {
-
-      
-      
       const user = new User({
         usrName: usrName,
         email: email,
@@ -135,11 +130,11 @@ exports.postSignup = (req, res, next) => {
         },
         role: "user",
       });
-      const Token = jwt.sign({ userId: user._id }, "process.env.JWT_SECRET", {
+      const accessToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
         expiresIn: "1d"
        });
-       user.accessToken = Token;
-       console.log(user)
+       user.accessToken = accessToken;
+       //console.log(user)
       return user.save();
     })
     .then(() => {

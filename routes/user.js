@@ -10,7 +10,7 @@ const router = express.Router()
 
 router.get('/', userController.getIndex)
 
-router.get('/matches', isAuth, userController.grantAccess('readOwn', 'matches'),userController.getMatches)
+router.get('/matches', isAuth, userController.getMatches)
 
 router.get('/matches/:matchId', isAuth, userController.getMatch)
 
@@ -26,8 +26,8 @@ router.post('/add-match', isAuth,
   ],
   userController.postAddMatch)
 
-router.get('/edit-match/:matchId', isAuth, userController.getEditMatch)
-router.post('/edit-match', isAuth,
+router.get('/edit-match/:matchId', isAuth, userController.grantIfOwnMatch("updateOwn", "matches"), userController.getEditMatch)
+router.post('/edit-match', isAuth, userController.grantIfOwnMatch("updateOwn", "matches"),
   [
     body('title', 'Inserisci un nome valido').isString().isLength({ min: 3 }).trim(),
     body('placeName', 'Inserisci un luogo valido').isString().isLength({ min: 3 }).trim(),
@@ -38,6 +38,7 @@ router.post('/edit-match', isAuth,
   ],
   userController.postEditMatch)
 
+router.post('/vote-match', isAuth, userController.postVoteMatch)
 router.get('/mymatches', userController.getUserMatches)
 
 router.get('/matches/:matchId/join', isAuth, userController.getJoinMatch)
@@ -46,8 +47,8 @@ router.post('/matches/:matchId/join', isAuth, userController.postJoinMatch)
 router.get('/matches/:matchId/unjoin', isAuth, userController.getUnJoinMatch)
 router.post('/matches/:matchId/unjoin', isAuth, userController.postUnJoinMatch)
 
-router.get('/myprofile', isAuth, userController.getUserProfile)
+router.get('/profile/:username', isAuth, userController.grantIfOwnProfile("readOwn", "profile"), userController.getUserProfile)
 
-router.post('/delete-match', isAuth, userController.postDeleteMatch)
+router.post('/delete-match', isAuth, userController.grantIfOwnMatch("deleteOwn", "matches"), userController.postDeleteMatch)
 
 module.exports = router

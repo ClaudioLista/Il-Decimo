@@ -10,11 +10,12 @@ const MongoDBStore = require("connect-mongodb-session")(session);
 const csrf = require("csurf");
 const passport = require('passport');
 
+require("dotenv").config();
+
 const errorController = require("./controllers/error");
 const User = require("./models/user");
 
-//const MONGODB_URI = 'mongodb+srv://ildecimo_node:Yqk3cdHnWRypqK7O@ildecimo.f8r39ia.mongodb.net/app'
-const MONGODB_URI = "mongodb+srv://ciro:ciro@cluster0.5izgbwo.mongodb.net/app";
+const MONGODB_URI = process.env.MONGODB_URI
 
 const app = express();
 const store = new MongoDBStore({
@@ -28,8 +29,10 @@ app.set("views", "views");
 
 const userRoutes = require("./routes/user");
 const authRoutes = require("./routes/auth");
+const user = require("./models/user");
 
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.json())
 app.use(express.static(path.join(__dirname, "public")));
 app.use(
   session({
@@ -45,6 +48,25 @@ app.use(
 );
 app.use(csrfProtection);
 app.use(passport.authenticate('session'));
+
+//TO-DO
+app.use((req, res, next) => {
+  if (req.headers["x-access-token"]) {
+   const accessToken = req.headers["x-access-token"];
+   const { userId, exp } = jwt.verify(accessToken, process.env.JWT_SECRET);
+   console.log(userId, exp)
+   // Check if token has expired
+   if (exp < Date.now().valueOf() / 1000) {
+    return res.status(401).json({
+     error: "JWT token has expired, please login to obtain a new one"
+    });
+   }
+   res.locals.loggedInUser = user.findById(userId);
+   next();
+  } else {
+   next();
+  }
+});
 
 passport.serializeUser(function(req, user, cb) {
   req.session.user = user;
@@ -67,6 +89,7 @@ app.use((req, res, next) => {
   User.findById(req.session.user._id)
     .then((user) => {
       req.user = user;
+      res.locals.user = user;
       next();
     })
     .catch((err) => console.log(err));
