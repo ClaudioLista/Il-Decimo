@@ -21,23 +21,60 @@ exports.grantAccess = function (action, resource) {
   };
 };
 
+exports.grantIfIsInMatch = function (action, resource) {
+  return async (req, res, next) => {
+    try {
+      const permission = roles.can(req.user.role)[action](resource);
+      const matchId = req.body.matchId || req.params.matchId;
+
+      user
+        .findById(req.user._id)
+        .then((user) => {
+          const risultato = user.matchList.find((element) =>
+            element.matchId.equals(matchId)
+          );
+          if (risultato !== undefined) {
+            playerIn = true;
+          }
+
+          if (
+            !permission.granted ||
+            (risultato == undefined && !(req.user.role == "admin"))
+          ) {
+            return res.status(401).json({
+              error: "You don't have enough permission to perform this action",
+            });
+          }
+          next();
+        })
+        .catch((err) => console.log(err));
+    } catch (error) {
+      next(error);
+    }
+  };
+};
+
 exports.grantIfOwnMatch = function (action, resource) {
   return async (req, res, next) => {
     try {
       const permission = roles.can(req.user.role)[action](resource);
       const matchId = req.body.matchId || req.params.matchId;
-      console.log(matchId)
+      console.log(matchId);
       Match.findById(matchId)
-      .then((match) => {
-        console.log(match)
-        if (!permission.granted || (!(match.hostUserId.equals(req.user._id)) && !(req.user.role=="admin"))) {
-          return res.status(401).json({
-            error: "You don't have enough permission to perform this action",
-          });
-        }
-        next();
-      })
-      .catch((err) => console.log(err));
+        .then((match) => {
+          console.log(match);
+          if (
+            !permission.granted ||
+            (!match.hostUserId.equals(req.user._id) &&
+              !(req.user.role == "admin"))
+          ) {
+            return res.status(401).json({
+              error: "You don't have enough permission to perform this action",
+            });
+          }
+          next();
+        })
+        .catch((err) => console.log(err));
     } catch (error) {
       next(error);
     }
@@ -49,16 +86,20 @@ exports.grantIfOwnProfile = function (action, resource) {
     try {
       const permission = roles.can(req.user.role)[action](resource);
       const username = req.params.username;
-      user.findOne({usrName: username})
-      .then((user) => {
-        if (!permission.granted || (!(user._id.equals(req.user._id)) && !(req.user.role=="admin"))) {
-          return res.status(401).json({
-            error: "You don't have enough permission to perform this action",
-          });
-        }
-        next();
-      })
-      .catch((err) => console.log(err));
+      user
+        .findOne({ usrName: username })
+        .then((user) => {
+          if (
+            !permission.granted ||
+            (!user._id.equals(req.user._id) && !(req.user.role == "admin"))
+          ) {
+            return res.status(401).json({
+              error: "You don't have enough permission to perform this action",
+            });
+          }
+          next();
+        })
+        .catch((err) => console.log(err));
     } catch (error) {
       next(error);
     }
@@ -101,11 +142,15 @@ exports.getMatches = (req, res, next) => {
 
 exports.getMatch = (req, res, next) => {
   const matchId = req.params.matchId;
+
   let nameUser = null;
   let playerIn = false;
   let is_full = false;
   let is_over = false;
   let userVote = "";
+
+
+  
 
   if (req.user) {
     user
@@ -113,8 +158,10 @@ exports.getMatch = (req, res, next) => {
       .then((user) => {
         nameUser = user.usrName;
         if (!(user.matchList.length === 0)) {
-          userMatch = user.matchList.find(element => element.matchId.equals(matchId))
-          userVote = userMatch.vote
+          userMatch = user.matchList.find((element) =>
+            element.matchId.equals(matchId)
+          );
+          userVote = userMatch.vote;
         }
         //console.log(userMatch.vote)
         // console.log(user.matchList)
@@ -143,7 +190,9 @@ exports.getMatch = (req, res, next) => {
         if (match.time < today) {
           is_over = true;
         }
+        
         const result = match.listPlayers.populate("players.userId");
+        
       }
 
       ChatRoom.findOne({ matchId: match._id })
@@ -231,9 +280,9 @@ exports.postAddMatch = (req, res, next) => {
     .save()
     .then(() => {
       user.findById(req.user._id).then((user) => {
-        user.matchList.push({ matchId: match._id, vote: ""})
+        user.matchList.push({ matchId: match._id, vote: "" });
         user.save();
-      })
+      });
       match.addPlayer(hostUserId);
       const chatroom = new ChatRoom({
         matchId: match._id,
@@ -256,31 +305,43 @@ exports.postVoteMatch = (req, res, next) => {
   const oldVote = req.body.oldVote;
   Match.findById(matchId)
     .then((match) => {
-      if(req.body.op == "add") {
+      if (req.body.op == "add") {
         match.votes[updatedVote] = match.votes[updatedVote] + 1;
-        if(oldVote != "noneVote") {
+        if (oldVote != "noneVote") {
           match.votes[oldVote] = match.votes[oldVote] - 1;
         }
         user
-       .findById(req.user._id)
-       .then((user) => {
-        const voteIndex = user.matchList.findIndex(element => element.matchId.equals(matchId))
-        // console.log(user.matchList[voteIndex].vote)
-        // console.log(updatedVote.toString())
-        user.matchList[voteIndex].vote = '' + updatedVote + ''
-        user.markModified('matchList')
-        user.save().then().catch((err) => console.log(err));
-       }).catch((err) => console.log(err));
+          .findById(req.user._id)
+          .then((user) => {
+            const voteIndex = user.matchList.findIndex((element) =>
+              element.matchId.equals(matchId)
+            );
+            // console.log(user.matchList[voteIndex].vote)
+            // console.log(updatedVote.toString())
+            user.matchList[voteIndex].vote = "" + updatedVote + "";
+            user.markModified("matchList");
+            user
+              .save()
+              .then()
+              .catch((err) => console.log(err));
+          })
+          .catch((err) => console.log(err));
       } else {
         match.votes[updatedVote] = match.votes[updatedVote] - 1;
         user
-       .findById(req.user._id)
-       .then((user) => {
-        const voteIndex = user.matchList.findIndex(element => element.matchId.equals(matchId))
-        user.matchList[voteIndex].vote = ''
-        user.markModified('matchList')
-        user.save().then().catch((err) => console.log(err));
-       }).catch((err) => console.log(err));
+          .findById(req.user._id)
+          .then((user) => {
+            const voteIndex = user.matchList.findIndex((element) =>
+              element.matchId.equals(matchId)
+            );
+            user.matchList[voteIndex].vote = "";
+            user.markModified("matchList");
+            user
+              .save()
+              .then()
+              .catch((err) => console.log(err));
+          })
+          .catch((err) => console.log(err));
       }
       return match.save();
     })
@@ -288,7 +349,7 @@ exports.postVoteMatch = (req, res, next) => {
       res.redirect("/mymatches");
     })
     .catch((err) => console.log(err));
-}
+};
 
 exports.getEditMatch = (req, res, next) => {
   const editMode = req.query.edit;
@@ -414,9 +475,9 @@ exports.postJoinMatch = (req, res, next) => {
     .then((match) => {
       if (match.currentPlayers != match.totalPlayers) {
         user.findById(req.user._id).then((user) => {
-          user.matchList.push({ matchId: match._id, vote: ""})
+          user.matchList.push({ matchId: match._id, vote: "" });
           user.save();
-        })
+        });
         return match.addPlayer(joiningUserId);
       }
     })
@@ -471,11 +532,13 @@ exports.postUnJoinMatch = (req, res, next) => {
 
 exports.getUserProfile = (req, res, next) => {
   const userName = req.params.username;
-  console.log(userName)
+  const permission = roles.can("user").readOwn("profile");
+  console.log(permission.granted) // true
+  console.log(permission.attributes) // ['*', '!record.id']
   user
-    .findOne({usrName: userName})
+    .findOne({ usrName: userName })
     .then((user) => {
-      console.log(user)
+      console.log(permission.filter(user));
       res.render("user/profile", {
         pageTitle: "My Profile",
         path: "/profile",

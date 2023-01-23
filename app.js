@@ -10,6 +10,9 @@ const MongoDBStore = require("connect-mongodb-session")(session);
 const csrf = require("csurf");
 const passport = require('passport');
 
+
+
+
 require("dotenv").config();
 
 const errorController = require("./controllers/error");
@@ -48,6 +51,9 @@ app.use(
 );
 app.use(csrfProtection);
 app.use(passport.authenticate('session'));
+
+
+
 
 //TO-DO
 app.use((req, res, next) => {
@@ -114,6 +120,7 @@ mongoose
   .then((result) => {
     const port = process.env.PORT || 5000
     const server = app.listen(port);
+
     const io = require("socket.io")(server);
     console.log("Listening on port ", port);
 

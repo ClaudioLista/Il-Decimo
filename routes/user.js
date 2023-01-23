@@ -12,9 +12,9 @@ router.get('/', userController.getIndex)
 
 router.get('/matches', isAuth, userController.getMatches)
 
-router.get('/matches/:matchId', isAuth, userController.getMatch)
+router.get('/matches/:matchId', isAuth, userController.grantAccess("readAny", "matches"), userController.getMatch)
 
-router.get('/add-match', isAuth, userController.getAddMatch)
+router.get('/add-match', isAuth,userController.getAddMatch)
 router.post('/add-match', isAuth,
   [
     body('title', 'Inserisci un nome valido').isString().isLength({ min: 3 }).trim(),
@@ -38,14 +38,14 @@ router.post('/edit-match', isAuth, userController.grantIfOwnMatch("updateOwn", "
   ],
   userController.postEditMatch)
 
-router.post('/vote-match', isAuth, userController.postVoteMatch)
-router.get('/mymatches', userController.getUserMatches)
+router.post('/vote-match', isAuth,userController.grantIfIsInMatch("updateOwn","votes"), userController.postVoteMatch)
+router.get('/mymatches',isAuth, userController.getUserMatches)
 
-router.get('/matches/:matchId/join', isAuth, userController.getJoinMatch)
-router.post('/matches/:matchId/join', isAuth, userController.postJoinMatch)
+router.get('/matches/:matchId/join', isAuth,userController.grantAccess("readAny", "matches"), userController.getJoinMatch)
+router.post('/matches/:matchId/join', isAuth, userController.grantAccess("readAny", "matches"), userController.postJoinMatch)
 
-router.get('/matches/:matchId/unjoin', isAuth, userController.getUnJoinMatch)
-router.post('/matches/:matchId/unjoin', isAuth, userController.postUnJoinMatch)
+router.get('/matches/:matchId/unjoin', isAuth, userController.grantIfIsInMatch("updateOwn", "matches"), userController.getUnJoinMatch)
+router.post('/matches/:matchId/unjoin', isAuth, userController.grantIfIsInMatch("updateOwn", "matches"), userController.postUnJoinMatch)
 
 router.get('/profile/:username', isAuth, userController.grantIfOwnProfile("readOwn", "profile"), userController.getUserProfile)
 

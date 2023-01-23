@@ -219,7 +219,7 @@ socket.on('message', (message) => {
                             <% }%>
                         <% } %>
                     </div>
-                    <% if (isAuthenticated && is_in && isOver || false) { %>
+                    <% if (isAuthenticated && is_in && isOver) { %>
                         <%- include('../includes/voting.ejs') %>
                     <% } %>
                     <br>
