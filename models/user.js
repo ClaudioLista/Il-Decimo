@@ -33,8 +33,11 @@ const userSchema = new Schema({
    },
    accessToken: {
     type: String
+   },
+   userAttempts: {
+    type: Number,
+    default: 0
    }
-   
 
 })
 

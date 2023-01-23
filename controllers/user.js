@@ -149,9 +149,6 @@ exports.getMatch = (req, res, next) => {
   let is_over = false;
   let userVote = "";
 
-
-  
-
   if (req.user) {
     user
       .findById(req.user._id)
@@ -532,13 +529,9 @@ exports.postUnJoinMatch = (req, res, next) => {
 
 exports.getUserProfile = (req, res, next) => {
   const userName = req.params.username;
-  const permission = roles.can("user").readOwn("profile");
-  console.log(permission.granted) // true
-  console.log(permission.attributes) // ['*', '!record.id']
   user
     .findOne({ usrName: userName })
     .then((user) => {
-      console.log(permission.filter(user));
       res.render("user/profile", {
         pageTitle: "My Profile",
         path: "/profile",

@@ -10,9 +10,6 @@ const MongoDBStore = require("connect-mongodb-session")(session);
 const csrf = require("csurf");
 const passport = require('passport');
 
-
-
-
 require("dotenv").config();
 
 const errorController = require("./controllers/error");
@@ -51,9 +48,6 @@ app.use(
 );
 app.use(csrfProtection);
 app.use(passport.authenticate('session'));
-
-
-
 
 //TO-DO
 app.use((req, res, next) => {

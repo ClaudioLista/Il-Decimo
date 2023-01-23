@@ -1,8 +1,12 @@
 const bcrypt = require("bcryptjs");
 const { validationResult } = require("express-validator");
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
 
 const User = require("../models/user");
+const LoginAttempt = require("../models/loginAttempt");
+
+const maxNumberOfFailedLogins = 5; //on single username
+const timeWindowForFailedLogins = 60 * 60 * 1
 
 exports.getLogin = (req, res, next) => {
   res.render("auth/login", {
@@ -20,7 +24,6 @@ exports.getLogin = (req, res, next) => {
 exports.postLogin = (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
-
   const errMsg = "Email o Password non validi, riprova ad effettuare il login!";
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -49,36 +52,72 @@ exports.postLogin = (req, res, next) => {
           validationErrors: [],
         });
       }
-      bcrypt
-        .compare(password, user.password)
-        .then((passOK) => {
-          if (passOK) {
-            req.session.isLoggedIn = true;
-            req.session.user = user;
-
-            const accessToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-              expiresIn: "1d"
-             });
-            User.findByIdAndUpdate(user._id, {accessToken})
-            return req.session.save(() => {
-              res.redirect("/");
-            });
-          }
-          return res.status(422).render("auth/login", {
+      LoginAttempt.findOne({ usrName: user.usrName }).then((blackList) => {
+        console.log(blackList);
+        if (user.userAttempts >= maxNumberOfFailedLogins && blackList) {
+          return res.status(429).render("auth/login", {
             path: "/login",
             pageTitle: "login",
-            errorMessage: errMsg,
+            errorMessage: "Too Many Attempts try it 15 minutes later",
             oldInput: {
               email: email,
               password: password,
             },
             validationErrors: [],
           });
-        })
-        .catch((err) => {
-          console.log(err);
-          res.redirect("/login");
-        });
+        } 
+        bcrypt
+          .compare(password, user.password)
+          .then((passOK) => {
+            if (passOK) {
+              user.userAttempts = 0;
+              user.save();
+
+              req.session.isLoggedIn = true;
+              req.session.user = user;
+
+              const accessToken = jwt.sign(
+                { userId: user._id },
+                process.env.JWT_SECRET,
+                {
+                  expiresIn: "1d",
+                }
+              );
+              User.findByIdAndUpdate(user._id, { accessToken });
+              return req.session.save(() => {
+                res.redirect("/");
+              });
+            }
+            const date = new Date();
+            LoginAttempt.findOne({usrName: user.usrName}).then((username) => {
+              if (!!username) {
+                username.save()
+              } else {
+                const loginAttempt = new LoginAttempt({
+                  usrName: user.usrName,
+                });
+                loginAttempt.save();
+              }
+            })
+            user.userAttempts = user.userAttempts + 1;
+            user.save();
+
+            return res.status(422).render("auth/login", {
+              path: "/login",
+              pageTitle: "login",
+              errorMessage: errMsg,
+              oldInput: {
+                email: email,
+                password: password,
+              },
+              validationErrors: [],
+            });
+          })
+          .catch((err) => {
+            console.log(err);
+            res.redirect("/login");
+          });
+      });
     })
     .catch((err) => console.log(err));
 };
@@ -130,11 +169,15 @@ exports.postSignup = (req, res, next) => {
         },
         role: "user",
       });
-      const accessToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-        expiresIn: "1d"
-       });
-       user.accessToken = accessToken;
-       //console.log(user)
+      const accessToken = jwt.sign(
+        { userId: user._id },
+        process.env.JWT_SECRET,
+        {
+          expiresIn: "1d",
+        }
+      );
+      user.accessToken = accessToken;
+      //console.log(user)
       return user.save();
     })
     .then(() => {

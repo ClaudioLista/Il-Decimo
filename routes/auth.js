@@ -14,12 +14,11 @@ var passport = require('passport')
 var GoogleStrategy = require('passport-google-oidc')
 var FacebookStrategy = require('passport-facebook')
 
-
 const rateLimit = require('express-rate-limit')
 
-const limiter = rateLimit({
+const loginRateLimiter = rateLimit({
 	windowMs: 5 * 60 * 1000, // 5 minutes
-	max: 5, // Limit each IP to 5 requests per `window` (here, per 5 minutes)
+	max: 10, // Limit each IP to 10 requests per `window` (here, per 5 minutes)
 	message:
 		'Too many login from this IP, please try again after 5 minutes',
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
@@ -52,7 +51,7 @@ router.get('/oauth2/redirect/facebook', passport.authenticate('facebook', {
   })
 )
 
-router.post('/login', limiter, isLog,
+router.post('/login', loginRateLimiter, isLog,
   [
     body('email').isEmail().normalizeEmail(),
     body('password').isLength({ min: 6 }).isAlphanumeric().trim() // TODO : modificare il controllo password
