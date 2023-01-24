@@ -1,60 +1,62 @@
 <h2>Vote the match!</h2>
 
-<ul class="feedback">
-  <li id="noneVote" class="noneVote <% if(m_vote === "") { %> active <% } %>"" hidden></li>
-  <li class="angry <% if(m_vote === "angry") { %> active <% } %>">
-    <div>
-      <svg class="eye left">
-        <use xlink:href="#eye"></use>
-      </svg>
-      <svg class="eye right">
-        <use xlink:href="#eye"></use>
-      </svg>
-      <svg class="mouth">
-        <use xlink:href="#mouth"></use>
-      </svg>
-    </div>
-  </li>
-  <li class="sad <% if(m_vote === "sad") { %> active <% } %>">
-    <div>
-      <svg class="eye left">
-        <use xlink:href="#eye"></use>
-      </svg>
-      <svg class="eye right">
-        <use xlink:href="#eye"></use>
-      </svg>
-      <svg class="mouth">
-        <use xlink:href="#mouth"></use>
-      </svg>
-    </div>
-  </li>
-  <li class="ok <% if(m_vote === "ok") { %> active <% } %>">
-    <div></div>
-  </li>
-  <li class="good <% if(m_vote === "good") { %> active <% } %>">
-    <div>
-      <svg class="eye left">
-        <use xlink:href="#eye"></use>
-      </svg>
-      <svg class="eye right">
-        <use xlink:href="#eye"></use>
-      </svg>
-      <svg class="mouth">
-        <use xlink:href="#mouth"></use>
-      </svg>
-    </div>
-  </li>
-  <li class="happy <% if(m_vote === "happy") { %> active <% } %>">
-    <div>
-      <svg class="eye left">
-        <use xlink:href="#eye"></use>
-      </svg>
-      <svg class="eye right">
-        <use xlink:href="#eye"></use>
-      </svg>
-    </div>
-  </li>
-</ul>
+<div style="text-align: center;">
+  <ul class="feedback">
+    <li id="noneVote" class="noneVote <% if(m_vote === "") { %> active <% } %>"" hidden></li>
+    <li class="angry <% if(m_vote === "angry") { %> active <% } %>">
+      <div>
+        <svg class="eye left">
+          <use xlink:href="#eye"></use>
+        </svg>
+        <svg class="eye right">
+          <use xlink:href="#eye"></use>
+        </svg>
+        <svg class="mouth">
+          <use xlink:href="#mouth"></use>
+        </svg>
+      </div>
+    </li>
+    <li class="sad <% if(m_vote === "sad") { %> active <% } %>">
+      <div>
+        <svg class="eye left">
+          <use xlink:href="#eye"></use>
+        </svg>
+        <svg class="eye right">
+          <use xlink:href="#eye"></use>
+        </svg>
+        <svg class="mouth">
+          <use xlink:href="#mouth"></use>
+        </svg>
+      </div>
+    </li>
+    <li class="ok <% if(m_vote === "ok") { %> active <% } %>">
+      <div></div>
+    </li>
+    <li class="good <% if(m_vote === "good") { %> active <% } %>">
+      <div>
+        <svg class="eye left">
+          <use xlink:href="#eye"></use>
+        </svg>
+        <svg class="eye right">
+          <use xlink:href="#eye"></use>
+        </svg>
+        <svg class="mouth">
+          <use xlink:href="#mouth"></use>
+        </svg>
+      </div>
+    </li>
+    <li class="happy <% if(m_vote === "happy") { %> active <% } %>">
+      <div>
+        <svg class="eye left">
+          <use xlink:href="#eye"></use>
+        </svg>
+        <svg class="eye right">
+          <use xlink:href="#eye"></use>
+        </svg>
+      </div>
+    </li>
+  </ul>
+</div>
 
 <ul class="counter">
   <li><div id="counterAngry"><%= m.votes.angry %></div></li>

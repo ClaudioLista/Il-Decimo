@@ -58,7 +58,7 @@ exports.postLogin = (req, res, next) => {
           return res.status(429).render("auth/login", {
             path: "/login",
             pageTitle: "login",
-            errorMessage: "Too Many Attempts try it 15 minutes later",
+            errorMessage: "Troppi tentativi, riprova tra poco.",
             oldInput: {
               email: email,
               password: password,
