@@ -37,6 +37,10 @@ const userSchema = new Schema({
    userAttempts: {
     type: Number,
     default: 0
+   },
+   activeSessions: {
+    type: Number,
+    default: 0
    }
 
 })

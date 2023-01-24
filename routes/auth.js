@@ -59,6 +59,8 @@ router.post('/login', loginRateLimiter, isLog,
   authController.postLogin
 )
 
+router.get('/terms', authController.getTerms)
+
 router.get('/signup', isLog, authController.getSignup)
 
 router.post('/signup', isLog,

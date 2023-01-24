@@ -32,14 +32,17 @@
                     <a class="<%= path === '/profile' ? 'active' : '' %>" href="/profile/<%= user.usrName %> ">My Profile</a>
                 </li>
                 <li class="main-header__item">
-                    <form action="/logout" method="POST">
-                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                        <button type="submit">Logout</button>
-                    </form>
+                    <button onclick="popup()" id="logoutButton">Logout</button>
                 </li>
             <% } %>
         </ul>
     </nav>
+    <div>
+        <form action="/logout" method="POST">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <button style="display: none;" id="confirmLogout" class="btnLogout" type="submit">Conferma Logout</button>
+        </form>
+    </div>
 </header>
 
 <nav class="mobile-nav">
@@ -70,11 +73,37 @@
                 <a class="<%= path === '/profile' ? 'active' : '' %>" href="/profile/<%= user.usrName %> ">My Profile</a>
             </li>
             <li class="mobile-nav__item">
-                <form action="/logout" method="POST">
-                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                    <button type="submit">Logout</button>
-                </form>
+                <button onclick="popup2()" id="logoutButton" type="submit">Logout</button>
             </li>
         <% } %>
     </ul>
+    <div>
+        <form action="/logout" method="POST">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <button style="display: none;" class="btnLogout" id="confirmLogout2" type="submit">Conferma Logout</button>
+        </form>
+    </div>
 </nav>
+
+<script>
+    function popup() {
+        console.log("click")
+        const logoutButton = document.getElementById("confirmLogout")
+        logoutButton.style.display = "block";
+        setTimeout(closePopUp, 5000);
+    }
+    function closePopUp() {
+        const logoutButton = document.getElementById("confirmLogout")
+        logoutButton.style.display = "none";
+    }
+    function popup2() {
+        console.log("click")
+        const logoutButton = document.getElementById("confirmLogout2")
+        logoutButton.style.display = "block";
+        setTimeout(closePopUp2, 5000);
+    }
+    function closePopUp2() {
+        const logoutButton = document.getElementById("confirmLogout2")
+        logoutButton.style.display = "none";
+    }
+</script>

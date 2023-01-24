@@ -50,7 +50,12 @@
                             type="password" name="confirmPassword" id="confirmPassword" value="<%= oldInput.confirmPassword %>">
                         <span class="focus-input100" data-symbol="&#xf190;"></span>
                     </div>
-                    <br>
+                    <div class="validate-input m-t-30" style="text-align: center;">
+                        <input 
+                            class="<%= validationErrors.find(e => e.param == 'confirmPassword') ? '' : '' %>"
+                            type="checkbox" required name="acceptTerms" id="acceptTerms">
+                        <a style="text-decoration: none;" href="terms" target="_blank">Accetta i termini e le condizioni!</text>
+                    </div>
                     <br>
                     <div class="container-login100-form-btn">
                         <div class="wrap-login100-form-btn">
@@ -62,7 +67,7 @@
                         <span>Or Sign Up Using</span>
                     </div>
                     <div class="flex-c-m">
-                        <a href="#" class="login100-social-item bg1">
+                        <a href="/login/federated/facebook" class="login100-social-item bg1">
                             <i class="fa fa-facebook"></i>
                         </a>
                         <a href="#" class="login100-social-item bg2">

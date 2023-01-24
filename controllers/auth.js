@@ -21,10 +21,14 @@ exports.getLogin = (req, res, next) => {
   });
 };
 
+exports.getTerms = (req, res, next) => {
+  res.render("auth/termsandconditions");
+};
+
 exports.postLogin = (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
-  const errMsg = "Email o Password non validi, riprova ad effettuare il login!";
+  let errMsg = "Email o Password non validi, riprova ad effettuare il login!";
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(422).render("auth/login", {
@@ -38,6 +42,7 @@ exports.postLogin = (req, res, next) => {
       validationErrors: errors.array(),
     });
   }
+
   User.findOne({ email: email })
     .then((user) => {
       if (!user) {
@@ -53,7 +58,6 @@ exports.postLogin = (req, res, next) => {
         });
       }
       LoginAttempt.findOne({ usrName: user.usrName }).then((blackList) => {
-        console.log(blackList);
         if (user.userAttempts >= maxNumberOfFailedLogins && blackList) {
           return res.status(429).render("auth/login", {
             path: "/login",
@@ -69,8 +73,9 @@ exports.postLogin = (req, res, next) => {
         bcrypt
           .compare(password, user.password)
           .then((passOK) => {
-            if (passOK) {
+            if (passOK && user.activeSessions < 2) {
               user.userAttempts = 0;
+              user.activeSessions = user.activeSessions + 1;
               user.save();
 
               req.session.isLoggedIn = true;
@@ -83,6 +88,7 @@ exports.postLogin = (req, res, next) => {
                   expiresIn: "1d",
                 }
               );
+
               User.findByIdAndUpdate(user._id, { accessToken });
               return req.session.save(() => {
                 res.redirect("/");
@@ -101,6 +107,10 @@ exports.postLogin = (req, res, next) => {
             })
             user.userAttempts = user.userAttempts + 1;
             user.save();
+
+            if(user.activeSessions >= 2) {
+              errMsg = "Hai già due sessioni attive!"
+            }
 
             return res.status(422).render("auth/login", {
               path: "/login",
@@ -187,6 +197,10 @@ exports.postSignup = (req, res, next) => {
 };
 
 exports.postLogout = (req, res, next) => {
+  User.findById(req.user._id).then((user) => {
+    user.activeSessions = user.activeSessions - 1
+    user.save()
+  }).catch((err) => console.log(err))
   req.session.destroy((err) => {
     res.redirect("/");
   });

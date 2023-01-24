@@ -6,13 +6,12 @@ const loginAttemptSchema = new Schema({
   usrName: {
     type: String,
   },
-  createdAt: { 
+  expireAt: { 
     type: Date, 
-    expires: "15m",
     default: Date.now 
   },
 });
 
-//loginAttemptSchema.index( { "expireAt": 1 }, { expireAfterSeconds: 0 } );
+loginAttemptSchema.index( { "expireAt": 1 }, { "expireAfterSeconds": 120 } );
 
 module.exports = mongoose.model("loginAttempt", loginAttemptSchema);

@@ -231,6 +231,24 @@ form {
   cursor: pointer;
 }
 
+.btnLogout {
+  display: inline-block;
+  padding: 0.25rem 1.5rem;
+  text-decoration: none;
+  font: inherit;
+  border: 1px solid #513dff;
+  color: #513dff;
+  background: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btnLogout:hover,
+.btnLogout:active {
+  background-color: #ff2d2d;
+  color: white;
+}
+
 .btn:hover,
 .btn:active {
   background-color: #513dff;
