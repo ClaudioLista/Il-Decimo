@@ -8,6 +8,7 @@ const isLog = require('../middleware/is-logged')
 const User = require('../models/user')
 const FederateUser = require('../models/federateUser')
 
+
 const router = express.Router()
 
 var passport = require('passport')
@@ -24,6 +25,8 @@ const loginRateLimiter = rateLimit({
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
 	legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 })
+
+router.get("/verify/:id/:token",authController.getVerify)
 
 router.get('/login', isLog, authController.getLogin)
 

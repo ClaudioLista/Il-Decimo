@@ -1,12 +1,16 @@
 const bcrypt = require("bcryptjs");
 const { validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
+const sendEmail = require("../util/email");
+const Token = require("../models/token");
+
 
 const User = require("../models/user");
 const LoginAttempt = require("../models/loginAttempt");
 
+
 const maxNumberOfFailedLogins = 5; //on single username
-const timeWindowForFailedLogins = 60 * 60 * 1
+const timeWindowForFailedLogins = 60 * 60 * 1;
 
 exports.getLogin = (req, res, next) => {
   res.render("auth/login", {
@@ -29,6 +33,10 @@ exports.postLogin = (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
   let errMsg = "Email o Password non validi, riprova ad effettuare il login!";
+
+
+
+
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(422).render("auth/login", {
@@ -71,7 +79,7 @@ exports.postLogin = (req, res, next) => {
               validationErrors: [],
             });
           }
-        } 
+        }
         bcrypt
           .compare(password, user.password)
           .then((passOK) => {
@@ -96,23 +104,26 @@ exports.postLogin = (req, res, next) => {
               });
             }
             const date = new Date();
-            LoginAttempt.findOne({usrName: user.usrName}).then((username) => {
+            LoginAttempt.findOne({ usrName: user.usrName }).then((username) => {
               if (!!username) {
                 //username.expireAt = (date + 60*60*1000)
-                username.attempts = username.attempts + 1
-                username.save()
+
+                username.attempts = username.attempts + 1;
+
+                username.save();
               } else {
                 const loginAttempt = new LoginAttempt({
                   usrName: user.usrName,
-                  attempts: 1
+                  attempts: 1,
                   //expireAt: (date + 60*60*1000)
                 });
+
                 loginAttempt.save();
               }
-            })
+            });
 
-            if(user.activeSessions >= 2) {
-              errMsg = "Hai già due sessioni attive!"
+            if (user.activeSessions >= 2) {
+              errMsg = "Hai già due sessioni attive!";
             }
 
             return res.status(422).render("auth/login", {
@@ -191,20 +202,66 @@ exports.postSignup = (req, res, next) => {
       );
       user.accessToken = accessToken;
       //console.log(user)
-      return user.save();
+
+    
+
+      user.save();
+      let token =  new Token({
+        userId: user._id,
+        token: accessToken
+      }).save()
+
+      const message = `${process.env.BASE_URL}/verify/${user.id}/${accessToken}`;
+       sendEmail(user.email, "Verify Email", message);
+  
+      
     })
     .then(() => {
+
       res.redirect("/login");
     })
     .catch((err) => console.log(err));
 };
 
 exports.postLogout = (req, res, next) => {
-  User.findById(req.user._id).then((user) => {
-    user.activeSessions = user.activeSessions - 1
-    user.save()
-  }).catch((err) => console.log(err))
+  User.findById(req.user._id)
+    .then((user) => {
+      user.activeSessions = user.activeSessions - 1;
+      user.save();
+    })
+    .catch((err) => console.log(err));
   req.session.destroy((err) => {
     res.redirect("/");
   });
 };
+
+exports.getVerify =(req,res,next) => {
+  
+  
+  User.findById(req.params.id).then((user)=>{
+  
+    if (!user) return res.status(400).send("Invalid link");
+    
+    Token.findOne({
+      userId: user._id,
+      token: req.params.token,
+    }).then((token) => {
+      if (!token) return res.status(400).send("Invalid link");
+      user.verified = true;
+      user.save()
+      token.remove()
+      return res.send("email verified sucessfully");
+    })
+
+    
+
+    
+  })
+
+  
+
+   
+
+
+  
+}

@@ -6,14 +6,15 @@ const { body } = require('express-validator')
 const userController = require('../controllers/user')
 const accessController = require('../controllers/accessControl')
 const isAuth = require('../middleware/is-auth')
+const isVerified = require('../middleware/is-verified')
 
 const router = express.Router()
 
 router.get('/', userController.getIndex)
 
-router.get('/matches', isAuth, userController.getMatches)
+router.get('/matches', userController.getMatches)
 
-router.get('/matches/:matchId', isAuth, accessController.grantAccess("readAny", "matches"), userController.getMatch)
+router.get('/matches/:matchId', isAuth, isVerified, accessController.grantAccess("readAny", "matches"), userController.getMatch)
 
 router.get('/add-match', isAuth,userController.getAddMatch)
 router.post('/add-match', isAuth,

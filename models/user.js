@@ -37,7 +37,11 @@ const userSchema = new Schema({
    activeSessions: {
     type: Number,
     default: 0
-   }
+   },
+   verified: {
+    type: Boolean,
+    default: false,
+  },
 
 })
 
