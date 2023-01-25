@@ -58,23 +58,24 @@ exports.postLogin = (req, res, next) => {
         });
       }
       LoginAttempt.findOne({ usrName: user.usrName }).then((blackList) => {
-        if (user.userAttempts >= maxNumberOfFailedLogins && blackList) {
-          return res.status(429).render("auth/login", {
-            path: "/login",
-            pageTitle: "login",
-            errorMessage: "Troppi tentativi, riprova tra poco.",
-            oldInput: {
-              email: email,
-              password: password,
-            },
-            validationErrors: [],
-          });
+        if (!!blackList) {
+          if (blackList.attempts >= maxNumberOfFailedLogins) {
+            return res.status(429).render("auth/login", {
+              path: "/login",
+              pageTitle: "login",
+              errorMessage: "Troppi tentativi, riprova tra poco.",
+              oldInput: {
+                email: email,
+                password: password,
+              },
+              validationErrors: [],
+            });
+          }
         } 
         bcrypt
           .compare(password, user.password)
           .then((passOK) => {
             if (passOK && user.activeSessions < 2) {
-              user.userAttempts = 0;
               user.activeSessions = user.activeSessions + 1;
               user.save();
 
@@ -97,16 +98,18 @@ exports.postLogin = (req, res, next) => {
             const date = new Date();
             LoginAttempt.findOne({usrName: user.usrName}).then((username) => {
               if (!!username) {
+                //username.expireAt = (date + 60*60*1000)
+                username.attempts = username.attempts + 1
                 username.save()
               } else {
                 const loginAttempt = new LoginAttempt({
                   usrName: user.usrName,
+                  attempts: 1
+                  //expireAt: (date + 60*60*1000)
                 });
                 loginAttempt.save();
               }
             })
-            user.userAttempts = user.userAttempts + 1;
-            user.save();
 
             if(user.activeSessions >= 2) {
               errMsg = "Hai già due sessioni attive!"

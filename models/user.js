@@ -34,10 +34,6 @@ const userSchema = new Schema({
    accessToken: {
     type: String
    },
-   userAttempts: {
-    type: Number,
-    default: 0
-   },
    activeSessions: {
     type: Number,
     default: 0
