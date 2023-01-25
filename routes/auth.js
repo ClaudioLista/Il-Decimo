@@ -16,6 +16,9 @@ var FacebookStrategy = require('passport-facebook')
 
 const rateLimit = require('express-rate-limit')
 
+const passErr= 'Perfavore inserisci una password valida! Deve contenere: almeno 8 caratteri,'+
+                ' almeno 1 lettera minuscola, almeno 1 lettera maiuscola, almeno 1 numero e almeno 1 simbolo'
+
 const loginRateLimiter = rateLimit({
 	windowMs: 15 * 60 * 1000, // 15 minutes
 	max: 10, // Limit each IP to 10 requests per `window`
@@ -54,7 +57,7 @@ router.get('/oauth2/redirect/facebook', passport.authenticate('facebook', {
 router.post('/login', loginRateLimiter, isLog,
   [
     body('email').isEmail().normalizeEmail(),
-    body('password').isLength({ min: 6 }).isAlphanumeric().trim() // TODO : modificare il controllo password
+    body('password').isLength({ min: 8, max: 50 }).trim()
   ],
   authController.postLogin
 )
@@ -87,15 +90,35 @@ router.post('/signup', isLog,
         })
       })
       .normalizeEmail(),
-    body('password', 'Perfavore inserisci una password con almeno 6 caratteri!')    // TODO : modificare il controllo password
-      .isLength({ min: 6 })
-      .isAlphanumeric()
+    body('password', passErr)
+      .isLength({ min: 8, max: 50 })
+      .isStrongPassword({
+        minLength: 8,
+        minLowercase: 1,
+        minUppercase: 1,
+        minNumbers: 1,
+        minSymbols: 1,
+        returnScore: false,
+        pointsPerUnique: 1,
+        pointsPerRepeat: 0.5,
+        pointsForContainingLower: 10,
+        pointsForContainingUpper: 10,
+        pointsForContainingNumber: 10,
+        pointsForContainingSymbol: 10,
+      })
       .trim(),
     body('confirmPassword')
       .trim()
       .custom((value, { req }) => {
         if (value !== req.body.password) {
           throw new Error('Le password devono essere uguali!')
+        }
+        return true
+      }),
+    body('acceptTerms')
+      .custom(input => {
+        if (!input) {
+          throw new Error('Devi accettare i termini di servizio spuntando la casella!')
         }
         return true
       })

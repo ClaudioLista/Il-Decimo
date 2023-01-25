@@ -11,7 +11,7 @@ const router = express.Router()
 
 router.get('/', userController.getIndex)
 
-router.get('/matches', isAuth, userController.getMatches)
+router.get('/matches', userController.getMatches)
 
 router.get('/matches/:matchId', isAuth, accessController.grantAccess("readAny", "matches"), userController.getMatch)
 

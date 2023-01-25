@@ -8,10 +8,17 @@ const LoginAttempt = require("../models/loginAttempt");
 const maxNumberOfFailedLogins = 5; //on single username
 const timeWindowForFailedLogins = 60 * 60 * 1
 
+exports.getTerms = (req, res, next) => {
+  res.render("auth/termsandconditions", {
+    path: "/terms",
+    pageTitle: "Termini di Servizio - Il Decimo",
+  });
+};
+
 exports.getLogin = (req, res, next) => {
   res.render("auth/login", {
     path: "/login",
-    pageTitle: "login",
+    pageTitle: "Login",
     errorMessage: "",
     oldInput: {
       email: "",
@@ -19,10 +26,6 @@ exports.getLogin = (req, res, next) => {
     },
     validationErrors: [],
   });
-};
-
-exports.getTerms = (req, res, next) => {
-  res.render("auth/termsandconditions");
 };
 
 exports.postLogin = (req, res, next) => {
@@ -33,7 +36,7 @@ exports.postLogin = (req, res, next) => {
   if (!errors.isEmpty()) {
     return res.status(422).render("auth/login", {
       path: "/login",
-      pageTitle: "login",
+      pageTitle: "Login",
       errorMessage: errMsg,
       oldInput: {
         email: email,
@@ -48,7 +51,7 @@ exports.postLogin = (req, res, next) => {
       if (!user) {
         return res.status(422).render("auth/login", {
           path: "/login",
-          pageTitle: "login",
+          pageTitle: "Login",
           errorMessage: errMsg,
           oldInput: {
             email: email,
@@ -62,7 +65,7 @@ exports.postLogin = (req, res, next) => {
           if (blackList.attempts >= maxNumberOfFailedLogins) {
             return res.status(429).render("auth/login", {
               path: "/login",
-              pageTitle: "login",
+              pageTitle: "Login",
               errorMessage: "Troppi tentativi, riprova tra poco.",
               oldInput: {
                 email: email,
@@ -190,7 +193,6 @@ exports.postSignup = (req, res, next) => {
         }
       );
       user.accessToken = accessToken;
-      //console.log(user)
       return user.save();
     })
     .then(() => {
