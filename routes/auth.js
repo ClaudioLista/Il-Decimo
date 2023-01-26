@@ -1,6 +1,8 @@
 const express = require('express')
 const { body } = require('express-validator')
 const { Promise, Error } = require('sequelize')
+const bcrypt = require("bcryptjs");
+var generatePass = require('password-generator')
 
 const authController = require('../controllers/auth')
 const isAuth = require('../middleware/is-auth')
@@ -8,26 +10,15 @@ const isLog = require('../middleware/is-logged')
 const User = require('../models/user')
 const FederateUser = require('../models/federateUser')
 
-
 const router = express.Router()
 
 var passport = require('passport')
 var GoogleStrategy = require('passport-google-oidc')
-var FacebookStrategy = require('passport-facebook')
-
-const rateLimit = require('express-rate-limit')
+var FacebookStrategy = require('passport-facebook');
+const { rateLimit } = require('../middleware/login-rate-limit');
 
 const passErr= 'Perfavore inserisci una password valida! Deve contenere: almeno 8 caratteri,'+
                 ' almeno 1 lettera minuscola, almeno 1 lettera maiuscola, almeno 1 numero e almeno 1 simbolo'
-
-const loginRateLimiter = rateLimit({
-	windowMs: 15 * 60 * 1000, // 15 minutes
-	max: 10, // Limit each IP to 10 requests per `window`
-	message:
-		'Too many login from this IP, please try again after 15 minutes',
-  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
-	legacyHeaders: false, // Disable the `X-RateLimit-*` headers
-})
 
 router.get("/verify/:id/:token",authController.getVerify)
 
@@ -57,7 +48,7 @@ router.get('/oauth2/redirect/facebook', passport.authenticate('facebook', {
   })
 )
 
-router.post('/login', loginRateLimiter, isLog,
+router.post('/login', rateLimit, isLog,
   [
     body('email').isEmail().normalizeEmail(),
     body('password').isLength({ min: 8, max: 50 }).trim()
@@ -71,8 +62,16 @@ router.get('/signup', isLog, authController.getSignup)
 
 router.post('/signup', isLog,
   [
-    body('usrName', 'Perfavore inserisci un username con almeno 6 caratteri, composto solo da lettere o numeri!')
-      .isLength({ min: 6, max: 16 })
+    body('nome', 'Perfavore inserisci il tuo Nome correttamente!')
+      .isLength({ min: 1, max: 28 })
+      .isString()
+      .trim(),
+    body('cognome', 'Perfavore inserisci il tuo Cognome correttamente!')
+      .isLength({ min: 1, max: 28 })
+      .isString()
+      .trim(),
+    body('usrName', 'Perfavore inserisci un Username con almeno 6 caratteri, composto solo da lettere o numeri!')
+      .isLength({ min: 4, max: 60 })
       .isAlphanumeric()
       .custom((value, { req }) => {
         return User.findOne({ usrName: value }).then((userDoc) => {
@@ -87,12 +86,15 @@ router.post('/signup', isLog,
         return User.findOne({ email: value }).then((userDoc) => {
           if (userDoc) {
             return Promise.reject(
-              'E-mail già registrata! Se non ricordi la password reimpostala.',
+              'E-mail già registrata! Se non ricordi la Password reimpostala.',
             )
           }
         })
       })
       .normalizeEmail(),
+    body('numCell', 'Perfavore inserisci un Numero telefonico valido!')
+      .isLength(10)
+      .isMobilePhone(),
     body('password', passErr)
       .isLength({ min: 8, max: 50 })
       .isStrongPassword({
@@ -114,14 +116,14 @@ router.post('/signup', isLog,
       .trim()
       .custom((value, { req }) => {
         if (value !== req.body.password) {
-          throw new Error('Le password devono essere uguali!')
+          throw new Error('Le Password devono essere uguali!')
         }
         return true
       }),
     body('acceptTerms')
       .custom(input => {
         if (!input) {
-          throw new Error('Devi accettare i termini di servizio spuntando la casella!')
+          throw new Error('Devi accettare i Termini di servizio spuntando la casella!')
         }
         return true
       })
@@ -144,16 +146,22 @@ passport.use(
       FederateUser.findOne({ subject: profile.id, provider: issuer })
         .then((fUser) => {
           if (!fUser) {
-            const user = new User({
-              usrName: profile.displayName,
-              email: profile.emails[0].value,
-              password: null,
-              matcheslist: {
-                matches: []
-              }
-            })
-            user
-              .save()
+            const pass = generatePass()
+            bcrypt.hash(pass, 12)
+            .then((hashedPassword) => {
+              const user = new User({
+                nome: profile.name.givenName,
+                cognome: profile.name.familyName,
+                usrName: 'g_' + profile.name.givenName + '_' + profile.name.familyName,
+                email: profile.emails[0].value,
+                password: hashedPassword,
+                matcheslist: {
+                  matches: []
+                },
+                verified: true,
+                activeSessions: 1
+              })
+              user.save()
               .then(() => {
                 const federateUser = new FederateUser({
                   userId: user._id,
@@ -167,6 +175,7 @@ passport.use(
               .catch((err) => {
                 return cb(err)
               })
+            })
           } else {
             User.findOne({ _id: fUser.userId }).then((user) => {
               return cb(null, user)
@@ -196,16 +205,22 @@ passport.use(
       })
         .then((fUser) => {
           if (!fUser) {
-            const user = new User({
-              usrName: profile.displayName,
-              email: profile.emails[0].value,
-              password: null,
-              matcheslist: {
-                matches: []
-              }
-            })
-            user
-              .save()
+            const pass = generatePass()
+            bcrypt.hash(pass, 12)
+            .then((hashedPassword) => {
+              const user = new User({
+                nome: profile.name.givenName,
+                cognome: profile.name.familyName,
+                usrName: 'f_' + profile.name.givenName + '_' + profile.name.familyName,
+                email: profile.emails[0].value,
+                password: hashedPassword,
+                matcheslist: {
+                  matches: []
+                },
+                verified: true,
+                activeSessions: 1
+              })
+              user.save()
               .then(() => {
                 const federateUser = new FederateUser({
                   userId: user._id,
@@ -219,6 +234,7 @@ passport.use(
               .catch((err) => {
                 return cb(err)
               })
+            })
           } else {
             User.findOne({ _id: fUser.userId }).then((user) => {
               return cb(null, user)
