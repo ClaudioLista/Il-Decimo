@@ -298,6 +298,27 @@ pa {
   text-align: center;
 }
 
+.pagination {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.pagination a {
+  text-decoration: none;
+  color: #0066ff;
+  padding: 0.5rem;
+  border: 1px solid #0066ff;
+  margin: 0 1rem;
+}
+
+.pagination a:hover,
+.pagination a:active,
+.pagination a.active {
+  background: #0066ff;
+  color: white;
+}
+
+
 .row {
   display: flex;
   margin-right: -15px;
