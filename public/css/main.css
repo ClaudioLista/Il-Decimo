@@ -298,6 +298,18 @@ pa {
   text-align: center;
 }
 
+.message {
+  /* margin: auto; */
+  width: 90%;
+  padding: 1rem;
+  margin-bottom: 10%;
+  color: black;
+  background: rgb(36, 255, 113);
+  border: 1px solid rgb(53, 167, 63);
+  border-radius: 25px;
+  text-align: center;
+}
+
 .pagination {
   margin-top: 2rem;
   text-align: center;
