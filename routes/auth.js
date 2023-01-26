@@ -20,15 +20,6 @@ const { rateLimit } = require('../middleware/login-rate-limit');
 const passErr= 'Perfavore inserisci una password valida! Deve contenere: almeno 8 caratteri,'+
                 ' almeno 1 lettera minuscola, almeno 1 lettera maiuscola, almeno 1 numero e almeno 1 simbolo'
 
-const loginRateLimiter = rateLimit({
-	windowMs: 15 * 60 * 1000, // 15 minutes
-	max: 10, // Limit each IP to 10 requests per `window`
-	message:
-		'Too many login from this IP, please try again after 15 minutes',
-  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
-	legacyHeaders: false, // Disable the `X-RateLimit-*` headers
-})
-
 router.get("/verify/:username/:token", authController.getVerify)
 
 router.get('/login', isLog, authController.getLogin)
