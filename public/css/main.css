@@ -301,23 +301,25 @@ pa {
 .pagination {
   margin-top: 2rem;
   text-align: center;
+  padding-top: 20px;
+  padding-bottom: 50px;
 }
 
 .pagination a {
   text-decoration: none;
-  color: #0066ff;
+  color: black;
   padding: 0.5rem;
-  border: 1px solid #0066ff;
+  border: 2px solid rgb(0, 255, 0);
   margin: 0 1rem;
+  background: white;
 }
 
 .pagination a:hover,
 .pagination a:active,
 .pagination a.active {
-  background: #0066ff;
+  background: rgb(0, 255, 0);
   color: white;
 }
-
 
 .row {
   display: flex;

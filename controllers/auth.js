@@ -7,7 +7,6 @@ const Token = require("../models/token");
 const User = require("../models/user");
 const LoginAttempt = require("../models/loginAttempt");
 
-
 const maxNumberOfFailedLogins = 5; //on single username
 const timeWindowForFailedLogins = 60 * 60 * 1
 
@@ -192,7 +191,6 @@ exports.postSignup = (req, res, next) => {
     .then((hashedPassword) => {
       const Nome = nome.charAt(0).toUpperCase() + nome.slice(1);
       const Cognome = cognome.charAt(0).toUpperCase() + cognome.slice(1);
-      console.log(Nome, Cognome)
       const user = new User({
         nome: Nome,
         cognome: Cognome,
