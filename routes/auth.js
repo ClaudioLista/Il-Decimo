@@ -20,7 +20,7 @@ const { rateLimit } = require('../middleware/login-rate-limit');
 const passErr= 'Perfavore inserisci una password valida! Deve contenere: almeno 8 caratteri,'+
                 ' almeno 1 lettera minuscola, almeno 1 lettera maiuscola, almeno 1 numero e almeno 1 simbolo'
 
-router.get("/verify/:id/:token",authController.getVerify)
+router.get("/verify/:username/:token", authController.getVerify)
 
 router.get('/login', isLog, authController.getLogin)
 

@@ -1,6 +1,6 @@
-const mongoose = require('mongoose')
+const mongoose = require("mongoose");
 
-const Schema = mongoose.Schema
+const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
   nome: {
@@ -10,48 +10,53 @@ const userSchema = new Schema({
     type: String
   },
   usrName: {
-    type: String
+    type: String,
   },
   email: {
-    type: String
+    type: String,
   },
   numCell: {
     type: String
   },
   password: {
-    type: String
+    type: String,
   },
   matchNum: {
-    type: Number
+    type: Number,
   },
   matchList: {
-    matchId: { 
-      type: Schema.Types.ObjectId, 
-      ref: 'Match'
+    matchId: {
+      type: Schema.Types.ObjectId,
+      ref: "Match",
     },
     vote: {
       type: String,
-      default: ""
+      default: "",
     },
     type: Array,
   },
   role: {
     type: String,
-    default: 'user',
-    enum: ["user", "admin"]
-   },
-   accessToken: {
-    type: String
-   },
-   activeSessions: {
+    default: "user",
+    enum: ["user", "admin"],
+  },
+  accessToken: {
+    type: String,
+  },
+  activeSessions: {
     type: Number,
-    default: 0
-   },
-   verified: {
+    default: 0,
+  },
+  verified: {
     type: Boolean,
     default: false,
   },
+  expireAt: { 
+    type: Date, 
+    default: null,
+  },
+});
 
-})
+userSchema.index( { "expireAt": 1 }, { "expireAfterSeconds": 0 } );
 
-module.exports = mongoose.model('User', userSchema)
+module.exports = mongoose.model("User", userSchema);

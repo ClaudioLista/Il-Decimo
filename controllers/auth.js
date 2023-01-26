@@ -8,7 +8,7 @@ const User = require("../models/user");
 const LoginAttempt = require("../models/loginAttempt");
 
 const maxNumberOfFailedLogins = 5; //on single username
-const timeWindowForFailedLogins = 60 * 60 * 1
+const timeWindowForFailedLogins = 60 * 60 * 1000
 
 exports.getTerms = (req, res, next) => {
   res.render("auth/termsandconditions", {
@@ -22,6 +22,7 @@ exports.getLogin = (req, res, next) => {
     path: "/login",
     pageTitle: "Login",
     errorMessage: "",
+    message: "",
     oldInput: {
       email: "",
       password: "",
@@ -82,6 +83,20 @@ exports.postLogin = (req, res, next) => {
           .compare(password, user.password)
           .then((passOK) => {
             if (passOK && user.activeSessions < 2) {
+
+              if (!user.verified) {
+                return res.status(422).render("auth/login", {
+                  path: "/login",
+                  pageTitle: "Login",
+                  errorMessage: "Per effettuare l'accesso devi prima verificare l'email!",
+                  oldInput: {
+                    email: email,
+                    password: password,
+                  },
+                  validationErrors: [],
+                });
+              }
+
               user.activeSessions = user.activeSessions + 1;
               user.save();
 
@@ -101,17 +116,16 @@ exports.postLogin = (req, res, next) => {
                 res.redirect("/");
               });
             }
-            const date = new Date();
             LoginAttempt.findOne({ usrName: user.usrName }).then((username) => {
               if (!!username) {
-                //username.expireAt = (date + 60*60*1000)
+                username.expireAt = (Date.now() + 300000)
                 username.attempts = username.attempts + 1;
                 username.save();
               } else {
                 const loginAttempt = new LoginAttempt({
                   usrName: user.usrName,
                   attempts: 1,
-                  //expireAt: (date + 60*60*1000)
+                  expireAt: (Date.now() + 300000)
                 });
 
                 loginAttempt.save();
@@ -202,6 +216,7 @@ exports.postSignup = (req, res, next) => {
           matches: [],
         },
         role: "user",
+        expireAt: (Date.now() + 86400000)
       });
       const accessToken = jwt.sign(
         { userId: user._id },
@@ -211,19 +226,26 @@ exports.postSignup = (req, res, next) => {
         }
       );
       user.accessToken = accessToken;
-
       user.save();
-      let token =  new Token({
+
+      let token = new Token({
         userId: user._id,
-        token: accessToken
+        token: accessToken,
+        expireAt: Date.now() + 86400000,
       }).save()
 
-      const message = `${process.env.BASE_URL}/verify/${user.id}/${accessToken}`;
-       sendEmail(user.email, "Verify Email", message); 
+      const message = `${process.env.BASE_URL}/verify/${user.usrName}/${accessToken}`;
+      const html = "<h2>Clicca il link per confermare l'email:</h2><a href='" + message + "' target='_blank'>" + message + "</a>"
+      sendEmail(user.email, "Verifica l'email!", html, message);
+      
     })
     .then(() => {
-
-      res.redirect("/login");
+      res.render("auth/login", {
+        path: "/login",
+        pageTitle: "login",
+        errorMessage: null,
+        message: "Abbiamo inviato un link per confermare la tua e-mail!",
+      });
     })
     .catch((err) => console.log(err));
 };
@@ -240,20 +262,40 @@ exports.postLogout = (req, res, next) => {
   });
 };
 
-exports.getVerify =(req,res,next) => {
-  User.findById(req.params.id).then((user)=>{
-    if (!user) return res.status(400).send("Invalid link");
-
+exports.getVerify = (req, res, next) => {
+  
+  User.findOne({usrName: req.params.username}).then((user)=>{
+  
+    if (!user) {
+      return res.status(400).render("auth/emailVerification", {
+        path: "/emailVerification",
+        pageTitle: "emailVerification",
+        valid: false
+      });
+    }
+    
     Token.findOne({
       userId: user._id,
       token: req.params.token,
-    })
-    .then((token) => {
-      if (!token) return res.status(400).send("Invalid link");
+    }).then((token) => {
+      if (!token) {
+        return res.status(400).render("auth/emailVerification", {
+          path: "/emailVerification",
+          pageTitle: "emailVerification",
+          valid: false
+        });
+      } 
       user.verified = true;
+      user.expireAt = null;
       user.save()
       token.remove()
-      return res.send("Email verificata con successo");
+      return res.status(400).render("auth/emailVerification", {
+        path: "/emailVerification",
+        pageTitle: "emailVerification",
+        valid: true
+      });
     })
+    
   })
+  
 }

@@ -11,7 +11,13 @@ const tokenSchema = new Schema({
     type: String,
     required: true,
   },
+  expireAt: { 
+    type: Date, 
+    default: null,
+  },
 });
+
+tokenSchema.index( { "expireAt": 1 }, { "expireAfterSeconds": 0 } );
 
 const Token = mongoose.model("token", tokenSchema);
 
