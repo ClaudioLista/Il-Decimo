@@ -57,10 +57,9 @@ exports.grantIfOwnMatch = function (action, resource) {
     try {
       const permission = roles.can(req.user.role)[action](resource);
       const matchId = req.body.matchId || req.params.matchId;
-      console.log(matchId);
+
       Match.findById(matchId)
         .then((match) => {
-          console.log(match);
           if (
             !permission.granted ||
             (!match.hostUserId.equals(req.user._id) &&

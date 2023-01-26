@@ -19,7 +19,6 @@ window.addEventListener("load", () => {
 });
 
 window.addEventListener("keypress", function(event) {
-    //console.log("KEY PRESS")
     if (event.key === "Enter") {
         event.preventDefault();
         sendMessage();
@@ -28,26 +27,14 @@ window.addEventListener("keypress", function(event) {
 
 function sendMessage() {
     let textarea = document.getElementById('chatMessage');
-	let chatMessage = textarea.value;
-    
+	let chatMessage = textarea.value; 
     if (chatMessage != "") {
         var currentdate = new Date();
-        
         var getMinutes= currentdate.getMinutes();
-        
-        if(currentdate.getMinutes() < 10){
+        if(currentdate.getMinutes() < 10) {
             var getMinutes= '0' + currentdate.getMinutes()
         }
-        
-
-        var datetime = 
-        //                 + currentdate.getDate() + "/"
-        // //             + (currentdate.getMonth()+1) + " @ "  
-                    + currentdate.getHours() + ":"  
-                    + getMinutes;
-        console.log(datetime);            
-
-        console.log(`You sent a message: ${chatMessage}`);
+        var datetime = +currentdate.getDate()+"/"+(currentdate.getMonth()+1)+" - "+currentdate.getHours()+":"+getMinutes;
 
         let divMessageChat = document.createElement('div')
         divMessageChat.className = "messages-chat"
@@ -66,17 +53,11 @@ function sendMessage() {
         pTime.className = "time"
 
         divMessage.appendChild(pText)
-        //divMessage.appendChild(pTime)
-
         divMessageChat.appendChild(divMessage)
         divMessageChat.appendChild(pTime)
 
         let parent = document.querySelector('#scratchPad')
         parent.appendChild(divMessageChat)
-        
-        // Info, concerned messages exchange, are dynamically inserted in the HTML5 page
-        //scratchPad.insertAdjacentHTML( 'beforeEnd', `<p>${datetime}: </p>`);
-        //scratchPad.insertAdjacentHTML( 'beforeEnd', `<p style="color:green"> ${chatMessage} </p>`);	 
 
         scratchPad.scrollTop = scratchPad.scrollHeight;
         
@@ -86,57 +67,36 @@ function sendMessage() {
             name: user,
             date: datetime
         });
-
         textarea.value = ''
     }
-
 }
 
 //Handle 'created' message
-socket.on('created', (room) => {	 
-	console.log(`room ${room} has been created!`);
-	console.log('This peer is the initiator...');
-
-	// Info, concerned messages exchange, are dynamically inserted in the HTML5 page
-	//scratchPad.insertAdjacentHTML( 'beforeEnd', `<p>Time: ${(performance.now() / 1000).toFixed(3)} --> room ${room} has been created! </p>`);
-    //scratchPad.insertAdjacentHTML( 'beforeEnd', `<p>Time: ${(performance.now() / 1000).toFixed(3)} --> This peer is the initiator... </p>`);
-});
+// socket.on('created', (room) => {	 
+// 	console.log(`room ${room} has been created!`);
+// 	console.log('This peer is the initiator...');
+// });
 
 //Handle 'remotePeerJoining' message
-socket.on('remotePeerJoining', (room) => {
-	console.log(`Request to join ${room}`);
-	console.log('You are the initiator!');
-
-	// Info, concerned messages exchange, are dynamically inserted in the HTML5 page
-    //scratchPad.insertAdjacentHTML( 'beforeEnd', `<p style="color:red">Time: ${(performance.now() / 1000).toFixed(3)} --> Message from server: request to join room ${room}</p>`);
-});
+// socket.on('remotePeerJoining', (room) => {
+// 	console.log(`Request to join ${room}`);
+// 	console.log('You are the initiator!');
+// });
 
 //Handle 'broadcast: joined' message
-socket.on('broadcast: joined', (msg) => {
-
-	// Info, concerned messages exchange, are dynamically inserted in the HTML5 page
-    //scratchPad.insertAdjacentHTML( 'beforeEnd', `<p style="color:red">Time: ${(performance.now() / 1000).toFixed(3)} --> Broadcast message from server: ${msg}</p>`);
-
-	console.log(`Broadcast message from server: ${msg}`);	  
-});
+// socket.on('broadcast: joined', (msg) => {
+// 	console.log(`Broadcast message from server: ${msg}`);	  
+// });
 
 //Handle 'joined' message
-socket.on('joined', (msg) => {
-	console.log(`You joined ${room}`);
-	console.log('You are the joiner!');
-
-	// Info, concerned messages exchange, are dynamically inserted in the HTML5 page
-    //scratchPad.insertAdjacentHTML( 'beforeEnd', `<p style="color:red">Time: ${(performance.now() / 1000).toFixed(3)} --> Message from server: you joined the room ${room}</p>`); 
-});
+// socket.on('joined', (msg) => {
+// 	console.log(`You joined ${room}`);
+// 	console.log('You are the joiner!');
+// });
 
 //Handle 'message' message
 socket.on('message', (message) => {
-	console.log(`Got message from other peer: ${message}`);
-	
-	// Info, concerned messages exchange, are dynamically inserted in the HTML5 page
-	//scratchPad.insertAdjacentHTML( 'beforeEnd', `<p>${message.date} --> ${message.name}: </p>`);
-    //scratchPad.insertAdjacentHTML( 'beforeEnd', `<p style="color:blue"> ${message.message} </p>`);
-
+	// console.log(`Got message from other peer: ${message}`);
     let divMessageChat = document.createElement('div')
     divMessageChat.className = "messages-chat"
 
@@ -158,8 +118,6 @@ socket.on('message', (message) => {
     pTime.className = "receive-time"
 
     divMessage.appendChild(pText)
-    //divMessage.appendChild(pTime)
-
     divMessageChat.appendChild(divMessage)
     divMessageChat.appendChild(pTime)
 
@@ -167,122 +125,93 @@ socket.on('message', (message) => {
     parent.appendChild(divMessageChat)
 
     scratchPad.scrollTop = scratchPad.scrollHeight;
-    
 });
 
 </script>
 
 <body>
-
     <%- include('../includes/navigation.ejs') %>
-    
     <main class="centered">
         <h1><%= m.title %></h1>
         <hr>
         <div class="grid">
-                <article class="card match-item">
-                    <header class="card__header">
-                        <h1 class="match__title"> Match Details </h1>
-                    </header>
-                    <hr>
-                    <div class="card__content">
-                        <h1>Players left: <%= m.totalPlayers - m.currentPlayers %></h1>
-                        <br>
-                        <h2 class="match__place">
-                            Where: <%= m.placeName %>
-                        </h2>
-                        <br>
-                        <h2 class="match__place">
-                            When: <%= m.time.getDate().toString() + "-" + (m.time.getMonth()+1).toString() + "-" + m.time.getFullYear().toString() %>
-                        </h2>
-                        <br>
-                        <h2 class="match__price">
-                            <%= m.price %>€
-                        </h2>
-                        <br>
-                        <p class="match__description">
-                            <%= m.description %>
-                        </p>
-                    </div>
-                    <div class="card__actions">
-                        <% if (isAuthenticated) { %>
-                            <% if (is_full && is_in) { %>
-                                <a href="/matches/<%= m._id %>/unjoin" class="btn">
-                                    UnJoin
-                                </a>
-                            <% } else if(is_full && !is_in) { %>  
-                                <h1 style="color: #513dff;">The Match is full!</h1>
-                            <% } else { %>
-                                <a href="/matches/<%= m._id %>/<% if (!is_in) { %>join<% } else { %>unjoin<% } %>" class="btn">
-                                    <% if (!is_in) { %> Join <% } else { %> UnJoin <% } %> 
-                                </a>
-                            <% }%>
-                        <% } %>
-                    </div>
-                    <% if (isAuthenticated && is_in && isOver) { %>
-                        <%- include('../includes/voting.ejs') %>
+            <article class="card match-item">
+                <header class="card__header">
+                    <h1 class="match__title">Match Details</h1>
+                </header>
+                <hr>
+                <div class="card__content">
+                    <h2>Players left: <%= m.totalPlayers - m.currentPlayers %></h2><br>
+                    <h2 class="match__place">Where: <%= m.placeName %></h2><br>
+                    <h2 class="match__place">When: <%= m.time.getDate().toString() + "-" + (m.time.getMonth()+1).toString() + "-" + m.time.getFullYear().toString() %></h2><br>
+                    <h2 class="match__price"><%= m.price %>€</h2><br>
+                    <p class="match__description"><%= m.description %></p>
+                </div>
+                <div class="card__actions">
+                    <% if (isAuthenticated) { %>
+                        <% if (is_full && is_in) { %>
+                            <a href="/matches/<%= m._id %>/unjoin" class="btn">UnJoin</a>
+                        <% } else if(is_full && !is_in) { %>  
+                            <h1 style="color: #513dff;">The Match is full!</h1>
+                        <% } else { %>
+                            <a href="/matches/<%= m._id %>/<% if (!is_in) { %>join<% } else { %>unjoin<% } %>" class="btn">
+                                <% if (!is_in) { %> Join <% } else { %> UnJoin <% } %> 
+                            </a>
+                        <% }%>
                     <% } %>
-                    <br>
-                </article>
-                <article class="card match-item">
+                </div>
+                <% if (isAuthenticated && is_in && isOver) { %>
+                    <%- include('../includes/voting.ejs') %>
+                <% } %>
+                <br>
+            </article>
+            <article class="card match-item">
+                <header class="card__header">
+                    <h1 class="match__title">Players list<i class="fa fa-futbol-o"></i></h1>
+                </header>
+                <hr>
+                <div class="card__content">
+                    <h2 class="player__list">
+                        <% for (let players of m.listPlayers.players) { %>
+                            <h2><%= players.userId.usrName %></h2>
+                        <% } %>
+                    </h2>
+                </div>
+                <br>
+            </article>
+            <% if (isAuthenticated && is_in) { %>
+                <article class="card chat-item">
                     <header class="card__header">
-                        <h2 class="match__title"> Players list
-                        <i class="fa fa-futbol-o"></i>
-                        </h2>
+                        <h1 class="match__title">Chat</h1>
                     </header>
                     <hr>
                     <div class="card__content">
-                        <h2 class="player__list">
-                            <% for (let players of m.listPlayers.players) { %>
-                                <h2><%= players.userId.usrName %></h2>
-                            <% } %>
-                        </h2>
-                    </div>
-                    <br>
-                </article>
-                <% if (isAuthenticated && is_in) { %>
-
-                    <article class="card chat-item">
-                        <header class="card__header">
-                            <h2 class="match__title"> Chat
-                            </h2>
-                        </header>
-                        <hr>
-                        <div class="card__content">
-                            <div class="chat" id="scratchPad">
-
-                                <% if (chat.length > 0) { %>
-                                    
-                                    <% for (let message of chat) { %>
-                                        <div class="messages-chat">
-                                            <% if(message.name == user){ %>
+                        <div class="chat" id="scratchPad">
+                            <% if (chat.length > 0) { %>
+                                <% for (let message of chat) { %>
+                                    <div class="messages-chat">
+                                        <% if(message.name == user){ %>
                                             <div class="message">
-                                                <p class="text"> <%= message.msg %></p>
+                                                <p class="text"><%= message.msg %></p>
                                             </div>
                                             <p class="time"><%= message.date %></p>
-                                            <% } else {%>
-                                                <div class="receive-message">
-                                                    <p class="receive-text"> <%= message.msg %> </p>
-                                                </div>
-                                                <p class="receive-time"><%= message.date %> <strong><%= message.name %></strong></p>
-                                            <% } %>
-                                        </div>
-
-                                    <% } %>
-
+                                        <% } else {%>
+                                            <div class="receive-message">
+                                                <p class="receive-text"><%= message.msg %></p>
+                                            </div>
+                                            <p class="receive-time"><%= message.date %> <strong><%= message.name %></strong></p>
+                                        <% } %>
+                                    </div>
                                 <% } %>
-
-                            </div>
-
-                            <div id="container" class="footer-chat">
-                                <input type="text" class="write-message" id="chatMessage" name="chat-message" placeholder="Type your message here"></input>
-                                <i class="icon send fa fa-paper-plane-o clickable" onClick="sendMessage()" aria-hidden="true"></i>
-                            </div>
-                            <!-- <button id="chatButton" class="btn" onClick="sendMessage()">Send</button> -->
+                            <% } %>
                         </div>
-                    </article>
-        
-                <% } %>
+                        <div id="container" class="footer-chat">
+                            <input type="text" class="write-message" id="chatMessage" name="chat-message" placeholder="Type your message here"></input>
+                            <i class="icon send fa fa-paper-plane-o clickable" onClick="sendMessage()" aria-hidden="true"></i>
+                        </div>
+                    </div>
+                </article>
+            <% } %>
         </div>
     </main>
 

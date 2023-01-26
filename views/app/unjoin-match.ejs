@@ -17,6 +17,8 @@
                 <input type="hidden" value="<%= m._id %>" name="matchId">
                 <button class="btn" type="submit">Confirm UnJoin!</button>
             </form>
+            <br><br>
+            <!-- <a class="btn" href="/matches/:matchId">Torna ai dettagli!</a> -->
         <% } else if (!playerIn && can_unjoin) { %>
             <h1 style="color: #513dff;"">You're not in this match!</h1>
         <% } else {%>

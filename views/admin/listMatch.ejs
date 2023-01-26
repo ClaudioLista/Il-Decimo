@@ -1,79 +1,75 @@
 <%- include('../includes/head.ejs') %>
-    <link rel="stylesheet" href="/css/adminmatch.css">
+    <link rel="stylesheet" href="/css/match.css">
 
 </head>
 
-<div class="row">
-    <div class="col-md-12">
-      <div class="user-dashboard-info-box table-responsive mb-0 bg-white p-4 shadow-sm">
-        <table class="table manage-candidates-top mb-0">
-          <thead>
-            <tr>
-              <th>Candidate Name</th>
-              <th class="text-center">Status</th>
-              <th class="action text-right">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr class="candidates-list">
-              <td class="title">
-                <div class="thumb">
-                  <img class="img-fluid" src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="">
-                </div>
-                <div class="candidate-list-details">
-                  <div class="candidate-list-info">
-                    <div class="candidate-list-title">
-                      <h5 class="mb-0"><a href="#">Brooke Kelly</a></h5>
-                    </div>
-                    <div class="candidate-list-option">
-                      <ul class="list-unstyled">
-                        <li><i class="fas fa-filter pr-1"></i>Information Technology</li>
-                        <li><i class="fas fa-map-marker-alt pr-1"></i>Rolling Meadows, IL 60008</li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </td>
-              <td class="candidate-list-favourite-time text-center">
-                <a class="candidate-list-favourite order-2 text-danger" href="#"><i class="fas fa-heart"></i></a>
-                <span class="candidate-list-time order-1">Shortlisted</span>
-              </td>
-              <td>
-                <ul class="list-unstyled mb-0 d-flex justify-content-end">
-                  <li><a href="#" class="text-primary" data-toggle="tooltip" title="" data-original-title="view"><i class="far fa-eye"></i></a></li>
-                  <li><a href="#" class="text-info" data-toggle="tooltip" title="" data-original-title="Edit"><i class="fas fa-pencil-alt"></i></a></li>
-                  <li><a href="#" class="text-danger" data-toggle="tooltip" title="" data-original-title="Delete"><i class="far fa-trash-alt"></i></a></li>
-                </ul>
-              </td>
-            </tr>
-            <tr class="candidates-list">
-              <td class="title">
-                <div class="thumb">
-                  <img class="img-fluid" src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="">
-                </div>
-                <div class="candidate-list-details">
-                  <div class="candidate-list-info">
-                    <div class="candidate-list-title">
-                      <h5 class="mb-0"><a href="#">Ronald Bradley</a></h5>
-                    </div>
-                    <div class="candidate-list-option">
-                      <ul class="list-unstyled">
-                        <li><i class="fas fa-filter pr-1"></i>Human Resources</li>
-                        <li><i class="fas fa-map-marker-alt pr-1"></i>Monroe Township, NJ 08831</li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </td>
-              <td class="candidate-list-favourite-time text-center">
-                <a class="candidate-list-favourite order-2 text-danger" href="#"><i class="fas fa-heart"></i></a>
-                <span class="candidate-list-time order-1">Shortlisted</span>
-              </td>
-              <td>
-                <ul class="list-unstyled mb-0 d-flex justify-content-end">
-                  <li><a href="#" class="text-primary" data-toggle="tooltip" title="" data-original-title="view"><i class="far fa-eye"></i></a></li>
-                  <li><a href="#" class="text-info" data-toggle="tooltip" title="" data-original-title="Edit"><i class="fas fa-pencil-alt"></i></a></li>
-                  <li><a href="#" class="text-danger" data-toggle="tooltip" title="" data-original-title="Delete"><i class="far fa-trash-alt"></i></a></li>
-                </ul>
-              </td>
-            </tr>
+<body style="background-image: linear-gradient(125deg, #2f1cbb, #114766);">
+    <%- include('../includes/navigation.ejs') %>
+    <main>
+        <% if (ms.length > 0) { %>
+            <div class="grid">
+                <% for (let match of ms) { %>
+                    <article class="card match-item" style="background-color: white;" onclick="location.assign('/matches/<%= match._id %>')">
+                        <header class="card__header">
+                            <h1 class="match__title"><%= match.title %></h1>
+                            <h2 class="match__playerCount" style="color: #513dff;"><%= match.totalPlayers /2 %> vs <%= match.totalPlayers /2 %></h2>
+                        </header>
+                        <div class="card__image">
+                            <img src="https://cdn3.iconfinder.com/data/icons/choosesport/png/512/football.png" alt="<%= match.title %>">
+                        </div>
+                        <div class="card__content">
+                            <% if (match.currentPlayers == match.totalPlayers) { %>
+                                <h2 class="match__playerCount" style="color: #513dff;">The match is full!</h2>
+                            <% } else { %>
+                                <h2 class="match__playerCount">We search:</h2>
+                                <h2 class="match__playerCount__in" style="color: #513dff;"><%= match.totalPlayers - match.currentPlayers %></h2>
+                                <h2 class="match__playerCount">players!</h2>
+                            <% } %>
+                            <br>
+                            <h2 class="match__place"><%= match.placeName %></h2>
+                            <h2 class="match__place"><%= match.time.getDate().toString()+"-"+(match.time.getMonth()+1).toString()+"-"+match.time.getFullYear().toString() %></h2>
+                            <h2 class="match__price"><%= match.price %>€</h2><br>
+                            <p class="match__description"><%= match.description %></p>
+                        </div>
+                        <div class="card__actions">
+                            <a href="/matches/<%= match._id %>" class="btn">Details</a>
+                            <% if (isAuthenticated) { %>
+                                <% if (match.currentPlayers != match.totalPlayers) { %>
+                                    <a href="/matches/<%= match._id %>/join" class="btn">Join</a>
+                                <% } %>
+                            <% } %>
+                        </div>
+                        <br>
+                    </article>
+                <% } %>
+            </div>
+            <%- include('../includes/pagination.ejs', {currentPage: currentPage, nextPage: nextPage, previousPage: previousPage, lastPage: lastPage, hasNextPage: hasNextPage, hasPreviousPage: hasPreviousPage}) %>
+        <% } else { %>
+            <h1>No matches Found!</h1>
+        <% } %>
+    </main>
+
+    <script>
+        function animateValue(obj, start, end, duration) {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+            if (!startTimestamp) startTimestamp = timestamp;
+            const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+            obj.innerHTML = Math.floor(progress * (end - start) + start);
+            if (progress < 1) {
+                window.requestAnimationFrame(step);
+            }
+            };
+            window.requestAnimationFrame(step);
+        }
+        window.addEventListener("load", () => { 
+            let list = document.getElementsByClassName("match__playerCount__in");
+            for (var i = 0; i < list.length; i++) {
+                list[i].id = "match__playerCount_" + (i + 1);
+                const counter = document.getElementById(list[i].id);
+                animateValue(counter, 0, counter.innerHTML, 1000);
+            }
+        });
+    </script>
+
+<%- include('../includes/end.ejs') %>

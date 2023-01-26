@@ -4,7 +4,7 @@ const user = require("../models/user");
 const { validationResult } = require("express-validator");
 const { roles } = require("../roles");
 
-const MATCHES_PER_PAGE = 4;
+const MATCHES_PER_PAGE = 3;
 
 exports.getIndex = (req, res, next) => {
   res.render("app/index", {
@@ -21,24 +21,24 @@ exports.getMatches = (req, res, next) => {
     .then((numMatches) => {
       totalMatches = numMatches;
       return Match.find()
-        .skip((page - 1) * MATCHES_PER_PAGE)
-        .limit(MATCHES_PER_PAGE)
-      })   
-        .then((matches) => {
-          res.render("app/match-list", {
-            ms: matches,
-            pageTitle: "All Matches",
-            path: "/matches",
-            currentPage: page,
-            hasNextPage: MATCHES_PER_PAGE * page < totalMatches,
-            hasPreviousPage: page > 1,
-            nextPage: page + 1,
-            previousPage: page - 1,
-            lastPage: Math.ceil(totalMatches / MATCHES_PER_PAGE)
-          });
-        })
-        .catch((err) => console.log(err));
-    }
+      .skip((page - 1) * MATCHES_PER_PAGE)
+      .limit(MATCHES_PER_PAGE)
+    })   
+    .then((matches) => {
+      res.render("app/match-list", {
+        ms: matches,
+        pageTitle: "All Matches",
+        path: "/matches",
+        currentPage: page,
+        hasNextPage: MATCHES_PER_PAGE * page < totalMatches,
+        hasPreviousPage: page > 1,
+        nextPage: page + 1,
+        previousPage: page - 1,
+        lastPage: Math.ceil(totalMatches / MATCHES_PER_PAGE)
+      });
+    })
+    .catch((err) => console.log(err));
+}
 
 exports.getMatch = (req, res, next) => {
   const matchId = req.params.matchId;

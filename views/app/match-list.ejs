@@ -8,49 +8,40 @@
     <main>
         <% if (ms.length > 0) { %>
             <div class="grid">
-            <% for (let match of ms) { %>
-                <article class="card match-item" style="background-image: radial-gradient(ellipse at 70%,rgb(255, 255, 255),rgb(0, 255, 0));" onclick="location.assign('/matches/<%= match._id %>')">
-                    <header class="card__header">
-                        <h1 class="match__title"><%= match.title %></h1>
-                        <h2 class="match__playerCount" style="color: #513dff;"><%= match.totalPlayers /2 %> vs <%= match.totalPlayers /2 %></h2>
-                    </header>
-                    <div class="card__image">
-                        <img src="https://cdn3.iconfinder.com/data/icons/choosesport/png/512/football.png" alt="<%= match.title %>">
-                    </div>
-                    <div class="card__content">
-                        <% if (match.currentPlayers == match.totalPlayers) { %>
-                            <h2 class="match__playerCount" style="color: #513dff;">The match is full!</h2>
-                        <% } else { %>
-                            <h2 class="match__playerCount">We search:</h2>
+                <% for (let match of ms) { %>
+                    <article class="card match-item" style="background-color: white;" onclick="location.assign('/matches/<%= match._id %>')">
+                        <header class="card__header">
+                            <h1 class="match__title"><%= match.title %></h1>
+                            <h2 class="match__playerCount" style="color: #513dff;"><%= match.totalPlayers /2 %> vs <%= match.totalPlayers /2 %></h2>
+                        </header>
+                        <div class="card__image">
+                            <img src="https://cdn3.iconfinder.com/data/icons/choosesport/png/512/football.png" alt="<%= match.title %>">
+                        </div>
+                        <div class="card__content">
+                            <% if (match.currentPlayers == match.totalPlayers) { %>
+                                <h2 class="match__playerCount" style="color: #513dff;">The match is full!</h2>
+                            <% } else { %>
+                                <h2 class="match__playerCount">We search:</h2>
                                 <h2 class="match__playerCount__in" style="color: #513dff;"><%= match.totalPlayers - match.currentPlayers %></h2>
-                            <h2 class="match__playerCount"> players!</h2>
-                        <% } %>
-                        <br>
-                        <h2 class="match__place">
-                            <%= match.placeName %>
-                        </h2>
-                        <h2 class="match__place">
-                            <%= match.time.getDate().toString() + "-" + (match.time.getMonth()+1).toString() + "-" + match.time.getFullYear().toString() %>
-                        </h2>
-                        <h2 class="match__price">
-                            <%= match.price %>€
-                        </h2>
-                        <br>
-                        <p class="match__description">
-                            <%= match.description %>
-                        </p>
-                    </div>
-                    <div class="card__actions">
-                        <a href="/matches/<%= match._id %>" class="btn">Details</a>
-                        <% if (isAuthenticated) { %>
-                            <% if (match.currentPlayers != match.totalPlayers) { %>
-                                <a href="/matches/<%= match._id %>/join" class="btn">Join</a>
+                                <h2 class="match__playerCount">players!</h2>
                             <% } %>
-                        <% } %>
-                    </div>
-                    <br>
-                </article>
-            <% } %>
+                            <br>
+                            <h2 class="match__place"><%= match.placeName %></h2>
+                            <h2 class="match__place"><%= match.time.getDate().toString()+"-"+(match.time.getMonth()+1).toString()+"-"+match.time.getFullYear().toString() %></h2>
+                            <h2 class="match__price"><%= match.price %>€</h2><br>
+                            <p class="match__description"><%= match.description %></p>
+                        </div>
+                        <div class="card__actions">
+                            <a href="/matches/<%= match._id %>" class="btn">Details</a>
+                            <% if (isAuthenticated) { %>
+                                <% if (match.currentPlayers != match.totalPlayers) { %>
+                                    <a href="/matches/<%= match._id %>/join" class="btn">Join</a>
+                                <% } %>
+                            <% } %>
+                        </div>
+                        <br>
+                    </article>
+                <% } %>
             </div>
             <%- include('../includes/pagination.ejs', {currentPage: currentPage, nextPage: nextPage, previousPage: previousPage, lastPage: lastPage, hasNextPage: hasNextPage, hasPreviousPage: hasPreviousPage}) %>
         <% } else { %>

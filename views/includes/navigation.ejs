@@ -17,7 +17,16 @@
                 <li class="main-header__item">
                     <a class="<%= path === '/mymatches' ? 'active' : '' %>" href="/mymatches">My Matches</a>
                 </li>
+                <% if (user.role == "admin") { %>
+                    <li class="main-header__item">
+                        <a class="<%= path === '/listMatch' ? 'active' : '' %>" href="/listMatch">All Matches</a>
+                    </li>
+                    <li class="main-header__item">
+                        <a class="<%= path === '/listUser' ? 'active' : '' %>" href="/listUser">All Users</a>
+                    </li>
+                <% } %>
             <% } %>
+            
         </ul>
         <ul class="main-header__item-list">
             <% if (!isAuthenticated) { %>

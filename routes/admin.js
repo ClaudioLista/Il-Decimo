@@ -8,6 +8,8 @@ const User = require('../models/user')
 
 const router = express.Router()
 
-router.get("/list",adminController.getList)
+router.get("/listMatch", adminController.getListMatch)
+
+router.get("/listUser", adminController.getListUser)
 
 module.exports = router

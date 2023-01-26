@@ -25,12 +25,19 @@
 .match__subtitle {
     font-size: 1rem;
     text-align: center;
-    color: #513dff;
+    color: #1e00fd;
+    background-color: rgba(255, 255, 255, 0.534);
+    display: inline-block;
+    padding: 5px;
+    border-color: #a64bf4;
+    border-style: solid;
 }
 
 .match__subtitle:hover,
 .match__subtitle:active {
     font-size: 1.1rem;
+    color: white;
+    background-color: #a64bf4;
 }
 
 .match__place {
@@ -61,4 +68,12 @@
 
 .match__description {
     text-align: center;
+}
+
+.backlink__ {
+    font-size: 1.2rem;
+}
+
+.backlink__:hover {
+    font-size: 1.4rem;
 }

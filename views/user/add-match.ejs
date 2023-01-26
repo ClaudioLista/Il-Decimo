@@ -15,7 +15,7 @@
 </script>
 
 <body>
-   <%- include('../includes/navigation.ejs') %>
+    <%- include('../includes/navigation.ejs') %>
     <main>
         <% if (errorMessage) { %>
             <div class="flex-c-m">
@@ -80,7 +80,7 @@
 							class="<%= validationErrors.find(e => e.param == 'price') ? 'input100-invalid' : 'input100' %>"
                             placeholder="Quanto costa a persona?"
                             value="<% if (hasError) { %><%= match.price %><% } %>"
-                            type="number" name="price" id="price" step="0.50" required>
+                            type="number" name="price" id="price" step="0.10" required>
                         <span class="focus-input100" data-symbol="&#xf19a;"></span>
                     </div>
                     <div class="wrap-input100 validate-input m-b-23">
