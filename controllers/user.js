@@ -4,6 +4,8 @@ const user = require("../models/user");
 const { validationResult } = require("express-validator");
 const { roles } = require("../roles");
 
+const MATCHES_PER_PAGE = 4;
+
 exports.getIndex = (req, res, next) => {
   res.render("app/index", {
     pageTitle: "Home",
@@ -12,16 +14,31 @@ exports.getIndex = (req, res, next) => {
 };
 
 exports.getMatches = (req, res, next) => {
+  const page = +req.query.page || 1;
+  let totalMatches;
   Match.find()
-    .then((matches) => {
-      res.render("app/match-list", {
-        ms: matches,
-        pageTitle: "All Matches",
-        path: "/matches",
-      });
-    })
-    .catch((err) => console.log(err));
-};
+    .countDocuments()
+    .then((numMatches) => {
+      totalMatches = numMatches;
+      return Match.find()
+        .skip((page - 1) * MATCHES_PER_PAGE)
+        .limit(MATCHES_PER_PAGE)
+      })   
+        .then((matches) => {
+          res.render("app/match-list", {
+            ms: matches,
+            pageTitle: "All Matches",
+            path: "/matches",
+            currentPage: page,
+            hasNextPage: MATCHES_PER_PAGE * page < totalMatches,
+            hasPreviousPage: page > 1,
+            nextPage: page + 1,
+            previousPage: page - 1,
+            lastPage: Math.ceil(totalMatches / MATCHES_PER_PAGE)
+          });
+        })
+        .catch((err) => console.log(err));
+    }
 
 exports.getMatch = (req, res, next) => {
   const matchId = req.params.matchId;
@@ -70,9 +87,8 @@ exports.getMatch = (req, res, next) => {
         if (match.time < today) {
           is_over = true;
         }
-        
+
         const result = match.listPlayers.populate("players.userId");
-        
       }
 
       ChatRoom.findOne({ matchId: match._id })

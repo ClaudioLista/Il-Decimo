@@ -29,6 +29,7 @@ app.set("views", "views");
 
 const userRoutes = require("./routes/user");
 const authRoutes = require("./routes/auth");
+const adminRoutes = require("./routes/admin");
 const user = require("./models/user");
 
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -106,6 +107,7 @@ app.use((req, res, next) => {
 
 app.use(userRoutes);
 app.use(authRoutes);
+app.use(adminRoutes);
 
 app.use(errorController.get404);
 
