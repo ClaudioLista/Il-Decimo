@@ -111,8 +111,10 @@ app.use(adminRoutes);
 
 app.use(errorController.get404);
 
+mongoose.set('useCreateIndex', true);
+mongoose.set('useUnifiedTopology', true);
 mongoose
-  .connect(MONGODB_URI)
+  .connect(MONGODB_URI, { useNewUrlParser: true })
   .then((result) => {
     const port = process.env.PORT || 5000
     const server = app.listen(port);

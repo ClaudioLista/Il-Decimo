@@ -16,7 +16,7 @@ router.get('/matches', userController.getMatches)
 
 router.get('/matches/:matchId', isAuth, accessController.grantAccess("readAny", "matches"), userController.getMatch)
 
-router.get('/add-match', isAuth,userController.getAddMatch)
+router.get('/add-match', isAuth, userController.getAddMatch)
 router.post('/add-match', isAuth,
   [
     body('title', 'Inserisci un nome valido').isString().isLength({ min: 3 }).trim(),

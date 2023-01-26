@@ -4,7 +4,6 @@ const jwt = require("jsonwebtoken");
 const sendEmail = require("../util/email");
 const Token = require("../models/token");
 
-
 const User = require("../models/user");
 const LoginAttempt = require("../models/loginAttempt");
 
@@ -140,7 +139,7 @@ exports.postLogin = (req, res, next) => {
 
             return res.status(422).render("auth/login", {
               path: "/login",
-              pageTitle: "login",
+              pageTitle: "Login",
               errorMessage: errMsg,
               oldInput: {
                 email: email,
@@ -164,8 +163,11 @@ exports.getSignup = (req, res, next) => {
     pageTitle: "Signup",
     errorMessage: "",
     oldInput: {
+      nome: "",
+      cognome: "",
       usrName: "",
       email: "",
+      numCell: "",
       password: "",
       confirmPassword: "",
     },
@@ -174,8 +176,11 @@ exports.getSignup = (req, res, next) => {
 };
 
 exports.postSignup = (req, res, next) => {
+  const nome = req.body.nome;
+  const cognome = req.body.cognome;
   const usrName = req.body.usrName;
   const email = req.body.email;
+  const numCell = req.body.numCell;
   const password = req.body.password;
 
   const errors = validationResult(req);
@@ -185,8 +190,11 @@ exports.postSignup = (req, res, next) => {
       pageTitle: "Signup",
       errorMessage: errors.array()[0].msg,
       oldInput: {
+        nome: nome,
+        cognome: cognome,
         usrName: usrName,
         email: email,
+        numCell: numCell,
         password: password,
         confirmPassword: req.body.confirmPassword,
       },
@@ -196,9 +204,15 @@ exports.postSignup = (req, res, next) => {
   bcrypt
     .hash(password, 12)
     .then((hashedPassword) => {
+      const Nome = nome.charAt(0).toUpperCase() + nome.slice(1);
+      const Cognome = cognome.charAt(0).toUpperCase() + cognome.slice(1);
+      console.log(Nome, Cognome)
       const user = new User({
+        nome: Nome,
+        cognome: Cognome,
         usrName: usrName,
         email: email,
+        numCell: numCell,
         password: hashedPassword,
         matcheslist: {
           matches: [],
