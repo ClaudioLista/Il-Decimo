@@ -8,7 +8,7 @@ const MATCHES_PER_PAGE = 4;
 
 exports.getIndex = (req, res, next) => {
   res.render("app/index", {
-    pageTitle: "Home",
+    pageTitle: "Il Decimo - Homepage",
     path: "/",
   });
 };
