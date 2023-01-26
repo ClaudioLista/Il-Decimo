@@ -42,7 +42,6 @@ exports.getMatches = (req, res, next) => {
 
 exports.getMatch = (req, res, next) => {
   const matchId = req.params.matchId;
-
   let nameUser = null;
   let playerIn = false;
   let is_full = false;
@@ -60,9 +59,6 @@ exports.getMatch = (req, res, next) => {
           );
           userVote = userMatch.vote;
         }
-        //console.log(userMatch.vote)
-        // console.log(user.matchList)
-        // console.log(user.matchList.find(element => element.matchId.equals(matchId)))
       })
       .catch((err) => console.log(err));
   }
@@ -87,7 +83,6 @@ exports.getMatch = (req, res, next) => {
         if (match.time < today) {
           is_over = true;
         }
-
         const result = match.listPlayers.populate("players.userId");
       }
 
@@ -168,7 +163,6 @@ exports.postAddMatch = (req, res, next) => {
     listPlayers: {
       players: [],
     },
-
     hostUserId: hostUserId,
   });
 
@@ -212,14 +206,9 @@ exports.postVoteMatch = (req, res, next) => {
             const voteIndex = user.matchList.findIndex((element) =>
               element.matchId.equals(matchId)
             );
-            // console.log(user.matchList[voteIndex].vote)
-            // console.log(updatedVote.toString())
             user.matchList[voteIndex].vote = "" + updatedVote + "";
             user.markModified("matchList");
-            user
-              .save()
-              .then()
-              .catch((err) => console.log(err));
+            user.save().then().catch((err) => console.log(err));
           })
           .catch((err) => console.log(err));
       } else {
@@ -232,18 +221,13 @@ exports.postVoteMatch = (req, res, next) => {
             );
             user.matchList[voteIndex].vote = "";
             user.markModified("matchList");
-            user
-              .save()
-              .then()
-              .catch((err) => console.log(err));
+            user.save().then().catch((err) => console.log(err));
           })
           .catch((err) => console.log(err));
       }
       return match.save();
     })
-    .then(() => {
-      res.redirect("/mymatches");
-    })
+    .then(() => { res.redirect("/mymatches") })
     .catch((err) => console.log(err));
 };
 

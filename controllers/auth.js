@@ -7,8 +7,7 @@ const Token = require("../models/token");
 const User = require("../models/user");
 const LoginAttempt = require("../models/loginAttempt");
 
-const maxNumberOfFailedLogins = 5; //on single username
-const timeWindowForFailedLogins = 60 * 60 * 1000
+const maxNumberOfFailedLogins = 5; //per signolo account
 
 exports.getTerms = (req, res, next) => {
   res.render("auth/termsandconditions", {
@@ -106,9 +105,7 @@ exports.postLogin = (req, res, next) => {
               const accessToken = jwt.sign(
                 { userId: user._id },
                 process.env.JWT_SECRET,
-                {
-                  expiresIn: "1d",
-                }
+                {  expiresIn: "1d" }
               );
 
               User.findByIdAndUpdate(user._id, { accessToken });
@@ -127,7 +124,6 @@ exports.postLogin = (req, res, next) => {
                   attempts: 1,
                   expireAt: (Date.now() + 300000)
                 });
-
                 loginAttempt.save();
               }
             });
@@ -135,7 +131,6 @@ exports.postLogin = (req, res, next) => {
             if (user.activeSessions >= 2) {
               errMsg = "Hai già due sessioni attive!";
             }
-
             return res.status(422).render("auth/login", {
               path: "/login",
               pageTitle: "Login",
@@ -221,9 +216,7 @@ exports.postSignup = (req, res, next) => {
       const accessToken = jwt.sign(
         { userId: user._id },
         process.env.JWT_SECRET,
-        {
-          expiresIn: "1d",
-        }
+        { expiresIn: "1d" }
       );
       user.accessToken = accessToken;
       user.save();
@@ -237,7 +230,6 @@ exports.postSignup = (req, res, next) => {
       const message = `${process.env.BASE_URL}/verify/${user.usrName}/${accessToken}`;
       const html = "<h2>Clicca il link per confermare l'email:</h2><a href='" + message + "' target='_blank'>" + message + "</a>"
       sendEmail(user.email, "Verifica l'email!", html, message);
-      
     })
     .then(() => {
       res.render("auth/login", {
@@ -263,13 +255,11 @@ exports.postLogout = (req, res, next) => {
 };
 
 exports.getVerify = (req, res, next) => {
-  
   User.findOne({usrName: req.params.username}).then((user)=>{
-  
     if (!user) {
       return res.status(400).render("auth/emailVerification", {
         path: "/emailVerification",
-        pageTitle: "emailVerification",
+        pageTitle: "Email Verification",
         valid: false
       });
     }
@@ -281,7 +271,7 @@ exports.getVerify = (req, res, next) => {
       if (!token) {
         return res.status(400).render("auth/emailVerification", {
           path: "/emailVerification",
-          pageTitle: "emailVerification",
+          pageTitle: "Email Verification",
           valid: false
         });
       } 
@@ -291,11 +281,9 @@ exports.getVerify = (req, res, next) => {
       token.remove()
       return res.status(400).render("auth/emailVerification", {
         path: "/emailVerification",
-        pageTitle: "emailVerification",
+        pageTitle: "Email Verification",
         valid: true
       });
     })
-    
   })
-  
 }
