@@ -14,3 +14,4 @@
 13) Miglioramento user experience generale del sistema
 14) Implementare eliminazione/archivio dei match passati
 15) Dare un username random se si registra qualcuno con lo stesso nome tramite Google
+16) Gestire il decremento delle sessioni attive quando si chiude il browser oppure scade la sessione

@@ -29,7 +29,7 @@ const loginRateLimiter = rateLimit({
 	legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 })
 
-router.get("/verify/:id/:token",authController.getVerify)
+router.get("/verify/:username/:token", authController.getVerify)
 
 router.get('/login', isLog, authController.getLogin)
 

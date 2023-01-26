@@ -1,0 +1,27 @@
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/match.css">
+    
+</head>
+
+<body>
+    <%- include('../includes/navigation.ejs') %>
+    <main class="centered">
+        <% if (valid) { %>
+            <h1>E-mail verificata con successo!</h1>
+        <% } else { %>
+            <h1>Link non valido</h1>
+        <% } %>  
+        <hr>
+        <br>
+        <% if (valid) { %>
+            <a href="/login">
+                <button class="btn" type="submit">Effettua il login!</button>
+            </a>
+        <% } else { %>
+            <a href="/">
+                <button class="btn" type="submit">HOME</button>
+            </a>
+        <% } %>  
+    </main>
+    
+<%- include('../includes/end.ejs') %>

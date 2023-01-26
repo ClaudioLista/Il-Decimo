@@ -12,10 +12,10 @@ const loginAttemptSchema = new Schema({
   },
   expireAt: { 
     type: Date, 
-    default: Date.now 
+    default: null,
   },
 });
 
-loginAttemptSchema.index( { "expireAt": 1 }, { "expireAfterSeconds": 3600 } );
+loginAttemptSchema.index( { "expireAt": 1 }, { "expireAfterSeconds": 0 } );
 
 module.exports = mongoose.model("loginAttempt", loginAttemptSchema);
