@@ -1,16 +1,39 @@
 const Match = require("../models/match");
 const ChatRoom = require("../models/chatroom");
 const user = require("../models/user");
+const logSession = require("../models/logSession");
 const { validationResult } = require("express-validator");
 const { roles } = require("../roles");
 
 const MATCHES_PER_PAGE = 3;
 
 exports.getIndex = (req, res, next) => {
-  res.render("app/index", {
-    pageTitle: "Il Decimo - Homepage",
-    path: "/",
-  });
+  let message = ""
+  if (req.query.info === 'true') {
+    logSession.find({ userId: req.user._id }).then((log) => {
+      if(log.length > 1) {
+        const currentdate = log[log.length - 2].time
+        var getMinutes= currentdate.getMinutes();
+        if(currentdate.getMinutes() < 10) {
+          var getMinutes= '0' + currentdate.getMinutes()
+        }
+        var datetime = +currentdate.getDate()+"/"+(currentdate.getMonth()+1)+"/"+currentdate.getFullYear()+" - "+currentdate.getHours()+":"+getMinutes;
+        message = "Ultimo accesso: " + (datetime);
+      }
+      else message = "Log-in effettuato con successo!"
+      res.render("app/index", {
+        pageTitle: "Il Decimo - Homepage",
+        path: "/",
+        message: message,
+      });
+    });
+  } else {
+    res.render("app/index", {
+      pageTitle: "Il Decimo - Homepage",
+      path: "/",
+      message: "",
+    });
+  }
 };
 
 exports.getMatches = (req, res, next) => {
@@ -21,9 +44,9 @@ exports.getMatches = (req, res, next) => {
     .then((numMatches) => {
       totalMatches = numMatches;
       return Match.find()
-      .skip((page - 1) * MATCHES_PER_PAGE)
-      .limit(MATCHES_PER_PAGE)
-    })   
+        .skip((page - 1) * MATCHES_PER_PAGE)
+        .limit(MATCHES_PER_PAGE);
+    })
     .then((matches) => {
       res.render("app/match-list", {
         ms: matches,
@@ -34,11 +57,11 @@ exports.getMatches = (req, res, next) => {
         hasPreviousPage: page > 1,
         nextPage: page + 1,
         previousPage: page - 1,
-        lastPage: Math.ceil(totalMatches / MATCHES_PER_PAGE)
+        lastPage: Math.ceil(totalMatches / MATCHES_PER_PAGE),
       });
     })
     .catch((err) => console.log(err));
-}
+};
 
 exports.getMatch = (req, res, next) => {
   const matchId = req.params.matchId;
@@ -208,7 +231,10 @@ exports.postVoteMatch = (req, res, next) => {
             );
             user.matchList[voteIndex].vote = "" + updatedVote + "";
             user.markModified("matchList");
-            user.save().then().catch((err) => console.log(err));
+            user
+              .save()
+              .then()
+              .catch((err) => console.log(err));
           })
           .catch((err) => console.log(err));
       } else {
@@ -221,13 +247,18 @@ exports.postVoteMatch = (req, res, next) => {
             );
             user.matchList[voteIndex].vote = "";
             user.markModified("matchList");
-            user.save().then().catch((err) => console.log(err));
+            user
+              .save()
+              .then()
+              .catch((err) => console.log(err));
           })
           .catch((err) => console.log(err));
       }
       return match.save();
     })
-    .then(() => { res.redirect("/mymatches") })
+    .then(() => {
+      res.redirect("/mymatches");
+    })
     .catch((err) => console.log(err));
 };
 

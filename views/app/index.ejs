@@ -3,6 +3,15 @@
     
 </head>
 
+<script>
+  window.addEventListener("load", () => {
+    setTimeout(() => {
+      const infoPopUp = document.getElementById("infoPopUp")
+      infoPopUp.style.display = "none";
+    }, 10000);
+  });
+</script>
+
 <body>
     <%- include('../includes/navigation.ejs') %>
     <div class="section center ">
@@ -19,6 +28,11 @@
         <a href="/matches" class="button w-button" style="border-radius: 25px;">Partecipa ad una partita!</a>
       <% } %>
     </div>
+    <% if (message) { %>
+      <div id="infoPopUp" class="popout popUpMessage">
+        <%= message %>
+      </div>
+    <% } %>
 
     <script src="/js/main.js"></script>
 </body>
