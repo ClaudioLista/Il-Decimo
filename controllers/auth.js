@@ -103,9 +103,9 @@ exports.postLogin = (req, res, next) => {
 
               req.session.isLoggedIn = true;
               req.session.user = user;
-              const ipAddress = IP.address()
-              console.log(ipAddress)
-              new logSession ({userId: user._id, ipAddress: ipAddress}).save();
+              var ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress 
+              console.log(ip)
+              new logSession ({userId: user._id, ipAddress: ip}).save();
               
               req.session.ipAddress = ipAddress;
 
