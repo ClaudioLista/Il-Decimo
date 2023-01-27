@@ -6,6 +6,7 @@ const Token = require("../models/token");
 
 const User = require("../models/user");
 const LoginAttempt = require("../models/loginAttempt");
+const logSession = require("../models/logSession");
 
 const maxNumberOfFailedLogins = 5; //per signolo account
 
@@ -101,6 +102,10 @@ exports.postLogin = (req, res, next) => {
 
               req.session.isLoggedIn = true;
               req.session.user = user;
+              const ipAddress = req.socket.remoteAddress;
+              new logSession ({userId: user._id, ipAddress: ipAddress}).save();
+              
+              req.session.ipAddress = ipAddress;
 
               const accessToken = jwt.sign(
                 { userId: user._id },
