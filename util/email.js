@@ -20,7 +20,7 @@ const sendEmail = async (email, subject, html, text) => {
       html: html,
       text: text,
     });
-    console.log("email sent sucessfully");
+    // console.log("email sent sucessfully");
   } catch (error) {
     console.log("email not sent");
     console.log(error);

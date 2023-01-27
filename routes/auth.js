@@ -56,6 +56,9 @@ router.post('/login', rateLimit, isLog,
   authController.postLogin
 )
 
+
+router.post('/checkOTP', isLog, authController.postcheckOTP)
+
 router.get('/terms', authController.getTerms)
 
 router.get('/signup', isLog, authController.getSignup)

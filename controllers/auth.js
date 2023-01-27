@@ -3,19 +3,104 @@ const { validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
 const sendEmail = require("../util/email");
 const Token = require("../models/token");
-const IP = require('ip');
+const userOTPVerification = require("../models/userOTPVerification");
+const IP = require("ip");
 
 const User = require("../models/user");
 const LoginAttempt = require("../models/loginAttempt");
 const logSession = require("../models/logSession");
+const UserOTPVerification = require("../models/userOTPVerification");
 
 const maxNumberOfFailedLogins = 5; //per signolo account
+
+const sendOTPVerificationEmail = async (_id, email, res) => {
+  try {
+    const otp = Math.floor(1000 + Math.random() * 9000).toString();
+
+    const message = otp;
+    const html = "<h2>Ecco il tuo OTP</h2> <h3> " + otp + "</h3>";
+
+    bcrypt.hash(otp, 12).then((hashedOTP) => {
+      const newOTPVerification = new userOTPVerification({
+        userId: _id,
+        otp: hashedOTP,
+        createdAt: Date.now(),
+        expireAt: Date.now() + 60000,
+      });
+      newOTPVerification.save();
+      sendEmail(email, "Il tuo OTP!", html, message);
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 exports.getTerms = (req, res, next) => {
   res.render("auth/termsandconditions", {
     path: "/terms",
     pageTitle: "Termini di Servizio - Il Decimo",
   });
+};
+
+
+
+exports.postcheckOTP = (req, res, next) => {
+  const email = req.body.email;
+  const otp = req.body.otp;
+  User.findOne({email: email})
+    .then((user) => {
+      if (!!user && !!otp) {
+        UserOTPVerification.find({ userId: user._id }).then((userOtps) => {
+          userOtp = userOtps[userOtps.length - 1]
+          
+          bcrypt.compare(otp, userOtp.otp).then((otpOK) => {
+            if (otpOK) {
+              
+              UserOTPVerification.deleteMany({userId: user._id});
+              req.session.isLoggedIn = true;
+              req.session.user = user;
+              var ip =
+                req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+              
+              const log = new logSession({ userId: user._id, ipAddress: ip });
+              log.save();
+
+              req.session.ipAddress = ip;
+              user.lastSession = log.time;
+              user.activeSessions = user.activeSessions + 1;
+              user.save();
+              const accessToken = jwt.sign(
+                { userId: user._id },
+                process.env.JWT_SECRET,
+                { expiresIn: "1d" }
+              );
+
+              User.findByIdAndUpdate(user._id, { accessToken });
+              return req.session.save(() => {
+                res.redirect("/");
+              });
+            }
+
+            else{
+              return res.render("auth/checkOTP", {
+                path: "/checkOTP",
+                pageTitle: "Check OTP",
+                errorMessage: "OTP non valido",
+                message: "",
+                oldInput: {
+                  otp: otp,
+                },
+                email: email,
+                validationErrors: [],
+              });
+            }
+          });
+        }).catch((error)=>{
+          console.log(error)
+        })
+      }
+    })
+    .catch((error) => console.log(error));
 };
 
 exports.getLogin = (req, res, next) => {
@@ -84,12 +169,12 @@ exports.postLogin = (req, res, next) => {
           .compare(password, user.password)
           .then((passOK) => {
             if (passOK && user.activeSessions < 2) {
-
               if (!user.verified) {
                 return res.status(422).render("auth/login", {
                   path: "/login",
                   pageTitle: "Login",
-                  errorMessage: "Per effettuare l'accesso devi prima verificare l'email!",
+                  errorMessage:
+                    "Per effettuare l'accesso devi prima verificare l'email!",
                   oldInput: {
                     email: email,
                     password: password,
@@ -98,44 +183,52 @@ exports.postLogin = (req, res, next) => {
                 });
               }
 
+              sendOTPVerificationEmail(user._id, user.email, res);
               
-
-              req.session.isLoggedIn = true;
-              req.session.user = user;
-              var ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress 
-              console.log(ip)
-              const log = new logSession ({userId: user._id, ipAddress: ip})
-              log.save()
-              
-              req.session.ipAddress = ip;
-              user.lastSession = log.time
-              user.activeSessions = user.activeSessions + 1;
-              user.save();
-              const accessToken = jwt.sign(
-                { userId: user._id },
-                process.env.JWT_SECRET,
-                {  expiresIn: "1d" }
-              );
-              
-              logSession.find({userId: user._id}).then((log)=>{
-              console.log(log[log.length - 2])
-              })
-            
-              User.findByIdAndUpdate(user._id, { accessToken });
-              return req.session.save(() => {
-                res.redirect("/");
+              return res.render("auth/checkOTP", {
+                path: "/checkOTP",
+                pageTitle: "Check OTP",
+                errorMessage: "",
+                message: "",
+                oldInput: {
+                  otp: "",
+                },
+                email: user.email,
+                validationErrors: [],
               });
+
+              // req.session.isLoggedIn = true;
+              // req.session.user = user;
+              // var ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress
+              // console.log(ip)
+              // const log = new logSession ({userId: user._id, ipAddress: ip})
+              // log.save()
+
+              // req.session.ipAddress = ip;
+              // user.lastSession = log.time
+              // user.activeSessions = user.activeSessions + 1;
+              // user.save();
+              // const accessToken = jwt.sign(
+              //   { userId: user._id },
+              //   process.env.JWT_SECRET,
+              //   {  expiresIn: "1d" }
+              // );
+
+              // User.findByIdAndUpdate(user._id, { accessToken });
+              // return req.session.save(() => {
+              //   res.redirect("/");
+              // });
             }
             LoginAttempt.findOne({ usrName: user.usrName }).then((username) => {
               if (!!username) {
-                username.expireAt = (Date.now() + 300000)
+                username.expireAt = Date.now() + 300000;
                 username.attempts = username.attempts + 1;
                 username.save();
               } else {
                 const loginAttempt = new LoginAttempt({
                   usrName: user.usrName,
                   attempts: 1,
-                  expireAt: (Date.now() + 300000)
+                  expireAt: Date.now() + 300000,
                 });
                 loginAttempt.save();
               }
@@ -224,7 +317,7 @@ exports.postSignup = (req, res, next) => {
           matches: [],
         },
         role: "user",
-        expireAt: (Date.now() + 86400000)
+        expireAt: Date.now() + 86400000,
       });
       const accessToken = jwt.sign(
         { userId: user._id },
@@ -238,10 +331,15 @@ exports.postSignup = (req, res, next) => {
         userId: user._id,
         token: accessToken,
         expireAt: Date.now() + 86400000,
-      }).save()
+      }).save();
 
       const message = `${process.env.BASE_URL}/verify/${user.usrName}/${accessToken}`;
-      const html = "<h2>Clicca il link per confermare l'email:</h2><a href='" + message + "' target='_blank'>" + message + "</a>"
+      const html =
+        "<h2>Clicca il link per confermare l'email:</h2><a href='" +
+        message +
+        "' target='_blank'>" +
+        message +
+        "</a>";
       sendEmail(user.email, "Verifica l'email!", html, message);
     })
     .then(() => {
@@ -268,15 +366,15 @@ exports.postLogout = (req, res, next) => {
 };
 
 exports.getVerify = (req, res, next) => {
-  User.findOne({usrName: req.params.username}).then((user)=>{
+  User.findOne({ usrName: req.params.username }).then((user) => {
     if (!user) {
       return res.status(400).render("auth/emailVerification", {
         path: "/emailVerification",
         pageTitle: "Email Verification",
-        valid: false
+        valid: false,
       });
     }
-    
+
     Token.findOne({
       userId: user._id,
       token: req.params.token,
@@ -285,18 +383,18 @@ exports.getVerify = (req, res, next) => {
         return res.status(400).render("auth/emailVerification", {
           path: "/emailVerification",
           pageTitle: "Email Verification",
-          valid: false
+          valid: false,
         });
-      } 
+      }
       user.verified = true;
       user.expireAt = null;
-      user.save()
-      token.remove()
+      user.save();
+      token.remove();
       return res.status(400).render("auth/emailVerification", {
         path: "/emailVerification",
         pageTitle: "Email Verification",
-        valid: true
+        valid: true,
       });
-    })
-  })
-}
+    });
+  });
+};

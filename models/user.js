@@ -51,6 +51,10 @@ const userSchema = new Schema({
     type: Boolean,
     default: false,
   },
+  otpVerified: {
+    type: Boolean,
+    default: false,
+  },
   expireAt: { 
     type: Date, 
     default: null,
