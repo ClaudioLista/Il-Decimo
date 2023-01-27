@@ -3,6 +3,7 @@ const { validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
 const sendEmail = require("../util/email");
 const Token = require("../models/token");
+const IP = require('ip');
 
 const User = require("../models/user");
 const LoginAttempt = require("../models/loginAttempt");
@@ -102,7 +103,8 @@ exports.postLogin = (req, res, next) => {
 
               req.session.isLoggedIn = true;
               req.session.user = user;
-              const ipAddress = req.socket.remoteAddress;
+              const ipAddress = IP.address()
+              console.log(ipAddress)
               new logSession ({userId: user._id, ipAddress: ipAddress}).save();
               
               req.session.ipAddress = ipAddress;
