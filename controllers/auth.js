@@ -98,8 +98,6 @@ exports.postLogin = (req, res, next) => {
                 });
               }
 
-              
-
               req.session.isLoggedIn = true;
               req.session.user = user;
               var ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress 
@@ -117,14 +115,17 @@ exports.postLogin = (req, res, next) => {
                 {  expiresIn: "1d" }
               );
               
-              logSession.find({userId: user._id}).then((log)=>{
-              console.log(log[log.length - 2])
-              })
-            
+              // let lastAccess = null
+              // logSession.find({userId: user._id}).then((log) => {
+              //   console.log(log[log.length - 2])
+              //   lastAccess = log[log.length - 2]
+              // })
+
               User.findByIdAndUpdate(user._id, { accessToken });
               return req.session.save(() => {
-                res.redirect("/");
+                res.redirect('/?info=' + "true")
               });
+          
             }
             LoginAttempt.findOne({ usrName: user.usrName }).then((username) => {
               if (!!username) {
