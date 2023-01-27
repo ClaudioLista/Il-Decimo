@@ -98,23 +98,29 @@ exports.postLogin = (req, res, next) => {
                 });
               }
 
-              user.activeSessions = user.activeSessions + 1;
-              user.save();
+              
 
               req.session.isLoggedIn = true;
               req.session.user = user;
               var ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress 
               console.log(ip)
-              new logSession ({userId: user._id, ipAddress: ip}).save();
+              const log = new logSession ({userId: user._id, ipAddress: ip})
+              log.save()
               
-              req.session.ipAddress = ipAddress;
-
+              req.session.ipAddress = ip;
+              user.lastSession = log.time
+              user.activeSessions = user.activeSessions + 1;
+              user.save();
               const accessToken = jwt.sign(
                 { userId: user._id },
                 process.env.JWT_SECRET,
                 {  expiresIn: "1d" }
               );
-
+              
+              logSession.find({userId: user._id}).then((log)=>{
+              console.log(log[log.length - 2])
+              })
+            
               User.findByIdAndUpdate(user._id, { accessToken });
               return req.session.save(() => {
                 res.redirect("/");

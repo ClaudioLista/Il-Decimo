@@ -55,6 +55,11 @@ const userSchema = new Schema({
     type: Date, 
     default: null,
   },
+  lastSession: { 
+    type: Date,
+     
+  },
+
 });
 
 userSchema.index( { "expireAt": 1 }, { "expireAfterSeconds": 0 } );
