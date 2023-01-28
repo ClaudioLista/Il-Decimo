@@ -40,18 +40,11 @@ const userSchema = new Schema({
     default: "user",
     enum: ["user", "admin"],
   },
-  accessToken: {
-    type: String,
-  },
   activeSessions: {
     type: Number,
     default: 0,
   },
   verified: {
-    type: Boolean,
-    default: false,
-  },
-  otpVerified: {
     type: Boolean,
     default: false,
   },
@@ -61,9 +54,7 @@ const userSchema = new Schema({
   },
   lastSession: { 
     type: Date,
-     
   },
-
 });
 
 userSchema.index( { "expireAt": 1 }, { "expireAfterSeconds": 0 } );

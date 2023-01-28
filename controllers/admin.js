@@ -28,7 +28,7 @@ exports.getListMatch = (req, res, next) => {
       });
     })
     .catch((err) => console.log(err));
-}
+};
 
 exports.getListUser = (req, res, next) => {
   const page = +req.query.page || 1;
@@ -55,4 +55,4 @@ exports.getListUser = (req, res, next) => {
       });
     })
     .catch((err) => console.log(err));
-}
+};

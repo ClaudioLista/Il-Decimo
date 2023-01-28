@@ -1,15 +1,15 @@
-const express = require('express')
-const { body } = require('express-validator')
+const express = require('express');
 
-const adminController = require('../controllers/admin')
-const isAuth = require('../middleware/is-auth')
-const isLog = require('../middleware/is-logged')
-const User = require('../models/user')
+const adminController = require('../controllers/admin');
 
-const router = express.Router()
+const isAuth = require('../middleware/is-auth');
+const isVerified = require('../middleware/is-verified');
+const isAdmin = require('../middleware/is-admin'); //dovrei usare accessController.grantAccess
 
-router.get("/listMatch", adminController.getListMatch)
+const router = express.Router();
 
-router.get("/listUser", adminController.getListUser)
+router.get("/listMatch", isAuth, isVerified, isAdmin, adminController.getListMatch);
 
-module.exports = router
+router.get("/listUser", isAuth, isVerified, isAdmin, adminController.getListUser);
+
+module.exports = router;

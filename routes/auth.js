@@ -1,68 +1,32 @@
-const express = require('express')
-const { body } = require('express-validator')
-const { Promise, Error } = require('sequelize')
-const bcrypt = require("bcryptjs");
-var generatePass = require('password-generator')
+const express = require('express');
+const { body } = require('express-validator');
+const { Promise, Error } = require('sequelize');
 
-const authController = require('../controllers/auth')
-const isAuth = require('../middleware/is-auth')
-const isLog = require('../middleware/is-logged')
-const User = require('../models/user')
-const FederateUser = require('../models/federateUser')
+const authController = require('../controllers/auth');
 
-const router = express.Router()
+const User = require('../models/user');
 
-var passport = require('passport')
-var GoogleStrategy = require('passport-google-oidc')
-var FacebookStrategy = require('passport-facebook');
+const isAuth = require('../middleware/is-auth');
+const isLog = require('../middleware/is-logged');
 const { rateLimit } = require('../middleware/login-rate-limit');
 
-const passErr= 'Perfavore inserisci una password valida! Deve contenere: almeno 8 caratteri,'+
-                ' almeno 1 lettera minuscola, almeno 1 lettera maiuscola, almeno 1 numero e almeno 1 simbolo'
+const router = express.Router();
 
-router.get("/verify/:username/:token", authController.getVerify)
+const passErr = 'Perfavore inserisci una password valida! Deve contenere: almeno 8 caratteri,'+
+                ' almeno 1 lettera minuscola, almeno 1 lettera maiuscola, almeno 1 numero e almeno 1 simbolo';
 
 router.get('/login', isLog, authController.getLogin)
-
-router.get('/login/federated/google', passport.authenticate('google', {
-    scope: [
-      'https://www.googleapis.com/auth/userinfo.profile',
-      'https://www.googleapis.com/auth/userinfo.email'
-    ],
-  })
-)
-
-router.get('/login/federated/facebook', passport.authenticate('facebook', {
-  scope:['email']
-}))
-
-router.get('/oauth2/redirect/google', passport.authenticate('google', {
-    successRedirect: '/',
-    failureRedirect: '/login'
-  })
-)
-
-router.get('/oauth2/redirect/facebook', passport.authenticate('facebook', {
-    successRedirect: '/',
-    failureRedirect: '/login'
-  })
-)
-
 router.post('/login', rateLimit, isLog,
   [
     body('email').isEmail().normalizeEmail(),
     body('password').isLength({ min: 8, max: 50 }).trim()
   ],
   authController.postLogin
-)
+);
 
+router.post('/checkOTP', isLog, authController.postCheckOTP);
 
-router.post('/checkOTP', isLog, authController.postcheckOTP)
-
-router.get('/terms', authController.getTerms)
-
-router.get('/signup', isLog, authController.getSignup)
-
+router.get('/signup', isLog, authController.getSignup);
 router.post('/signup', isLog,
   [
     body('nome', 'Perfavore inserisci il tuo Nome correttamente!')
@@ -132,123 +96,10 @@ router.post('/signup', isLog,
       })
   ],
   authController.postSignup
-)
+);
 
-router.post('/logout', isAuth, authController.postLogout)
+router.get("/verify/:username/:token", isLog, authController.getVerify);
 
-passport.use(
-  new GoogleStrategy(
-    {
-      clientID:
-        '368248899535-vgc9fj94cfkk9sojps8pct6bjgu2d4j0.apps.googleusercontent.com',
-      clientSecret: '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',
-      callbackURL: '/oauth2/redirect/google',
-      scope: ['profile']
-    },
-    function verify(issuer, profile, cb) {
-      FederateUser.findOne({ subject: profile.id, provider: issuer })
-        .then((fUser) => {
-          if (!fUser) {
-            const pass = generatePass()
-            bcrypt.hash(pass, 12)
-            .then((hashedPassword) => {
-              const user = new User({
-                nome: profile.name.givenName,
-                cognome: profile.name.familyName,
-                usrName: 'g_' + profile.name.givenName + '_' + profile.name.familyName,
-                email: profile.emails[0].value,
-                password: hashedPassword,
-                matcheslist: {
-                  matches: []
-                },
-                verified: true,
-                activeSessions: 1
-              })
-              user.save()
-              .then(() => {
-                const federateUser = new FederateUser({
-                  userId: user._id,
-                  provider: issuer,
-                  subject: profile.id
-                })
-                federateUser.save().then(() => {
-                  return cb(null, user)
-                })
-              })
-              .catch((err) => {
-                return cb(err)
-              })
-            })
-          } else {
-            User.findOne({ _id: fUser.userId }).then((user) => {
-              return cb(null, user)
-            })
-          }
-        })
-        .catch((err) => {
-          return cb(err)
-        })
-    },
-  )
-)
+router.post('/logout', isAuth, authController.postLogout);
 
-passport.use(
-  new FacebookStrategy(
-    {
-      clientID: '846393583262405',
-      clientSecret: 'b0bdd9d16238229f41cdd8f7bc5ab6c6',
-      callbackURL: '/oauth2/redirect/facebook',
-      state: true,
-      profileFields: ['id', 'email', 'gender', 'name'],
-    },
-    function verify(accessToken, refreshToken, profile, cb) {
-      FederateUser.findOne({
-        subject: profile.id,
-        provider: 'https://www.facebook.com'
-      })
-        .then((fUser) => {
-          if (!fUser) {
-            const pass = generatePass()
-            bcrypt.hash(pass, 12)
-            .then((hashedPassword) => {
-              const user = new User({
-                nome: profile.name.givenName,
-                cognome: profile.name.familyName,
-                usrName: 'f_' + profile.name.givenName + '_' + profile.name.familyName,
-                email: profile.emails[0].value,
-                password: hashedPassword,
-                matcheslist: {
-                  matches: []
-                },
-                verified: true,
-                activeSessions: 1
-              })
-              user.save()
-              .then(() => {
-                const federateUser = new FederateUser({
-                  userId: user._id,
-                  provider: 'https://www.facebook.com',
-                  subject: profile.id
-                })
-                federateUser.save().then(() => {
-                  return cb(null, user)
-                })
-              })
-              .catch((err) => {
-                return cb(err)
-              })
-            })
-          } else {
-            User.findOne({ _id: fUser.userId }).then((user) => {
-              return cb(null, user)
-            })
-          }
-        })
-        .catch((err) => {
-          return cb(err)
-        })
-    },
-  )
-)
-
-module.exports = router
+module.exports = router;

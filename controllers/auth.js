@@ -1,105 +1,17 @@
 const bcrypt = require("bcryptjs");
 const { validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
-const sendEmail = require("../util/email");
-const Token = require("../models/token");
-const userOTPVerification = require("../models/userOTPVerification");
-const IP = require("ip");
 
 const User = require("../models/user");
 const LoginAttempt = require("../models/loginAttempt");
-const logSession = require("../models/logSession");
+const LogSession = require("../models/logSession");
+const Token = require("../models/token");
 const UserOTPVerification = require("../models/userOTPVerification");
 
+const sendEmail = require("../util/email");
+const { OTPVerification } = require('../middleware/send-OTP-verification');
+
 const maxNumberOfFailedLogins = 5; //per signolo account
-
-const sendOTPVerificationEmail = async (_id, email, res) => {
-  try {
-    const otp = Math.floor(1000 + Math.random() * 9000).toString();
-
-    const message = otp;
-    const html = "<h2>Ecco il tuo OTP</h2> <h3> " + otp + "</h3>";
-
-    bcrypt.hash(otp, 12).then((hashedOTP) => {
-      const newOTPVerification = new userOTPVerification({
-        userId: _id,
-        otp: hashedOTP,
-        createdAt: Date.now(),
-        expireAt: Date.now() + 120000,
-      });
-      newOTPVerification.save();
-      sendEmail(email, "Il tuo OTP!", html, message);
-    });
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-exports.getTerms = (req, res, next) => {
-  res.render("auth/termsandconditions", {
-    path: "/terms",
-    pageTitle: "Termini di Servizio - Il Decimo",
-  });
-};
-
-exports.postcheckOTP = (req, res, next) => {
-  const email = req.body.email;
-  const otp = req.body.otp;
-  User.findOne({email: email})
-    .then((user) => {
-      if (!!user && !!otp) {
-        UserOTPVerification.find({ userId: user._id }).then((userOtps) => {
-          userOtp = userOtps[userOtps.length - 1]
-          
-          bcrypt.compare(otp, userOtp.otp).then((otpOK) => {
-            if (otpOK) {
-              
-              UserOTPVerification.deleteMany({userId: user._id});
-              req.session.isLoggedIn = true;
-              req.session.user = user;
-              var ip =
-                req.headers["x-forwarded-for"] || req.socket.remoteAddress;
-              
-              const log = new logSession({ userId: user._id, ipAddress: ip });
-              log.save();
-
-              req.session.ipAddress = ip;
-              user.lastSession = log.time;
-              user.activeSessions = user.activeSessions + 1;
-              user.save();
-              const accessToken = jwt.sign(
-                { userId: user._id },
-                process.env.JWT_SECRET,
-                { expiresIn: "1d" }
-              );
-
-              User.findByIdAndUpdate(user._id, { accessToken });
-              return req.session.save(() => {
-                res.redirect("/?info=true");
-              });
-            }
-
-            else{
-              return res.render("auth/checkOTP", {
-                path: "/checkOTP",
-                pageTitle: "Check OTP",
-                errorMessage: "OTP non valido",
-                message: "",
-                oldInput: {
-                  otp: otp,
-                },
-                email: email,
-                validationErrors: [],
-              });
-            }
-          });
-        }).catch((error)=>{
-          console.log(error)
-        })
-      }
-    })
-    .catch((error) => console.log(error));
-};
 
 exports.getLogin = (req, res, next) => {
   res.render("auth/login", {
@@ -180,9 +92,7 @@ exports.postLogin = (req, res, next) => {
                   validationErrors: [],
                 });
               }
-
-              sendOTPVerificationEmail(user._id, user.email, res);
-              
+              OTPVerification(user._id, user.email, res);
               return res.render("auth/checkOTP", {
                 path: "/checkOTP",
                 pageTitle: "Check OTP",
@@ -194,28 +104,6 @@ exports.postLogin = (req, res, next) => {
                 email: user.email,
                 validationErrors: [],
               });
-
-              // req.session.isLoggedIn = true;
-              // req.session.user = user;
-              // var ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress
-              // console.log(ip)
-              // const log = new logSession ({userId: user._id, ipAddress: ip})
-              // log.save()
-
-              // req.session.ipAddress = ip;
-              // user.lastSession = log.time
-              // user.activeSessions = user.activeSessions + 1;
-              // user.save();
-              // const accessToken = jwt.sign(
-              //   { userId: user._id },
-              //   process.env.JWT_SECRET,
-              //   {  expiresIn: "1d" }
-              // );
-
-              // User.findByIdAndUpdate(user._id, { accessToken });
-              // return req.session.save(() => {
-              //   res.redirect("/");
-              // });
             }
             LoginAttempt.findOne({ usrName: user.usrName }).then((username) => {
               if (!!username) {
@@ -231,7 +119,6 @@ exports.postLogin = (req, res, next) => {
                 loginAttempt.save();
               }
             });
-
             if (user.activeSessions >= 2) {
               errMsg = "Hai già due sessioni attive!";
             }
@@ -253,6 +140,52 @@ exports.postLogin = (req, res, next) => {
       });
     })
     .catch((err) => console.log(err));
+};
+
+exports.postCheckOTP = (req, res, next) => {
+  const email = req.body.email;
+  const otp = req.body.otp;
+  User.findOne({email: email})
+    .then((user) => {
+      if (!!user && !!otp) {
+        UserOTPVerification.find({ userId: user._id }).then((userOtps) => {
+          userOtp = userOtps[userOtps.length - 1]
+          
+          bcrypt.compare(otp, userOtp.otp).then((otpOK) => {
+            if (otpOK) {
+              UserOTPVerification.deleteMany({userId: user._id});
+              req.session.isLoggedIn = true;
+              req.session.user = user;
+              var ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;    
+              const log = new LogSession({ userId: user._id, ipAddress: ip });
+              log.save();
+              req.session.ipAddress = ip;
+              user.lastSession = log.time;
+              user.activeSessions = user.activeSessions + 1;
+              user.save();
+              return req.session.save(() => {
+                res.redirect("/?info=true");
+              });
+            } else {
+              return res.render("auth/checkOTP", {
+                path: "/checkOTP",
+                pageTitle: "Check OTP",
+                errorMessage: "OTP non valido",
+                message: "",
+                oldInput: {
+                  otp: otp,
+                },
+                email: email,
+                validationErrors: [],
+              });
+            }
+          });
+        }).catch((error)=>{
+          console.log(error)
+        })
+      }
+    })
+    .catch((error) => console.log(error));
 };
 
 exports.getSignup = (req, res, next) => {
@@ -299,6 +232,7 @@ exports.postSignup = (req, res, next) => {
       validationErrors: errors.array(),
     });
   }
+
   bcrypt
     .hash(password, 12)
     .then((hashedPassword) => {
@@ -322,22 +256,18 @@ exports.postSignup = (req, res, next) => {
         process.env.JWT_SECRET,
         { expiresIn: "1d" }
       );
-      user.accessToken = accessToken;
       user.save();
-
       let token = new Token({
         userId: user._id,
         token: accessToken,
         expireAt: Date.now() + 86400000,
-      }).save();
+      });
+      token.save();
 
       const message = `${process.env.BASE_URL}/verify/${user.usrName}/${accessToken}`;
       const html =
-        "<h2>Clicca il link per confermare l'email:</h2><a href='" +
-        message +
-        "' target='_blank'>" +
-        message +
-        "</a>";
+        "<h2>Clicca il link per confermare l'email:</h2><a href='" + message +
+        "' target='_blank'>" + message + "</a>";
       sendEmail(user.email, "Verifica l'email!", html, message);
     })
     .then(() => {
@@ -351,18 +281,6 @@ exports.postSignup = (req, res, next) => {
     .catch((err) => console.log(err));
 };
 
-exports.postLogout = (req, res, next) => {
-  User.findById(req.user._id)
-    .then((user) => {
-      user.activeSessions = user.activeSessions - 1;
-      user.save();
-    })
-    .catch((err) => console.log(err));
-  req.session.destroy((err) => {
-    res.redirect("/");
-  });
-};
-
 exports.getVerify = (req, res, next) => {
   User.findOne({ usrName: req.params.username }).then((user) => {
     if (!user) {
@@ -372,7 +290,6 @@ exports.getVerify = (req, res, next) => {
         valid: false,
       });
     }
-
     Token.findOne({
       userId: user._id,
       token: req.params.token,
@@ -394,5 +311,17 @@ exports.getVerify = (req, res, next) => {
         valid: true,
       });
     });
+  });
+};
+
+exports.postLogout = (req, res, next) => {
+  User.findById(req.user._id)
+    .then((user) => {
+      user.activeSessions = user.activeSessions - 1;
+      user.save();
+    })
+    .catch((err) => console.log(err));
+  req.session.destroy((err) => {
+    res.redirect("/");
   });
 };

@@ -1,5 +1,5 @@
 const Match = require("../models/match");
-const user = require("../models/user");
+const User = require("../models/user");
 const { roles } = require("../roles");
 
 exports.grantAccess = function (action, resource) {
@@ -25,8 +25,7 @@ exports.grantIfIsInMatch = function (action, resource) {
       const permission = roles.can(req.user.role)[action](resource);
       const matchId = req.body.matchId || req.params.matchId;
 
-      user
-        .findById(req.user._id)
+      User.findById(req.user._id)
         .then((user) => {
           const risultato = user.matchList.find((element) =>
             element.matchId.equals(matchId)
@@ -83,8 +82,7 @@ exports.grantIfOwnProfile = function (action, resource) {
     try {
       const permission = roles.can(req.user.role)[action](resource);
       const username = req.params.username;
-      user
-        .findOne({ usrName: username })
+      User.findOne({ usrName: username })
         .then((user) => {
           if (
             !permission.granted ||

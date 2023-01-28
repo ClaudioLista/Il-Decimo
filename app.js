@@ -1,7 +1,4 @@
 const path = require("path");
-
-const ChatRoom = require("./models/chatroom");
-
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
@@ -9,11 +6,12 @@ const session = require("express-session");
 const MongoDBStore = require("connect-mongodb-session")(session);
 const csrf = require("csurf");
 const passport = require('passport');
-
 require("dotenv").config();
 
 const errorController = require("./controllers/error");
+
 const User = require("./models/user");
+const ChatRoom = require("./models/chatroom");
 
 const MONGODB_URI = process.env.MONGODB_URI
 
@@ -29,8 +27,8 @@ app.set("views", "views");
 
 const userRoutes = require("./routes/user");
 const authRoutes = require("./routes/auth");
+const federateRoutes = require("./routes/federate");
 const adminRoutes = require("./routes/admin");
-const user = require("./models/user");
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.json())
@@ -49,25 +47,6 @@ app.use(
 );
 app.use(csrfProtection);
 app.use(passport.authenticate('session'));
-
-//TO-DO
-app.use((req, res, next) => {
-  if (req.headers["x-access-token"]) {
-   const accessToken = req.headers["x-access-token"];
-   const { userId, exp } = jwt.verify(accessToken, process.env.JWT_SECRET);
-   console.log(userId, exp)
-   // Check if token has expired
-   if (exp < Date.now().valueOf() / 1000) {
-    return res.status(401).json({
-     error: "JWT token has expired, please login to obtain a new one"
-    });
-   }
-   res.locals.loggedInUser = user.findById(userId);
-   next();
-  } else {
-   next();
-  }
-});
 
 passport.serializeUser(function(req, user, cb) {
   req.session.user = user;
@@ -107,6 +86,7 @@ app.use((req, res, next) => {
 
 app.use(userRoutes);
 app.use(authRoutes);
+app.use(federateRoutes);
 app.use(adminRoutes);
 
 app.use(errorController.get404);

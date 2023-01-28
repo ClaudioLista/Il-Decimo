@@ -1,16 +1,17 @@
+const { validationResult } = require("express-validator");
+
+const User = require("../models/user");
 const Match = require("../models/match");
 const ChatRoom = require("../models/chatroom");
-const user = require("../models/user");
-const logSession = require("../models/logSession");
-const { validationResult } = require("express-validator");
-const { roles } = require("../roles");
+const LogSession = require("../models/logSession");
+// const { roles } = require("../roles");
 
 const MATCHES_PER_PAGE = 3;
 
 exports.getIndex = (req, res, next) => {
-  let message = ""
+  let message = "";
   if (req.query.info === 'true') {
-    logSession.find({ userId: req.user._id }).then((log) => {
+    LogSession.find({ userId: req.user._id }).then((log) => {
       if(log.length > 1) {
         const currentdate = log[log.length - 2].time
         var getMinutes= currentdate.getMinutes();
@@ -34,6 +35,26 @@ exports.getIndex = (req, res, next) => {
       message: "",
     });
   }
+};
+
+exports.getTerms = (req, res, next) => {
+  res.render("app/termsandconditions", {
+    path: "/terms",
+    pageTitle: "Termini di Servizio - Il Decimo",
+  });
+};
+
+exports.getUserProfile = (req, res, next) => {
+  const userName = req.params.username;
+  User.findOne({ usrName: userName })
+    .then((user) => {
+      res.render("user/profile", {
+        pageTitle: "My Profile",
+        path: "/profile",
+        user: user,
+      });
+    })
+    .catch((err) => console.log(err));
 };
 
 exports.getMatches = (req, res, next) => {
@@ -72,8 +93,7 @@ exports.getMatch = (req, res, next) => {
   let userVote = "";
 
   if (req.user) {
-    user
-      .findById(req.user._id)
+    User.findById(req.user._id)
       .then((user) => {
         nameUser = user.usrName;
         if (!(user.matchList.length === 0)) {
@@ -85,7 +105,6 @@ exports.getMatch = (req, res, next) => {
       })
       .catch((err) => console.log(err));
   }
-
   Match.findById(matchId)
     .populate({
       path: "listPlayers.players.userId",
@@ -108,7 +127,6 @@ exports.getMatch = (req, res, next) => {
         }
         const result = match.listPlayers.populate("players.userId");
       }
-
       ChatRoom.findOne({ matchId: match._id })
         .then((chatroom) => {
           messages = chatroom.chat.message;
@@ -151,8 +169,8 @@ exports.postAddMatch = (req, res, next) => {
   const description = req.body.description;
   const totalPlayers = req.body.totalPlayers;
   const currentPlayers = 0;
-
   const hostUserId = req.user;
+
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(422).render("user/add-match", {
@@ -188,11 +206,9 @@ exports.postAddMatch = (req, res, next) => {
     },
     hostUserId: hostUserId,
   });
-
-  match
-    .save()
+  match.save()
     .then(() => {
-      user.findById(req.user._id).then((user) => {
+      User.findById(req.user._id).then((user) => {
         user.matchList.push({ matchId: match._id, vote: "" });
         user.save();
       });
@@ -223,8 +239,7 @@ exports.postVoteMatch = (req, res, next) => {
         if (oldVote != "noneVote") {
           match.votes[oldVote] = match.votes[oldVote] - 1;
         }
-        user
-          .findById(req.user._id)
+        User.findById(req.user._id)
           .then((user) => {
             const voteIndex = user.matchList.findIndex((element) =>
               element.matchId.equals(matchId)
@@ -239,8 +254,7 @@ exports.postVoteMatch = (req, res, next) => {
           .catch((err) => console.log(err));
       } else {
         match.votes[updatedVote] = match.votes[updatedVote] - 1;
-        user
-          .findById(req.user._id)
+        User.findById(req.user._id)
           .then((user) => {
             const voteIndex = user.matchList.findIndex((element) =>
               element.matchId.equals(matchId)
@@ -361,12 +375,8 @@ exports.getJoinMatch = (req, res, next) => {
       const result = match.listPlayers.players.find(
         (element) => element.userId == req.user._id.toString()
       );
-      if (result !== undefined) {
-        is_in = true;
-      }
-      if (match.currentPlayers == match.totalPlayers) {
-        is_full = true;
-      }
+      if (result !== undefined) is_in = true;
+      if (match.currentPlayers == match.totalPlayers) is_full = true;
       res.render("app/join-match", {
         m: match,
         pageTitle: "Join Match",
@@ -385,7 +395,7 @@ exports.postJoinMatch = (req, res, next) => {
   Match.findById(matchId)
     .then((match) => {
       if (match.currentPlayers != match.totalPlayers) {
-        user.findById(req.user._id).then((user) => {
+        User.findById(req.user._id).then((user) => {
           user.matchList.push({ matchId: match._id, vote: "" });
           user.save();
         });
@@ -408,14 +418,10 @@ exports.getUnJoinMatch = (req, res, next) => {
       const result = match.listPlayers.players.find(
         (element) => element.userId == req.user._id.toString()
       );
-      if (result !== undefined) {
-        is_in = true;
-      }
+      if (result !== undefined) is_in = true;
       let matchDate = new Date(match.time);
       let diffInSec = matchDate / 60000 - currentDate / 60000;
-      if (diffInSec > 1440) {
-        can_unjoin = true;
-      }
+      if (diffInSec > 1440) can_unjoin = true;
       res.render("app/unjoin-match", {
         m: match,
         pageTitle: "Join Match",
@@ -437,20 +443,6 @@ exports.postUnJoinMatch = (req, res, next) => {
     })
     .then(() => {
       res.redirect("/mymatches");
-    })
-    .catch((err) => console.log(err));
-};
-
-exports.getUserProfile = (req, res, next) => {
-  const userName = req.params.username;
-  user
-    .findOne({ usrName: userName })
-    .then((user) => {
-      res.render("user/profile", {
-        pageTitle: "My Profile",
-        path: "/profile",
-        user: user,
-      });
     })
     .catch((err) => console.log(err));
 };
