@@ -5,6 +5,39 @@
 	
 </head>
 
+<script>
+	function startTimer(duration, display) {
+		var timer = duration, minutes, seconds;
+		setInterval(function () {
+			minutes = parseInt(timer / 60, 10);
+			seconds = parseInt(timer % 60, 10);
+
+			minutes = minutes < 10 ? "0" + minutes : minutes;
+			seconds = seconds < 10 ? "0" + seconds : seconds;
+
+			display.textContent = minutes + ":" + seconds;
+
+			if (--timer < 0) {
+				timer = duration;
+			}
+		}, 1000);
+	}	
+
+	window.onload = function () {
+		var minutes = 60 * 2,
+		display = document.querySelector('#time');
+		startTimer(minutes, display);
+		setTimeout(() => {
+			const message = document.getElementById("info-message")
+        	message.style.display = "none";
+		}, 5000);
+		setTimeout(() => {
+			window.location.assign("http://localhost:5000/login");
+		}, 115000)
+	};
+
+</script>
+
 <body>
    <%- include('../includes/navigation.ejs') %>
     <div class="limiter">
@@ -12,14 +45,15 @@
 			<div class="wrap-login100 p-l-55 p-r-55 p-t-60 p-b-54">
 				<form class="login100-form validate-form" action="/checkOTP" method="POST">
                     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-					<span class="login100-form-title p-b-49">Verifica OTP</span>
+					<span class="login100-form-title p-b-20">Verifica OTP</span>
+					<div class="p-b-20" style="text-align: center;">L'otp scade tra: <span id="time">02:00</span> </div>
 					<% if (errorMessage) { %>
 						<div class="flex-c-m">
 							<div class="popout error-message"><%= errorMessage %></div>
                         </div>
 					<% } else if (message) { %>
 						<div class="flex-c-m">
-							<div class="popout message"><%= message %></div>
+							<div id="info-message" class="popout info-message"><%= message %></div>
                         </div>
 					<% } %>
 				

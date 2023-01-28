@@ -25,7 +25,7 @@ const sendOTPVerificationEmail = async (_id, email, res) => {
         userId: _id,
         otp: hashedOTP,
         createdAt: Date.now(),
-        expireAt: Date.now() + 60000,
+        expireAt: Date.now() + 120000,
       });
       newOTPVerification.save();
       sendEmail(email, "Il tuo OTP!", html, message);
@@ -41,8 +41,6 @@ exports.getTerms = (req, res, next) => {
     pageTitle: "Termini di Servizio - Il Decimo",
   });
 };
-
-
 
 exports.postcheckOTP = (req, res, next) => {
   const email = req.body.email;
@@ -77,7 +75,7 @@ exports.postcheckOTP = (req, res, next) => {
 
               User.findByIdAndUpdate(user._id, { accessToken });
               return req.session.save(() => {
-                res.redirect("/");
+                res.redirect("/?info=true");
               });
             }
 
@@ -189,7 +187,7 @@ exports.postLogin = (req, res, next) => {
                 path: "/checkOTP",
                 pageTitle: "Check OTP",
                 errorMessage: "",
-                message: "",
+                message: "Abbiamo inviato l'OTP sulla tua email!",
                 oldInput: {
                   otp: "",
                 },
