@@ -1,39 +1,39 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 
-const Schema = mongoose.Schema
+const Schema = mongoose.Schema;
 
 const matchSchema = new Schema({
   title: {
     type: String,
-    required: true
+    required: true,
   },
   placeName: {
     type: String,
-    required: true
+    required: true,
   },
   address: {
     type: String,
-    required: true
+    required: true,
   },
   time: {
     type: Date,
-    required: true
+    required: true,
   },
   price: {
     type: Number,
-    required: true
+    required: true,
   },
   description: {
     type: String,
-    required: true
+    required: true,
   },
   totalPlayers: {
     type: Number,
-    required: true
+    required: true,
   },
   currentPlayers: {
     type: Number,
-    required: true
+    required: true,
   },
   listPlayers: {
     players: [
@@ -41,7 +41,7 @@ const matchSchema = new Schema({
         userId: { 
           type: Schema.Types.ObjectId, 
           ref: 'User', 
-          required: true 
+          required: true ,
         }
       }
     ]
@@ -51,14 +51,14 @@ const matchSchema = new Schema({
     sad: { type: Number, default: 0, required: false},
     ok: { type: Number, default: 0, required: false},
     good: { type: Number, default: 0, required: false},
-    happy: { type: Number, default: 0, required: false}
+    happy: { type: Number, default: 0, required: false},
   },
   hostUserId: {
     type: Schema.Types.ObjectId,
     ref: 'User',
-    required: true
-  }
-})
+    required: true,
+  },
+});
 
 matchSchema.methods.addPlayer = function(user) {
   const updatedMatchPlayers = [...this.listPlayers.players];
@@ -71,7 +71,7 @@ matchSchema.methods.addPlayer = function(user) {
   this.currentPlayers = this.currentPlayers+1;
 
   return this.save();
-}
+};
 
 matchSchema.methods.RemovePlayer = function(userId){
 
@@ -83,6 +83,6 @@ matchSchema.methods.RemovePlayer = function(userId){
   this.currentPlayers = this.currentPlayers-1;
 
   return this.save();
-}
+};
 
-module.exports = mongoose.model('Match', matchSchema)
+module.exports = mongoose.model('Match', matchSchema);

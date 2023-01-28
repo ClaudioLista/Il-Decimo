@@ -1,6 +1,6 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 
-const Schema = mongoose.Schema
+const Schema = mongoose.Schema;
 
 const chatRoomSchema = new Schema({
   matchId: {
@@ -25,8 +25,8 @@ const chatRoomSchema = new Schema({
         }
       }
     ]
-  }
-})
+  },
+});
 
 chatRoomSchema.methods.addMessage = function (message) {
   const updatedMessage = [...this.chat.message]
@@ -42,6 +42,6 @@ chatRoomSchema.methods.addMessage = function (message) {
   this.chat = updatedChat
 
   return this.save()
-}
+};
 
-module.exports = mongoose.model('ChatRoom', chatRoomSchema)
+module.exports = mongoose.model('ChatRoom', chatRoomSchema);

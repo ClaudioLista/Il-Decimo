@@ -9,7 +9,6 @@ const UserOTPVerificationSchema = new Schema({
   },
   otp: {
     type: String,
-    
   },
   createdAt: { 
     type: Date, 
