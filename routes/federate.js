@@ -8,6 +8,8 @@ var FacebookStrategy = require('passport-facebook');
 const router = express.Router();
 
 const FederateUser = require('../models/federateUser');
+const User = require('../models/user');
+const Session = require('../models/session');
 
 router.get('/login/federated/google', passport.authenticate('google', {
     scope: [
@@ -59,7 +61,6 @@ passport.use(
                   matches: []
                 },
                 verified: true,
-                activeSessions: 1
               })
               user.save()
               .then(() => {
@@ -78,7 +79,13 @@ passport.use(
             })
           } else {
             User.findOne({ _id: fUser.userId }).then((user) => {
-              return cb(null, user)
+              Session.find({'session.user.usrName': user.usrName}).then((activeSessions) => {
+                if (activeSessions.length > 2) {
+                  return cb(null, null)
+                } else {
+                  return cb(null, user)
+                }
+              })
             })
           }
         })
@@ -137,7 +144,13 @@ passport.use(
             })
           } else {
             User.findOne({ _id: fUser.userId }).then((user) => {
-              return cb(null, user)
+              Session.find({'session.user.usrName': user.usrName}).then((activeSessions) => {
+                if (activeSessions.length > 2) {
+                  return cb(null, null)
+                } else {
+                  return cb(null, user)
+                }
+              })
             })
           }
         })

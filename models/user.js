@@ -40,10 +40,6 @@ const userSchema = new Schema({
     default: "user",
     enum: ["user", "admin"],
   },
-  activeSessions: {
-    type: Number,
-    default: 0,
-  },
   verified: {
     type: Boolean,
     default: false,

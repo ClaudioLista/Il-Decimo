@@ -6,6 +6,7 @@ const User = require("../models/user");
 const LoginAttempt = require("../models/loginAttempt");
 const LogSession = require("../models/logSession");
 const Token = require("../models/token");
+const Session = require("../models/session");
 const UserOTPVerification = require("../models/userOTPVerification");
 
 const sendEmail = require("../util/email");
@@ -78,60 +79,64 @@ exports.postLogin = (req, res, next) => {
         bcrypt
           .compare(password, user.password)
           .then((passOK) => {
-            if (passOK && user.activeSessions < 2) {
-              if (!user.verified) {
-                return res.status(422).render("auth/login", {
-                  path: "/login",
-                  pageTitle: "Login",
-                  errorMessage:
-                    "Per effettuare l'accesso devi prima verificare l'email!",
+            Session.find({'session.user.usrName': user.usrName}).then((activeSessions) => {
+              // console.log(activeSessions)
+              // console.log(activeSessions.length)
+              if (passOK && activeSessions.length < 2) {
+                if (!user.verified) {
+                  return res.status(422).render("auth/login", {
+                    path: "/login",
+                    pageTitle: "Login",
+                    errorMessage:
+                      "Per effettuare l'accesso devi prima verificare l'email!",
+                    oldInput: {
+                      email: email,
+                      password: password,
+                    },
+                    validationErrors: [],
+                  });
+                }
+                OTPVerification(user._id, user.email, res);
+                return res.render("auth/checkOTP", {
+                  path: "/checkOTP",
+                  pageTitle: "Check OTP",
+                  errorMessage: "",
+                  message: "Abbiamo inviato l'OTP sulla tua email!",
                   oldInput: {
-                    email: email,
-                    password: password,
+                    otp: "",
                   },
+                  email: user.email,
                   validationErrors: [],
                 });
               }
-              OTPVerification(user._id, user.email, res);
-              return res.render("auth/checkOTP", {
-                path: "/checkOTP",
-                pageTitle: "Check OTP",
-                errorMessage: "",
-                message: "Abbiamo inviato l'OTP sulla tua email!",
+              LoginAttempt.findOne({ usrName: user.usrName }).then((username) => {
+                if (!!username) {
+                  username.expireAt = Date.now() + 300000;
+                  username.attempts = username.attempts + 1;
+                  username.save();
+                } else {
+                  const loginAttempt = new LoginAttempt({
+                    usrName: user.usrName,
+                    attempts: 1,
+                    expireAt: Date.now() + 300000,
+                  });
+                  loginAttempt.save();
+                }
+              });
+              if (activeSessions.length >= 2) {
+                errMsg = "Hai già due sessioni attive!";
+              }
+              return res.status(422).render("auth/login", {
+                path: "/login",
+                pageTitle: "Login",
+                errorMessage: errMsg,
                 oldInput: {
-                  otp: "",
+                  email: email,
+                  password: password,
                 },
-                email: user.email,
                 validationErrors: [],
               });
-            }
-            LoginAttempt.findOne({ usrName: user.usrName }).then((username) => {
-              if (!!username) {
-                username.expireAt = Date.now() + 300000;
-                username.attempts = username.attempts + 1;
-                username.save();
-              } else {
-                const loginAttempt = new LoginAttempt({
-                  usrName: user.usrName,
-                  attempts: 1,
-                  expireAt: Date.now() + 300000,
-                });
-                loginAttempt.save();
-              }
-            });
-            if (user.activeSessions >= 2) {
-              errMsg = "Hai già due sessioni attive!";
-            }
-            return res.status(422).render("auth/login", {
-              path: "/login",
-              pageTitle: "Login",
-              errorMessage: errMsg,
-              oldInput: {
-                email: email,
-                password: password,
-              },
-              validationErrors: [],
-            });
+            })
           })
           .catch((err) => {
             console.log(err);
@@ -161,7 +166,6 @@ exports.postCheckOTP = (req, res, next) => {
               log.save();
               req.session.ipAddress = ip;
               user.lastSession = log.time;
-              user.activeSessions = user.activeSessions + 1;
               user.save();
               return req.session.save(() => {
                 res.redirect("/?info=true");
@@ -315,12 +319,6 @@ exports.getVerify = (req, res, next) => {
 };
 
 exports.postLogout = (req, res, next) => {
-  User.findById(req.user._id)
-    .then((user) => {
-      user.activeSessions = user.activeSessions - 1;
-      user.save();
-    })
-    .catch((err) => console.log(err));
   req.session.destroy((err) => {
     res.redirect("/");
   });
