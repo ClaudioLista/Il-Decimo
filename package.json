@@ -39,6 +39,7 @@
     "pug": "^3.0.2",
     "sequelize": "^5.0.0-beta.11",
     "socket.io": "^4.5.4",
-    "winston": "^3.8.2"
+    "winston": "^3.8.2",
+    "winston-mongodb": "^5.1.1"
   }
 }

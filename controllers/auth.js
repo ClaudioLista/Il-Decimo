@@ -13,7 +13,7 @@ const sendEmail = require("../util/email");
 const { OTPVerification } = require('../middleware/send-OTP-verification');
 const { logger } = require("../util/logger");
 
-const maxNumberOfFailedLogins = 5; //per signolo account
+const maxNumberOfFailedLogins = 10;
 
 exports.getLogin = (req, res, next) => {
   res.render("auth/login", {
@@ -34,13 +34,12 @@ exports.postLogin = (req, res, next) => {
   const password = req.body.password;
   let errMsg = "Username o Password non validi, riprova ad effettuare il login!";
 
-  const userInfo = (!!req.session.user) ? req.session.user.usrName : 'guest';
   const remoteAddress = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
   const logMessage ="'" + req.method + "' request to " + "'" + req.url + "' from (IP: " +  remoteAddress + ")"
 
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    const logWarnMessage = "E-mail: " + email + " - username o password invalidi."
+    const logWarnMessage = "Username: " + usrName + " - username o password invalidi."
     logger.warn(logMessage + " " + logWarnMessage)
     return res.status(422).render("auth/login", {
       path: "/login",
@@ -57,6 +56,8 @@ exports.postLogin = (req, res, next) => {
   User.findOne({ usrName: usrName })
     .then((user) => {
       if (!user) {
+        const logWarnMessage = "Username: " + usrName + " - username non esistente."
+        logger.warn(logMessage + " " + logWarnMessage)
         return res.status(422).render("auth/login", {
           path: "/login",
           pageTitle: "Login",
@@ -71,6 +72,8 @@ exports.postLogin = (req, res, next) => {
       LoginAttempt.findOne({ usrName: user.usrName }).then((blackList) => {
         if (!!blackList) {
           if (blackList.attempts >= maxNumberOfFailedLogins) {
+            const logWarnMessage = "Username: " + usrName + " - troppi tentativi di login."
+            logger.warn(logMessage + " " + logWarnMessage)
             return res.status(429).render("auth/login", {
               path: "/login",
               pageTitle: "Login",
@@ -89,6 +92,8 @@ exports.postLogin = (req, res, next) => {
             Session.find({'session.user.usrName': user.usrName}).then((activeSessions) => {
               if (passOK && activeSessions.length < 2) {
                 if (!user.verified) {
+                  const logWarnMessage = "Username: " + usrName + " - account non verificato."
+                  logger.warn(logMessage + " " + logWarnMessage)
                   return res.status(422).render("auth/login", {
                     path: "/login",
                     pageTitle: "Login",
@@ -128,6 +133,8 @@ exports.postLogin = (req, res, next) => {
                 }
               });
               if (activeSessions.length >= 2) {
+                const logWarnMessage = "Username: " + usrName + " - l'account ha già due sessioni attive."
+                logger.warn(logMessage + " " + logWarnMessage)
                 errMsg = "Hai già due sessioni attive!";
               }
               return res.status(422).render("auth/login", {
@@ -144,14 +151,20 @@ exports.postLogin = (req, res, next) => {
           })
           .catch((err) => {
             console.log(err);
+            logger.info(logMessage + " " + err)
             res.redirect("/login");
           });
       });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      console.log(err);
+      logger.info(logMessage + " " + err)
+    });
 };
 
 exports.postCheckOTP = (req, res, next) => {
+  const remoteAddress = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+  const logMessage ="'" + req.method + "' request to " + "'" + req.url + "' from (IP: " +  remoteAddress + ")"
   const email = req.body.email;
   const otp = req.body.otp;
   User.findOne({email: email})
@@ -162,6 +175,8 @@ exports.postCheckOTP = (req, res, next) => {
           
           bcrypt.compare(otp, userOtp.otp).then((otpOK) => {
             if (otpOK) {
+              const logInfoMessage = "Username: " + user.usrName + " - OTP inserito correttamente."
+              logger.info(logMessage + " " + logInfoMessage)
               UserOTPVerification.deleteMany({userId: user._id});
               req.session.isLoggedIn = true;
               req.session.user = user;
@@ -175,6 +190,8 @@ exports.postCheckOTP = (req, res, next) => {
                 res.redirect("/?info=true");
               });
             } else {
+              const logInfoMessage = "Username: " + user.usrName + " - OTP inserito non valido."
+              logger.warn(logMessage + " " + logInfoMessage)
               return res.render("auth/checkOTP", {
                 path: "/checkOTP",
                 pageTitle: "Check OTP",
@@ -189,11 +206,15 @@ exports.postCheckOTP = (req, res, next) => {
             }
           });
         }).catch((error)=>{
+          logger.info(logMessage + " " + error)
           console.log(error)
         })
       }
     })
-    .catch((error) => console.log(error));
+    .catch((error) => {
+      logger.info(logMessage + " " + error)
+      console.log(error)
+    })
 };
 
 exports.getSignup = (req, res, next) => {

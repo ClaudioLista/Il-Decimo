@@ -24,7 +24,7 @@ router.post('/login', rateLimit, isLog,
   authController.postLogin
 );
 
-router.post('/checkOTP', isLog, authController.postCheckOTP);
+router.post('/checkOTP', rateLimit, isLog, authController.postCheckOTP);
 
 router.get('/signup', isLog, authController.getSignup);
 router.post('/signup', isLog,
