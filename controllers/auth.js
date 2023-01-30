@@ -22,7 +22,7 @@ exports.getLogin = (req, res, next) => {
     errorMessage: "",
     message: "",
     oldInput: {
-      email: "",
+      usrName: "",
       password: "",
     },
     validationErrors: [],
@@ -30,9 +30,9 @@ exports.getLogin = (req, res, next) => {
 };
 
 exports.postLogin = (req, res, next) => {
-  const email = req.body.email;
+  const usrName = req.body.usrName;
   const password = req.body.password;
-  let errMsg = "Email o Password non validi, riprova ad effettuare il login!";
+  let errMsg = "Username o Password non validi, riprova ad effettuare il login!";
 
   const userInfo = (!!req.session.user) ? req.session.user.usrName : 'guest';
   const remoteAddress = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
@@ -47,14 +47,14 @@ exports.postLogin = (req, res, next) => {
       pageTitle: "Login",
       errorMessage: errMsg,
       oldInput: {
-        email: email,
+        usrName: usrName,
         password: password,
       },
       validationErrors: errors.array(),
     });
   }
 
-  User.findOne({ email: email })
+  User.findOne({ usrName: usrName })
     .then((user) => {
       if (!user) {
         return res.status(422).render("auth/login", {
@@ -62,7 +62,7 @@ exports.postLogin = (req, res, next) => {
           pageTitle: "Login",
           errorMessage: errMsg,
           oldInput: {
-            email: email,
+            usrName: usrName,
             password: password,
           },
           validationErrors: [],
@@ -76,7 +76,7 @@ exports.postLogin = (req, res, next) => {
               pageTitle: "Login",
               errorMessage: "Troppi tentativi, riprova tra poco.",
               oldInput: {
-                email: email,
+                usrName: usrName,
                 password: password,
               },
               validationErrors: [],
@@ -87,17 +87,14 @@ exports.postLogin = (req, res, next) => {
           .compare(password, user.password)
           .then((passOK) => {
             Session.find({'session.user.usrName': user.usrName}).then((activeSessions) => {
-              // console.log(activeSessions)
-              // console.log(activeSessions.length)
               if (passOK && activeSessions.length < 2) {
                 if (!user.verified) {
                   return res.status(422).render("auth/login", {
                     path: "/login",
                     pageTitle: "Login",
-                    errorMessage:
-                      "Per effettuare l'accesso devi prima verificare l'email!",
+                    errorMessage: "Per effettuare l'accesso devi prima verificare l'email!",
                     oldInput: {
-                      email: email,
+                      usrName: usrName,
                       password: password,
                     },
                     validationErrors: [],
@@ -138,7 +135,7 @@ exports.postLogin = (req, res, next) => {
                 pageTitle: "Login",
                 errorMessage: errMsg,
                 oldInput: {
-                  email: email,
+                  usrName: usrName,
                   password: password,
                 },
                 validationErrors: [],
