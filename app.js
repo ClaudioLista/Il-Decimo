@@ -12,6 +12,7 @@ const errorController = require("./controllers/error");
 
 const User = require("./models/user");
 const ChatRoom = require("./models/chatroom");
+const Loghttp = require("./models/loghttp");
 
 const MONGODB_URI = process.env.MONGODB_URI
 
@@ -29,6 +30,7 @@ const userRoutes = require("./routes/user");
 const authRoutes = require("./routes/auth");
 const federateRoutes = require("./routes/federate");
 const adminRoutes = require("./routes/admin");
+const { raw } = require("body-parser");
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.json())
@@ -45,6 +47,29 @@ app.use(
     }
   })
 );
+
+app.use((req, res,next) => {
+  const { httpVersion, method, socket, url } = req;
+  const remoteAddress = req.headers["x-forwarded-for"] || socket.remoteAddress;  
+  let username= "guest"
+  if(!!req.session.user){
+  username = req.session.user.usrName
+  }
+
+
+  new Loghttp ({
+    username: username,
+    httpVersion:httpVersion,
+    method:method,
+    url:url,
+    remoteAddress:remoteAddress
+  }).save()
+
+
+   next();
+  
+});
+
 app.use(csrfProtection);
 app.use(passport.authenticate('session'));
 
