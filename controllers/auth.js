@@ -11,6 +11,7 @@ const UserOTPVerification = require("../models/userOTPVerification");
 
 const sendEmail = require("../util/email");
 const { OTPVerification } = require('../middleware/send-OTP-verification');
+const { logger } = require("../util/logger");
 
 const maxNumberOfFailedLogins = 5; //per signolo account
 
@@ -33,8 +34,14 @@ exports.postLogin = (req, res, next) => {
   const password = req.body.password;
   let errMsg = "Email o Password non validi, riprova ad effettuare il login!";
 
+  const userInfo = (!!req.session.user) ? req.session.user.usrName : 'guest';
+  const remoteAddress = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+  const logMessage ="'" + req.method + "' request to " + "'" + req.url + "' from (IP: " +  remoteAddress + ")"
+
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
+    const logWarnMessage = "E-mail: " + email + " - username o password invalidi."
+    logger.warn(logMessage + " " + logWarnMessage)
     return res.status(422).render("auth/login", {
       path: "/login",
       pageTitle: "Login",

@@ -2,6 +2,10 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const loghttpSchema = new Schema({
+  time: {
+    type: Date,
+    default: Date.now()
+  },
   username: {
     type: String,
     default:null,
@@ -20,6 +24,4 @@ const loghttpSchema = new Schema({
   },
 });
 
-const LogHttp = mongoose.model("Loghttp", loghttpSchema);
-
-module.exports = LogHttp;
+module.exports = mongoose.model("Loghttp", loghttpSchema);

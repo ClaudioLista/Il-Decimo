@@ -5,8 +5,10 @@ const mongoose = require("mongoose");
 const session = require("express-session");
 const MongoDBStore = require("connect-mongodb-session")(session);
 const csrf = require("csurf");
-const passport = require('passport');
+const passport = require("passport");
 require("dotenv").config();
+
+const { logger } = require("./util/logger")
 
 const errorController = require("./controllers/error");
 
@@ -48,14 +50,16 @@ app.use(
   })
 );
 
-app.use((req, res,next) => {
+app.use((req, res, next) => {
   const { httpVersion, method, socket, url } = req;
   const remoteAddress = req.headers["x-forwarded-for"] || socket.remoteAddress;  
   let username= "guest"
   if(!!req.session.user){
-  username = req.session.user.usrName
+    username = req.session.user.usrName
   }
 
+  const logMessage ="'" + method + "' request to " + "'" + url + "' from " + username + " (IP: " +  remoteAddress + ")"
+  logger.info(logMessage)
 
   new Loghttp ({
     username: username,
@@ -65,8 +69,7 @@ app.use((req, res,next) => {
     remoteAddress:remoteAddress
   }).save()
 
-
-   next();
+  next();
   
 });
 
