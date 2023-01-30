@@ -18,7 +18,7 @@ const passErr = 'Perfavore inserisci una password valida! Deve contenere: almeno
 router.get('/login', isLog, authController.getLogin)
 router.post('/login', rateLimit, isLog,
   [
-    body('email').isEmail().normalizeEmail(),
+    body('usrName').isLength({ min: 4, max: 60 }).isAlphanumeric().trim(),
     body('password').isLength({ min: 8, max: 50 }).trim()
   ],
   authController.postLogin
@@ -46,7 +46,8 @@ router.post('/signup', isLog,
             return Promise.reject('Username già utilizzato!')
           }
         })
-      }),
+      })
+      .trim(),
     body('email', 'Inserisci una E-mail valida!')
       .isEmail()
       .custom((value, { req }) => {
