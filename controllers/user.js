@@ -5,7 +5,7 @@ const Match = require("../models/match");
 const ChatRoom = require("../models/chatroom");
 const LogSession = require("../models/logSession");
 // const { roles } = require("../roles");
-
+const { logger } = require("../util/logger");
 const MATCHES_PER_PAGE = 3;
 
 exports.getIndex = (req, res, next) => {
@@ -306,9 +306,13 @@ exports.postEditMatch = (req, res, next) => {
   const updatedPrice = req.body.price;
   const updatedDescription = req.body.description;
   const updatedTotalPlayers = req.body.totalPlayers;
+  const remoteAddress = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+  const logMessage ="'" + req.method + "' request to " + "'" + req.url + "' from (IP: " +  remoteAddress + ")"
 
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
+    const logErrorMessage = "Username: " + req.session.user.usrName + " - fallito edit match."
+    logger.error(logMessage + " " + logErrorMessage)
     return res.status(422).render("user/edit-match", {
       pageTitle: "Edit Match",
       path: "/edit-match",
@@ -343,6 +347,8 @@ exports.postEditMatch = (req, res, next) => {
       return match.save();
     })
     .then(() => {
+      const logInfoMessage = "Username: " + req.session.user.usrName + " - edit match completato con successo."
+      logger.info(logMessage + " " + logInfoMessage)
       res.redirect("/mymatches");
     })
     .catch((err) => console.log(err));
@@ -449,9 +455,14 @@ exports.postUnJoinMatch = (req, res, next) => {
 
 exports.postDeleteMatch = (req, res, next) => {
   const matchId = req.body.matchId;
+  const remoteAddress = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+  const logMessage ="'" + req.method + "' request to " + "'" + req.url + "' from (IP: " +  remoteAddress + ")"
   Match.findByIdAndRemove(matchId)
     .then(() => {
+      const logWarnMessage = "Username: " + req.session.user.usrName + " - Match eliminato con successo."
+      logger.warn(logMessage + " " + logWarnMessage)
       res.redirect("/mymatches");
+
     })
     .catch((err) => console.log(err));
 };

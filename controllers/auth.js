@@ -243,8 +243,13 @@ exports.postSignup = (req, res, next) => {
   const numCell = req.body.numCell;
   const password = req.body.password;
 
+  const remoteAddress = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+  const logMessage ="'" + req.method + "' request to " + "'" + req.url + "' from (IP: " +  remoteAddress + ")"
+
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
+    const logWarnMessage = " Registrazione fallita per campi errati."
+    logger.warn(logMessage + " " + logWarnMessage)
     return res.status(422).render("auth/signup", {
       path: "/signup",
       pageTitle: "Signup",
@@ -292,6 +297,8 @@ exports.postSignup = (req, res, next) => {
         expireAt: Date.now() + 86400000,
       });
       token.save();
+      const logWarnMessage = "Username: " + usrName + " - Registrato con successo."
+      logger.warn(logMessage + " " + logWarnMessage)
 
       const message = `${process.env.BASE_URL}/verify/${user.usrName}/${accessToken}`;
       const html =
@@ -311,8 +318,13 @@ exports.postSignup = (req, res, next) => {
 };
 
 exports.getVerify = (req, res, next) => {
+  const remoteAddress = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+  const logMessage ="'" + req.method + "' request to " + "'" + req.url + "' from (IP: " +  remoteAddress + ")"
+
   User.findOne({ usrName: req.params.username }).then((user) => {
     if (!user) {
+      const logErrorMessage = " Fallito verifica email per user non trovato."
+      logger.error(logMessage + " " + logErrorMessage)
       return res.status(400).render("auth/emailVerification", {
         path: "/emailVerification",
         pageTitle: "Email Verification",
@@ -324,6 +336,8 @@ exports.getVerify = (req, res, next) => {
       token: req.params.token,
     }).then((token) => {
       if (!token) {
+        const logErrorMessage = "Username: " + req.params.username  + " - fallito verifica email per token errato."
+        logger.error(logMessage + " " + logErrorMessage)
         return res.status(400).render("auth/emailVerification", {
           path: "/emailVerification",
           pageTitle: "Email Verification",
@@ -334,6 +348,8 @@ exports.getVerify = (req, res, next) => {
       user.expireAt = null;
       user.save();
       token.remove();
+      const logWarnMessage = "Username: " + req.params.username  + " - verifica email avvenuta con successo."
+      logger.warn(logMessage + " " + logWarnMessage)
       return res.status(400).render("auth/emailVerification", {
         path: "/emailVerification",
         pageTitle: "Email Verification",
