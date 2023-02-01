@@ -307,12 +307,12 @@ exports.postEditMatch = (req, res, next) => {
   const updatedDescription = req.body.description;
   const updatedTotalPlayers = req.body.totalPlayers;
   const remoteAddress = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
-  const logMessage ="'" + req.method + "' request to " + "'" + req.url + "' from (IP: " +  remoteAddress + ")"
+  const logMessage ="'"+req.method+"' request to "+"'"+req.url+"' from (IP: "+remoteAddress+")";
 
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    const logErrorMessage = "Username: " + req.session.user.usrName + " - fallito edit match."
-    logger.error(logMessage + " " + logErrorMessage)
+    const logErrorMessage = "Username: "+req.session.user.usrName+" - fallito edit match.";
+    logger.error(logMessage + " " + logErrorMessage);
     return res.status(422).render("user/edit-match", {
       pageTitle: "Edit Match",
       path: "/edit-match",
@@ -347,7 +347,7 @@ exports.postEditMatch = (req, res, next) => {
       return match.save();
     })
     .then(() => {
-      const logInfoMessage = "Username: " + req.session.user.usrName + " - edit match completato con successo."
+      const logInfoMessage = "Username: "+req.session.user.usrName+" - edit match completato con successo."
       logger.info(logMessage + " " + logInfoMessage)
       res.redirect("/mymatches");
     })
@@ -398,6 +398,9 @@ exports.getJoinMatch = (req, res, next) => {
 exports.postJoinMatch = (req, res, next) => {
   const matchId = req.body.matchId;
   const joiningUserId = req.user._id;
+  const remoteAddress = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+  const logMessage = "'"+req.method+"' request to "+"'"+req.url+"' from (IP: "+remoteAddress+")";
+
   Match.findById(matchId)
     .then((match) => {
       if (match.currentPlayers != match.totalPlayers) {
@@ -405,13 +408,22 @@ exports.postJoinMatch = (req, res, next) => {
           user.matchList.push({ matchId: match._id, vote: "" });
           user.save();
         });
+        const logInfoMessage = "Username: "+req.session.user.usrName+" - aggiunto al match: "+match._id+".";
+        logger.error(logMessage + " " + logInfoMessage);
         return match.addPlayer(joiningUserId);
+      } else {
+        const logErrorMessage = "Username: "+req.session.user.usrName+" - ERRORE aggiunta al match: "+match._id+".";
+        logger.error(logMessage + " " + logErrorMessage);
       }
     })
     .then(() => {
       res.redirect("/matches/" + matchId.toString());
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const logErrorMessage = "Username: "+req.session.user.usrName+" - ERRORE "+err+" in JoinMatch: "+matchId+".";
+      logger.error(logMessage + " " + logErrorMessage);
+      console.log(err)
+    });
 };
 
 exports.getUnJoinMatch = (req, res, next) => {
@@ -443,24 +455,33 @@ exports.getUnJoinMatch = (req, res, next) => {
 exports.postUnJoinMatch = (req, res, next) => {
   const matchId = req.body.matchId;
   const unjoiningUserId = req.user._id;
+  const remoteAddress = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+  const logMessage = "'"+req.method+"' request to "+"'"+req.url+"' from (IP: "+remoteAddress+")";
+
   Match.findById(matchId)
     .then((match) => {
+      const logInfoMessage = "Username: "+req.session.user.usrName+" - rimosso dal match: "+match._id+".";
+      logger.error(logMessage + " " + logInfoMessage);
       return match.RemovePlayer(unjoiningUserId);
     })
     .then(() => {
       res.redirect("/mymatches");
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const logErrorMessage = "Username: "+req.session.user.usrName+" - ERRORE"+err+" in UnjoinMatch: "+matchId+".";
+      logger.error(logMessage + " " + logErrorMessage);
+      console.log(err)
+    });
 };
 
 exports.postDeleteMatch = (req, res, next) => {
   const matchId = req.body.matchId;
   const remoteAddress = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
-  const logMessage ="'" + req.method + "' request to " + "'" + req.url + "' from (IP: " +  remoteAddress + ")"
+  const logMessage = "'"+req.method+"' request to "+"'"+req.url+"' from (IP: " +  remoteAddress + ")";
   Match.findByIdAndRemove(matchId)
     .then(() => {
-      const logWarnMessage = "Username: " + req.session.user.usrName + " - Match eliminato con successo."
-      logger.warn(logMessage + " " + logWarnMessage)
+      const logWarnMessage = "Username: "+req.session.user.usrName+" - Match eliminato con successo.";
+      logger.warn(logMessage + " " + logWarnMessage);
       res.redirect("/mymatches");
 
     })
