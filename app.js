@@ -8,7 +8,7 @@ const csrf = require("csurf");
 const passport = require("passport");
 require("dotenv").config();
 
-const { logger } = require("./util/logger");
+const { logger, loggerrun } = require("./util/logger");
 
 const errorController = require("./controllers/error");
 
@@ -59,7 +59,6 @@ vault().then((data) => {
     if (!!req.session.user) {
       username = req.session.user.usrName;
     }
-
     const logMessage =
       "'" +
       method +
@@ -71,7 +70,10 @@ vault().then((data) => {
       " (IP: " +
       remoteAddress +
       ")";
-    logger.info(logMessage);
+
+    logger(data.MONGODB_URI_LOGS).then((logger) => {
+      logger.info(logMessage);
+    });
 
     next();
   });

@@ -13,13 +13,14 @@ const logLevels = {
   trace: 5,
 };
 
+const run = async (dbString) => {
+
 const logger = createLogger({
   levels: logLevels,
   format: format.combine(format.timestamp(), format.json()),
   transports: [
     new transports.MongoDB({
-      level: "info",
-      db: process.env.MONGODB_URI_LOGS,
+      db: dbString,
       options: {
         useUnifiedTopology: true,
       },
@@ -29,7 +30,7 @@ const logger = createLogger({
     }),
     new transports.MongoDB({
       level: "warn",
-      db: process.env.MONGODB_URI_LOGS,
+      db: dbString,
       options: {
         useUnifiedTopology: true,
       },
@@ -39,7 +40,7 @@ const logger = createLogger({
     }),
     new transports.MongoDB({
       level: "error",
-      db: process.env.MONGODB_URI_LOGS,
+      db: dbString,
       options: {
         useUnifiedTopology: true,
       },
@@ -64,5 +65,6 @@ const logger = createLogger({
     }),
   ],
 });
-
-exports.logger = logger;
+return logger
+}
+exports.logger = run;
