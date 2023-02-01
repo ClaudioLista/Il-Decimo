@@ -360,6 +360,7 @@ exports.getVerify = (req, res, next) => {
 };
 
 exports.postLogout = (req, res, next) => {
+  logger.info("L'utente " + req.user.usrName + " ha effettuato il log-out.")
   req.session.destroy((err) => {
     res.redirect("/");
   });

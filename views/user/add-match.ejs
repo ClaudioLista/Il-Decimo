@@ -7,12 +7,6 @@
 </head>
 
 <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
-<script>
-    function showDate() {
-        let matchDate = document.getElementById("time");
-        matchDate.type = "datetime-local"
-    }
-</script>
 
 <body>
     <%- include('../includes/navigation.ejs') %>
@@ -62,7 +56,7 @@
                             onfocus="showDate()"
                             placeholder="Giorno e Ora"
                             value="<% if (hasError) { %><%= match.time %><% } %>"
-                            name="time" id="time" required>
+                            name="time" type="datetime-local" id="time" required>
                         <span class="focus-input100" data-symbol="&#xf32e;"></span>
                     </div>
                     <div class="wrap-input100 validate-input m-b-23">

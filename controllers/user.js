@@ -171,8 +171,12 @@ exports.postAddMatch = (req, res, next) => {
   const currentPlayers = 0;
   const hostUserId = req.user;
 
+  const remoteAddress = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+  const logMessage ="'" + req.method + "' request to " + "'" + req.url + "' from "+ req.user.usrName +" (IP: " +  remoteAddress + ")"
+
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
+    logger.warn(logMessage + " Campi inseriti errati.")
     return res.status(422).render("user/add-match", {
       pageTitle: "Add Match",
       path: "/add-match",
@@ -223,6 +227,7 @@ exports.postAddMatch = (req, res, next) => {
         .save()
         .then(() => {})
         .catch((err) => console.log(err));
+      logger.info(logMessage + " Match creato correttamente.")
       res.redirect("/mymatches");
     })
     .catch((err) => console.log(err));
@@ -232,9 +237,14 @@ exports.postVoteMatch = (req, res, next) => {
   const matchId = req.body.matchId;
   const updatedVote = req.body.newVote;
   const oldVote = req.body.oldVote;
+
+  const remoteAddress = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+  const logMessage ="'" + req.method + "' request to " + "'" + req.url + "' from "+ req.user.usrName +" (IP: " +  remoteAddress + ")"
+
   Match.findById(matchId)
     .then((match) => {
       if (req.body.op == "add") {
+        logger.info(logMessage + " L'utente ha votato '" + updatedVote + "' la partita '" + match.title + "'")
         match.votes[updatedVote] = match.votes[updatedVote] + 1;
         if (oldVote != "noneVote") {
           match.votes[oldVote] = match.votes[oldVote] - 1;
@@ -253,6 +263,7 @@ exports.postVoteMatch = (req, res, next) => {
           })
           .catch((err) => console.log(err));
       } else {
+        logger.info(logMessage + " L'utente ha rimosso il voto alla partita '" + match.title + "'")
         match.votes[updatedVote] = match.votes[updatedVote] - 1;
         User.findById(req.user._id)
           .then((user) => {
@@ -307,7 +318,7 @@ exports.postEditMatch = (req, res, next) => {
   const updatedDescription = req.body.description;
   const updatedTotalPlayers = req.body.totalPlayers;
   const remoteAddress = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
-  const logMessage ="'"+req.method+"' request to "+"'"+req.url+"' from (IP: "+remoteAddress+")";
+  const logMessage ="'"+req.method+"' request to "+"'"+req.url+"' from " + req.user.usrName + " (IP: "+remoteAddress+")";
 
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -399,7 +410,7 @@ exports.postJoinMatch = (req, res, next) => {
   const matchId = req.body.matchId;
   const joiningUserId = req.user._id;
   const remoteAddress = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
-  const logMessage = "'"+req.method+"' request to "+"'"+req.url+"' from (IP: "+remoteAddress+")";
+  const logMessage = "'"+req.method+"' request to "+"'"+req.url+"' from " + req.user.usrName + " (IP: "+remoteAddress+")";
 
   Match.findById(matchId)
     .then((match) => {
@@ -456,7 +467,7 @@ exports.postUnJoinMatch = (req, res, next) => {
   const matchId = req.body.matchId;
   const unjoiningUserId = req.user._id;
   const remoteAddress = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
-  const logMessage = "'"+req.method+"' request to "+"'"+req.url+"' from (IP: "+remoteAddress+")";
+  const logMessage = "'"+req.method+"' request to "+"'"+req.url+"' from " + req.user.usrName + " (IP: "+remoteAddress+")";
 
   Match.findById(matchId)
     .then((match) => {
@@ -477,7 +488,7 @@ exports.postUnJoinMatch = (req, res, next) => {
 exports.postDeleteMatch = (req, res, next) => {
   const matchId = req.body.matchId;
   const remoteAddress = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
-  const logMessage = "'"+req.method+"' request to "+"'"+req.url+"' from (IP: " +  remoteAddress + ")";
+  const logMessage = "'"+req.method+"' request to "+"'"+req.url+"' from " + req.user.usrName + " (IP: " +  remoteAddress + ")";
   Match.findByIdAndRemove(matchId)
     .then(() => {
       const logWarnMessage = "Username: "+req.session.user.usrName+" - Match eliminato con successo.";
