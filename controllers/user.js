@@ -179,7 +179,7 @@ exports.postAddMatch = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     vault().then((data) => {
-      logger(data.MONGODB_URI_LOG).then((logger) => {
+      logger(data.MONGODB_URI_LOGS).then((logger) => {
         logger.warn(logMessage + " Campi inseriti errati.")
       });
     })
@@ -234,7 +234,7 @@ exports.postAddMatch = (req, res, next) => {
         .then(() => {})
         .catch((err) => console.log(err));
       vault().then((data) => {
-        logger(data.MONGODB_URI_LOG).then((logger) => {
+        logger(data.MONGODB_URI_LOGS).then((logger) => {
           logger.info(logMessage + " Match creato correttamente.")
         });
       })
@@ -255,7 +255,7 @@ exports.postVoteMatch = (req, res, next) => {
     .then((match) => {
       if (req.body.op == "add") {
         vault().then((data) => {
-          logger(data.MONGODB_URI_LOG).then((logger) => {
+          logger(data.MONGODB_URI_LOGS).then((logger) => {
             logger.info(logMessage + " L'utente ha votato '" + updatedVote + "' la partita '" + match.title + "'")
           });
         })
@@ -278,7 +278,7 @@ exports.postVoteMatch = (req, res, next) => {
           .catch((err) => console.log(err));
       } else {
         vault().then((data) => {
-          logger(data.MONGODB_URI_LOG).then((logger) => {
+          logger(data.MONGODB_URI_LOGS).then((logger) => {
             logger.info(logMessage + " L'utente ha rimosso il voto alla partita '" + match.title + "'")
           });
         })
@@ -342,7 +342,7 @@ exports.postEditMatch = (req, res, next) => {
   if (!errors.isEmpty()) {
     const logErrorMessage = "Username: "+req.session.user.usrName+" - fallito edit match.";
     vault().then((data) => {
-      logger(data.MONGODB_URI_LOG).then((logger) => {
+      logger(data.MONGODB_URI_LOGS).then((logger) => {
         logger.error(logMessage + " " + logErrorMessage);
       });
     })
@@ -382,7 +382,7 @@ exports.postEditMatch = (req, res, next) => {
     .then(() => {
       const logInfoMessage = "Username: "+req.session.user.usrName+" - edit match completato con successo."
       vault().then((data) => {
-        logger(data.MONGODB_URI_LOG).then((logger) => {
+        logger(data.MONGODB_URI_LOGS).then((logger) => {
           logger.info(logMessage + " " + logInfoMessage)
         });
       })
@@ -447,7 +447,7 @@ exports.postJoinMatch = (req, res, next) => {
         });
         const logInfoMessage = "Username: "+req.session.user.usrName+" - aggiunto al match: "+match._id+".";
         vault().then((data) => {
-          logger(data.MONGODB_URI_LOG).then((logger) => {
+          logger(data.MONGODB_URI_LOGS).then((logger) => {
             logger.info(logMessage + " " + logInfoMessage);
           });
         })
@@ -455,7 +455,7 @@ exports.postJoinMatch = (req, res, next) => {
       } else {
         const logErrorMessage = "Username: "+req.session.user.usrName+" - ERRORE aggiunta al match: "+match._id+".";
         vault().then((data) => {
-          logger(data.MONGODB_URI_LOG).then((logger) => {
+          logger(data.MONGODB_URI_LOGS).then((logger) => {
             logger.error(logMessage + " " + logErrorMessage);
           });
         })
@@ -467,7 +467,7 @@ exports.postJoinMatch = (req, res, next) => {
     .catch((err) => {
       const logErrorMessage = "Username: "+req.session.user.usrName+" - ERRORE in JoinMatch: "+matchId+". "+err;
       vault().then((data) => {
-        logger(data.MONGODB_URI_LOG).then((logger) => {
+        logger(data.MONGODB_URI_LOGS).then((logger) => {
           logger.error(logMessage + " " + logErrorMessage);
         });
       })
@@ -511,7 +511,7 @@ exports.postUnJoinMatch = (req, res, next) => {
     .then((match) => {
       const logInfoMessage = "Username: "+req.session.user.usrName+" - rimosso dal match: "+match._id+".";
       vault().then((data) => {
-        logger(data.MONGODB_URI_LOG).then((logger) => {
+        logger(data.MONGODB_URI_LOGS).then((logger) => {
           logger.info(logMessage + " " + logInfoMessage);
         });
       })
@@ -523,7 +523,7 @@ exports.postUnJoinMatch = (req, res, next) => {
     .catch((err) => {
       const logErrorMessage = "Username: "+req.session.user.usrName+" - ERRORE in UnjoinMatch: "+matchId+". "+err;
       vault().then((data) => {
-        logger(data.MONGODB_URI_LOG).then((logger) => {
+        logger(data.MONGODB_URI_LOGS).then((logger) => {
           logger.error(logMessage + " " + logErrorMessage);
         });
       })
@@ -539,7 +539,7 @@ exports.postDeleteMatch = (req, res, next) => {
     .then(() => {
       const logWarnMessage = "Username: "+req.session.user.usrName+" - Match eliminato con successo.";
       vault().then((data) => {
-        logger(data.MONGODB_URI_LOG).then((logger) => {
+        logger(data.MONGODB_URI_LOGS).then((logger) => {
           logger.warn(logMessage + " " + logWarnMessage);
         });
       })

@@ -75,7 +75,7 @@ passport.use(
                 })
                 const logInfoMessage = "Utente: "+user._id+" creato con successo dal profilo Google!";
                 vault().then((data) => {
-                  logger(data.MONGODB_URI_LOG).then((logger) => {
+                  logger(data.MONGODB_URI_LOGS).then((logger) => {
                     logger.info(logMessage + " " + logInfoMessage)
                   });
                 })
@@ -90,7 +90,7 @@ passport.use(
                 if (activeSessions.length > 2) {
                   const logWarnMessage = "LOGIN FALLITO - Utente: "+user.usrName+" ha troppe sessioni attive!";
                   vault().then((data) => {
-                    logger(data.MONGODB_URI_LOG).then((logger) => {
+                    logger(data.MONGODB_URI_LOGS).then((logger) => {
                       logger.warn(logMessage + " " + logWarnMessage)
                     });
                   })
@@ -98,7 +98,7 @@ passport.use(
                 } else {
                   const logInfoMessage = "Utente: "+user.usrName+" - LOGIN EFFETTUATO con Google";
                   vault().then((data) => {
-                    logger(data.MONGODB_URI_LOG).then((logger) => {
+                    logger(data.MONGODB_URI_LOGS).then((logger) => {
                       logger.info(logMessage + " " + logInfoMessage);
                     });
                   })
@@ -158,7 +158,7 @@ passport.use(
                 })
                 const logInfoMessage = "Utente: "+user._id+" creato con successo dal profilo Facebook!";
                 vault().then((data) => {
-                  logger(data.MONGODB_URI_LOG).then((logger) => {
+                  logger(data.MONGODB_URI_LOGS).then((logger) => {
                     logger.info(logMessage + " " + logInfoMessage);
                   });
                 })
@@ -173,7 +173,7 @@ passport.use(
                 if (activeSessions.length > 2) {
                   const logWarnMessage = "LOGIN FALLITO - Utente: "+user.usrName+" ha troppe sessioni attive!";
                   vault().then((data) => {
-                    logger(data.MONGODB_URI_LOG).then((logger) => {
+                    logger(data.MONGODB_URI_LOGS).then((logger) => {
                       logger.warn(logMessage + " " + logWarnMessage);
                     });
                   })
@@ -181,7 +181,7 @@ passport.use(
                 } else {
                   const logInfoMessage = "Utente: "+user.usrName+" - LOGIN EFFETTUATO con Facebook";
                   vault().then((data) => {
-                    logger(data.MONGODB_URI_LOG).then((logger) => {
+                    logger(data.MONGODB_URI_LOGS).then((logger) => {
                       logger.info(logMessage + " " + logInfoMessage);
                     });
                   })
