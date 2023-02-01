@@ -4,7 +4,7 @@ const User = require("../models/user");
 const Match = require("../models/match");
 const ChatRoom = require("../models/chatroom");
 const LogSession = require("../models/logSession");
-// const { roles } = require("../roles");
+
 const { logger } = require("../util/logger");
 const MATCHES_PER_PAGE = 3;
 
@@ -409,7 +409,7 @@ exports.postJoinMatch = (req, res, next) => {
           user.save();
         });
         const logInfoMessage = "Username: "+req.session.user.usrName+" - aggiunto al match: "+match._id+".";
-        logger.error(logMessage + " " + logInfoMessage);
+        logger.info(logMessage + " " + logInfoMessage);
         return match.addPlayer(joiningUserId);
       } else {
         const logErrorMessage = "Username: "+req.session.user.usrName+" - ERRORE aggiunta al match: "+match._id+".";
@@ -420,7 +420,7 @@ exports.postJoinMatch = (req, res, next) => {
       res.redirect("/matches/" + matchId.toString());
     })
     .catch((err) => {
-      const logErrorMessage = "Username: "+req.session.user.usrName+" - ERRORE "+err+" in JoinMatch: "+matchId+".";
+      const logErrorMessage = "Username: "+req.session.user.usrName+" - ERRORE in JoinMatch: "+matchId+". "+err;
       logger.error(logMessage + " " + logErrorMessage);
       console.log(err)
     });
@@ -461,14 +461,14 @@ exports.postUnJoinMatch = (req, res, next) => {
   Match.findById(matchId)
     .then((match) => {
       const logInfoMessage = "Username: "+req.session.user.usrName+" - rimosso dal match: "+match._id+".";
-      logger.error(logMessage + " " + logInfoMessage);
+      logger.info(logMessage + " " + logInfoMessage);
       return match.RemovePlayer(unjoiningUserId);
     })
     .then(() => {
       res.redirect("/mymatches");
     })
     .catch((err) => {
-      const logErrorMessage = "Username: "+req.session.user.usrName+" - ERRORE"+err+" in UnjoinMatch: "+matchId+".";
+      const logErrorMessage = "Username: "+req.session.user.usrName+" - ERRORE in UnjoinMatch: "+matchId+". "+err;
       logger.error(logMessage + " " + logErrorMessage);
       console.log(err)
     });

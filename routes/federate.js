@@ -10,6 +10,7 @@ const router = express.Router();
 const FederateUser = require('../models/federateUser');
 const User = require('../models/user');
 const Session = require('../models/session');
+const { logger } = require("../util/logger");
 
 router.get('/login/federated/google', passport.authenticate('google', {
     scope: [
@@ -72,6 +73,10 @@ passport.use(
                 federateUser.save().then(() => {
                   return cb(null, user)
                 })
+                const remoteAddress = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+                const logMessage = "'"+req.method+"' request to "+"'"+req.url+"' from (IP: "+remoteAddress+")";
+                const logInfoMessage = "Utente: "+user._id+" creato con successo dal profilo Google!";
+                logger.info(logMessage + " " + logInfoMessage);
               })
               .catch((err) => {
                 return cb(err)
@@ -81,8 +86,16 @@ passport.use(
             User.findOne({ _id: fUser.userId }).then((user) => {
               Session.find({'session.user.usrName': user.usrName}).then((activeSessions) => {
                 if (activeSessions.length > 2) {
+                  const remoteAddress = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+                  const logMessage = "'"+req.method+"' request to "+"'"+req.url+"' from (IP: "+remoteAddress+")";
+                  const logWarnMessage = "LOGIN FALLITO - Utente: "+user.usrName+" ha troppe sessioni attive!";
+                  logger.warn(logMessage + " " + logWarnMessage);
                   return cb(null, null)
                 } else {
+                  const remoteAddress = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+                  const logMessage = "'"+req.method+"' request to "+"'"+req.url+"' from (IP: "+remoteAddress+")";
+                  const logInfoMessage = "Utente: "+user.usrName+" - LOGIN EFFETTUATO con Google";
+                  logger.info(logMessage + " " + logInfoMessage);
                   return cb(null, user)
                 }
               })
@@ -137,6 +150,10 @@ passport.use(
                 federateUser.save().then(() => {
                   return cb(null, user)
                 })
+                const remoteAddress = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+                const logMessage = "'"+req.method+"' request to "+"'"+req.url+"' from (IP: "+remoteAddress+")";
+                const logInfoMessage = "Utente: "+user._id+" creato con successo dal profilo Facebook!";
+                logger.info(logMessage + " " + logInfoMessage);
               })
               .catch((err) => {
                 return cb(err)
@@ -146,8 +163,16 @@ passport.use(
             User.findOne({ _id: fUser.userId }).then((user) => {
               Session.find({'session.user.usrName': user.usrName}).then((activeSessions) => {
                 if (activeSessions.length > 2) {
+                  const remoteAddress = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+                  const logMessage = "'"+req.method+"' request to "+"'"+req.url+"' from (IP: "+remoteAddress+")";
+                  const logWarnMessage = "LOGIN FALLITO - Utente: "+user.usrName+" ha troppe sessioni attive!";
+                  logger.warn(logMessage + " " + logWarnMessage);
                   return cb(null, null)
                 } else {
+                  const remoteAddress = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+                  const logMessage = "'"+req.method+"' request to "+"'"+req.url+"' from (IP: "+remoteAddress+")";
+                  const logInfoMessage = "Utente: "+user.usrName+" - LOGIN EFFETTUATO con Facebook";
+                  logger.info(logMessage + " " + logInfoMessage);
                   return cb(null, user)
                 }
               })
