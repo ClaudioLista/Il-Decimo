@@ -74,7 +74,11 @@ passport.use(
                   return cb(null, user)
                 })
                 const logInfoMessage = "Utente: "+user._id+" creato con successo dal profilo Google!";
-                logger.info(logInfoMessage);
+                vault().then((data) => {
+                  logger(data.MONGODB_URI_LOG).then((logger) => {
+                    logger.info(logMessage + " " + logInfoMessage)
+                  });
+                })
               })
               .catch((err) => {
                 return cb(err)
@@ -85,11 +89,19 @@ passport.use(
               Session.find({'session.user.usrName': user.usrName}).then((activeSessions) => {
                 if (activeSessions.length > 2) {
                   const logWarnMessage = "LOGIN FALLITO - Utente: "+user.usrName+" ha troppe sessioni attive!";
-                  logger.warn(logWarnMessage);
+                  vault().then((data) => {
+                    logger(data.MONGODB_URI_LOG).then((logger) => {
+                      logger.warn(logMessage + " " + logWarnMessage)
+                    });
+                  })
                   return cb(null, null)
                 } else {
                   const logInfoMessage = "Utente: "+user.usrName+" - LOGIN EFFETTUATO con Google";
-                  logger.info(logInfoMessage);
+                  vault().then((data) => {
+                    logger(data.MONGODB_URI_LOG).then((logger) => {
+                      logger.info(logMessage + " " + logInfoMessage);
+                    });
+                  })
                   return cb(null, user)
                 }
               })
@@ -145,7 +157,11 @@ passport.use(
                   return cb(null, user)
                 })
                 const logInfoMessage = "Utente: "+user._id+" creato con successo dal profilo Facebook!";
-                logger.info(logInfoMessage);
+                vault().then((data) => {
+                  logger(data.MONGODB_URI_LOG).then((logger) => {
+                    logger.info(logMessage + " " + logInfoMessage);
+                  });
+                })
               })
               .catch((err) => {
                 return cb(err)
@@ -156,11 +172,19 @@ passport.use(
               Session.find({'session.user.usrName': user.usrName}).then((activeSessions) => {
                 if (activeSessions.length > 2) {
                   const logWarnMessage = "LOGIN FALLITO - Utente: "+user.usrName+" ha troppe sessioni attive!";
-                  logger.warn(logWarnMessage);
+                  vault().then((data) => {
+                    logger(data.MONGODB_URI_LOG).then((logger) => {
+                      logger.warn(logMessage + " " + logWarnMessage);
+                    });
+                  })
                   return cb(null, null)
                 } else {
                   const logInfoMessage = "Utente: "+user.usrName+" - LOGIN EFFETTUATO con Facebook";
-                  logger.info(logInfoMessage);
+                  vault().then((data) => {
+                    logger(data.MONGODB_URI_LOG).then((logger) => {
+                      logger.info(logMessage + " " + logInfoMessage);
+                    });
+                  })
                   return cb(null, user)
                 }
               })

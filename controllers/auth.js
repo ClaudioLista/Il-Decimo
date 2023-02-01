@@ -236,7 +236,7 @@ exports.postCheckOTP = (req, res, next) => {
               const logInfoMessage = "Username: " + user.usrName + " - OTP inserito non valido."
               vault().then((data) => {
                 logger(data.MONGODB_URI_LOG).then((logger) => {
-                  logger.warn(logMessage + " " + logInfoMessage)
+                  logger.info(logMessage + " " + logInfoMessage)
                 });
               })
               
@@ -310,10 +310,10 @@ exports.postSignup = (req, res, next) => {
 
     vault().then((data) => {
       logger(data.MONGODB_URI_LOG).then((logger) => {
-        logger.warn(logMessage + " " + logInfoMessage)
+        logger.warn(logMessage + " " + logWarnMessage)
       });
     })
-    logger.warn(logMessage + " " + logWarnMessage)
+    
     return res.status(422).render("auth/signup", {
       path: "/signup",
       pageTitle: "Signup",
@@ -362,7 +362,13 @@ exports.postSignup = (req, res, next) => {
       });
       token.save();
       const logWarnMessage = "Username: " + usrName + " - Registrato con successo."
-      logger.warn(logMessage + " " + logWarnMessage)
+
+      vault().then((data) => {
+        logger(data.MONGODB_URI_LOG).then((logger) => {
+          logger.warn(logMessage + " " + logWarnMessage)
+        });
+      })
+      
 
       const message = `${process.env.BASE_URL}/verify/${user.usrName}/${accessToken}`;
       const html =
@@ -388,7 +394,13 @@ exports.getVerify = (req, res, next) => {
   User.findOne({ usrName: req.params.username }).then((user) => {
     if (!user) {
       const logErrorMessage = " Fallito verifica email per user non trovato."
-      logger.error(logMessage + " " + logErrorMessage)
+      vault().then((data) => {
+        logger(data.MONGODB_URI_LOG).then((logger) => {
+          logger.error(logMessage + " " + logErrorMessage)
+        });
+      })
+
+      
       return res.status(400).render("auth/emailVerification", {
         path: "/emailVerification",
         pageTitle: "Email Verification",
@@ -401,7 +413,13 @@ exports.getVerify = (req, res, next) => {
     }).then((token) => {
       if (!token) {
         const logErrorMessage = "Username: " + req.params.username  + " - fallito verifica email per token errato."
-        logger.error(logMessage + " " + logErrorMessage)
+
+        vault().then((data) => {
+          logger(data.MONGODB_URI_LOG).then((logger) => {
+            logger.error(logMessage + " " + logErrorMessage)
+          });
+        })
+        
         return res.status(400).render("auth/emailVerification", {
           path: "/emailVerification",
           pageTitle: "Email Verification",
@@ -413,7 +431,12 @@ exports.getVerify = (req, res, next) => {
       user.save();
       token.remove();
       const logWarnMessage = "Username: " + req.params.username  + " - verifica email avvenuta con successo."
-      logger.warn(logMessage + " " + logWarnMessage)
+      vault().then((data) => {
+        logger(data.MONGODB_URI_LOG).then((logger) => {
+          logger.warn(logMessage + " " + logWarnMessage)
+        });
+      })
+      
       return res.status(400).render("auth/emailVerification", {
         path: "/emailVerification",
         pageTitle: "Email Verification",
@@ -424,7 +447,12 @@ exports.getVerify = (req, res, next) => {
 };
 
 exports.postLogout = (req, res, next) => {
-  logger.info("L'utente " + req.user.usrName + " ha effettuato il log-out.")
+  vault().then((data) => {
+    logger(data.MONGODB_URI_LOG).then((logger) => {
+      logger.info("L'utente " + req.user.usrName + " ha effettuato il log-out.")
+    });
+  })
+  
   req.session.destroy((err) => {
     res.redirect("/");
   });
