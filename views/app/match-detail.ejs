@@ -31,10 +31,18 @@ function sendMessage() {
     if (chatMessage != "") {
         var currentdate = new Date();
         var getMinutes= currentdate.getMinutes();
+        var getMonth = currentdate.getMonth();
+        var getDay = currentdate.getDate();
         if(currentdate.getMinutes() < 10) {
-            var getMinutes= '0' + currentdate.getMinutes()
+            var getMinutes = '0' + currentdate.getMinutes()
         }
-        var datetime = +currentdate.getDate()+"/"+(currentdate.getMonth()+1)+" - "+currentdate.getHours()+":"+getMinutes;
+        if(currentdate.getMonth() + 1 < 10) {
+            var getMonth = '0' + (currentdate.getMonth() + 1)
+        }
+        if(currentdate.getDate() < 10) {
+            var getDay = '0' + currentdate.getDate()
+        }
+        var datetime = getDay+"/"+getMonth+ "/" + currentdate.getFullYear() + " - "+currentdate.getHours()+":"+getMinutes;
 
         let divMessageChat = document.createElement('div')
         divMessageChat.className = "messages-chat"

@@ -37,84 +37,85 @@ router.get('/oauth2/redirect/facebook', passport.authenticate('facebook', {
   })
 );
 
-passport.use(
-  new GoogleStrategy(
-    {
-      clientID:
-        '368248899535-vgc9fj94cfkk9sojps8pct6bjgu2d4j0.apps.googleusercontent.com',
-      clientSecret: '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',
-      callbackURL: '/oauth2/redirect/google',
-      scope: ['profile']
-    },
-    function verify(issuer, profile, cb) {
-      FederateUser.findOne({ subject: profile.id, provider: issuer })
-        .then((fUser) => {
-          if (!fUser) {
-            const pass = generatePass()
-            bcrypt.hash(pass, 12)
-            .then((hashedPassword) => {
-              const user = new User({
-                nome: profile.name.givenName,
-                cognome: profile.name.familyName,
-                usrName: 'g_' + profile.name.givenName + '_' + profile.name.familyName,
-                email: profile.emails[0].value,
-                password: hashedPassword,
-                matcheslist: {
-                  matches: []
-                },
-                verified: true,
-              })
-              user.save()
-              .then(() => {
-                const federateUser = new FederateUser({
-                  userId: user._id,
-                  provider: issuer,
-                  subject: profile.id
+vault().then((data) => {
+  passport.use(
+    new GoogleStrategy(
+      {
+        clientID: data.GOOGLE_CLIENT_ID,
+        clientSecret: data.GOOGLE_CLIENT_SECRET,
+        callbackURL: '/oauth2/redirect/google',
+        scope: ['profile']
+      },
+      function verify(issuer, profile, cb) {
+        FederateUser.findOne({ subject: profile.id, provider: issuer })
+          .then((fUser) => {
+            if (!fUser) {
+              const pass = generatePass()
+              bcrypt.hash(pass, 12)
+              .then((hashedPassword) => {
+                const user = new User({
+                  nome: profile.name.givenName,
+                  cognome: profile.name.familyName,
+                  usrName: 'g_' + profile.name.givenName + '_' + profile.name.familyName,
+                  email: profile.emails[0].value,
+                  password: hashedPassword,
+                  matcheslist: {
+                    matches: []
+                  },
+                  verified: true,
                 })
-                federateUser.save().then(() => {
-                  return cb(null, user)
-                })
-                const logInfoMessage = "Utente: "+user._id+" creato con successo dal profilo Google!";
-                vault().then((data) => {
-                  logger(data.MONGODB_URI_LOGS).then((logger) => {
-                    logger.info(logMessage + " " + logInfoMessage)
-                  });
-                })
-              })
-              .catch((err) => {
-                return cb(err)
-              })
-            })
-          } else {
-            User.findOne({ _id: fUser.userId }).then((user) => {
-              Session.find({'session.user.usrName': user.usrName}).then((activeSessions) => {
-                if (activeSessions.length > 2) {
-                  const logWarnMessage = "LOGIN FALLITO - Utente: "+user.usrName+" ha troppe sessioni attive!";
+                user.save()
+                .then(() => {
+                  const federateUser = new FederateUser({
+                    userId: user._id,
+                    provider: issuer,
+                    subject: profile.id
+                  })
+                  federateUser.save().then(() => {
+                    return cb(null, user)
+                  })
+                  const logInfoMessage = "Utente: "+user._id+" creato con successo dal profilo Google!";
                   vault().then((data) => {
                     logger(data.MONGODB_URI_LOGS).then((logger) => {
-                      logger.warn(logMessage + " " + logWarnMessage)
+                      logger.info(logInfoMessage)
                     });
                   })
-                  return cb(null, null)
-                } else {
-                  const logInfoMessage = "Utente: "+user.usrName+" - LOGIN EFFETTUATO con Google";
-                  vault().then((data) => {
-                    logger(data.MONGODB_URI_LOGS).then((logger) => {
-                      logger.info(logMessage + " " + logInfoMessage);
-                    });
-                  })
-                  return cb(null, user)
-                }
+                })
+                .catch((err) => {
+                  return cb(err)
+                })
               })
-            })
-          }
-        })
-        .catch((err) => {
-          return cb(err)
-        })
-    },
-  )
-);
+            } else {
+              User.findOne({ _id: fUser.userId }).then((user) => {
+                Session.find({'session.user.usrName': user.usrName}).then((activeSessions) => {
+                  if (activeSessions.length > 2) {
+                    const logWarnMessage = "LOGIN FALLITO - Utente: "+user.usrName+" ha troppe sessioni attive!";
+                    vault().then((data) => {
+                      logger(data.MONGODB_URI_LOGS).then((logger) => {
+                        logger.warn(logWarnMessage)
+                      });
+                    })
+                    return cb(null, null)
+                  } else {
+                    const logInfoMessage = "Utente: "+user.usrName+" - LOGIN EFFETTUATO con Google";
+                    vault().then((data) => {
+                      logger(data.MONGODB_URI_LOGS).then((logger) => {
+                        logger.info(logInfoMessage);
+                      });
+                    })
+                    return cb(null, user)
+                  }
+                })
+              })
+            }
+          })
+          .catch((err) => {
+            return cb(err)
+          })
+      },
+    )
+  );
+})
 
 passport.use(
   new FacebookStrategy(

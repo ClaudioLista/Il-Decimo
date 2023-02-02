@@ -1,7 +1,7 @@
 const Match = require("../models/match");
 const User = require("../models/user");
 
-const ELEM_PER_PAGE = 3;
+const ELEM_PER_PAGE = 10;
 
 exports.getListMatch = (req, res, next) => {
   const page = +req.query.page || 1;
