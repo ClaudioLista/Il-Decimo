@@ -10,6 +10,7 @@ const router = express.Router();
 const FederateUser = require('../models/federateUser');
 const User = require('../models/user');
 const Session = require('../models/session');
+const { vault } = require('../util/vault')
 const { logger } = require("../util/logger");
 
 router.get('/login/federated/google', passport.authenticate('google', {
