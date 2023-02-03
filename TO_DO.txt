@@ -14,3 +14,6 @@
 14) Implementare eliminazione/archivio dei match passati
 15) Dare un username random se si registra qualcuno con lo stesso nome tramite Google DONE
 16) Gestire il decremento delle sessioni attive quando si chiude il browser oppure scade la sessione DONE
+
+IMPORTANTE:
+1) CSURF deprecato (alternativa: https://www.npmjs.com/package/csrf)

@@ -18,8 +18,8 @@ const passErr = 'Perfavore inserisci una password valida! Deve contenere: almeno
 router.get('/login', isLog, authController.getLogin)
 router.post('/login', rateLimit, isLog,
   [
-    body('usrName').isLength({ min: 4, max: 60 }).isAlphanumeric().trim(),
-    body('password').isLength({ min: 8, max: 50 }).trim()
+    body('usrName').isLength({ min: 4, max: 60 }).isAlphanumeric().trim().escape(),
+    body('password').isLength({ min: 8, max: 50 }).trim().escape()
   ],
   authController.postLogin
 );
@@ -32,11 +32,13 @@ router.post('/signup', isLog,
     body('nome', 'Perfavore inserisci il tuo Nome correttamente!')
       .isLength({ min: 1, max: 28 })
       .isString()
-      .trim(),
+      .trim()
+      .escape(),
     body('cognome', 'Perfavore inserisci il tuo Cognome correttamente!')
       .isLength({ min: 1, max: 28 })
       .isString()
-      .trim(),
+      .trim()
+      .escape(),
     body('usrName', 'Perfavore inserisci un Username con almeno 6 caratteri, composto solo da lettere o numeri!')
       .isLength({ min: 4, max: 60 })
       .isAlphanumeric()
@@ -47,7 +49,8 @@ router.post('/signup', isLog,
           }
         })
       })
-      .trim(),
+      .trim()
+      .escape(),
     body('email', 'Inserisci una E-mail valida!')
       .isEmail()
       .custom((value, { req }) => {
@@ -59,10 +62,12 @@ router.post('/signup', isLog,
           }
         })
       })
-      .normalizeEmail(),
+      .normalizeEmail()
+      .escape(),
     body('numCell', 'Perfavore inserisci un Numero telefonico valido!')
       .isLength(10)
-      .isMobilePhone(),
+      .isMobilePhone()
+      .escape(),
     body('password', passErr)
       .isLength({ min: 8, max: 50 })
       .isStrongPassword({
@@ -79,7 +84,8 @@ router.post('/signup', isLog,
         pointsForContainingNumber: 10,
         pointsForContainingSymbol: 10,
       })
-      .trim(),
+      .trim()
+      .escape(),
     body('confirmPassword')
       .trim()
       .custom((value, { req }) => {
@@ -87,7 +93,8 @@ router.post('/signup', isLog,
           throw new Error('Le Password devono essere uguali!')
         }
         return true
-      }),
+      })
+      .escape(),
     body('acceptTerms')
       .custom(input => {
         if (!input) {

@@ -6,6 +6,10 @@ const session = require("express-session");
 const MongoDBStore = require("connect-mongodb-session")(session);
 const csrf = require("csurf");
 const passport = require("passport");
+const toobusy = require('toobusy-js');
+const hpp = require('hpp');
+const helmet = require('helmet')
+
 require("dotenv").config();
 
 const { logger, loggerrun } = require("./util/logger");
@@ -35,21 +39,54 @@ vault().then((data) => {
     collection: "sessions",
   });
 
+  app.use(helmet.hsts());
+  app.use(hpp())
   app.use(bodyParser.urlencoded({ extended: false }));
   app.use(express.json());
   app.use(express.static(path.join(__dirname, "public")));
   app.use(
     session({
-      secret: "forza napoli", //TODO: cambiare il segreto con una stringa molto lunga e complicata
+      secret: data.SESSION_SECRET,
       resave: false,
       saveUninitialized: false,
       store: store,
       cookie: {
         maxAge: 7200000, //la sessione si cancella dopo 2h
+        httpOnly: true,
+        sameSite: true,
         //secure: true  solo in fase di deploy va bene
       },
     })
   );
+
+  app.use(function(req, res, next) {
+    const { method, socket, url } = req;
+    const remoteAddress =
+      req.headers["x-forwarded-for"] || socket.remoteAddress;
+      let username = "guest";
+    if (!!req.session.user) {
+      username = req.session.user.usrName;
+    }
+    const logMessage =
+      "'" +
+      method +
+      "' request to " +
+      "'" +
+      url +
+      "' from " +
+      username +
+      " (IP: " +
+      remoteAddress +
+      ")";
+    if (toobusy()) {
+        logger(data.MONGODB_URI_LOGS).then((logger) => {
+          logger.info(logMessage, " - Richiesta rifiutata perchè il server è impegnato.");
+        });
+        res.send(503, "Server Too Busy");
+    } else {
+    next();
+    }
+});
 
   app.use((req, res, next) => {
     const { method, socket, url } = req;
