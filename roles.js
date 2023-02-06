@@ -11,6 +11,7 @@ exports.roles = (function() {
     .updateOwn("votes")
     
     ac.grant("admin")
+    .extend("user")
     .createAny("profile")
     .readAny("profile")
     .updateAny("profile")
