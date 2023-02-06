@@ -347,32 +347,33 @@ exports.postSignup = (req, res, next) => {
         role: "user",
         expireAt: Date.now() + 86400000,
       });
-      const accessToken = jwt.sign(
-        { userId: user._id },
-        process.env.JWT_SECRET,
-        { expiresIn: "1d" }
-      );
-      user.save();
-      let token = new Token({
-        userId: user._id,
-        token: accessToken,
-        expireAt: Date.now() + 86400000,
-      });
-      token.save();
-      const logWarnMessage = "Username: " + usrName + " - Registrato con successo."
 
       vault().then((data) => {
+        const accessToken = jwt.sign(
+          { userId: user._id },
+          data.JWT_SECRET,
+          { expiresIn: "1d" }
+        );
+        user.save();
+        let token = new Token({
+          userId: user._id,
+          token: accessToken,
+          expireAt: Date.now() + 86400000,
+        });
+        token.save();
+        const logWarnMessage = "Username: " + usrName + " - Registrato con successo."
+  
         logger(data.MONGODB_URI_LOGS).then((logger) => {
           logger.warn(logMessage + " " + logWarnMessage)
         });
+  
+        const message = `${process.env.BASE_URL}/verify/${user.usrName}/${accessToken}`;
+        const html =
+          "<h2>Clicca il link per confermare l'email:</h2><a href='" + message +
+          "' target='_blank'>" + message + "</a>";
+        sendEmail(user.email, "Verifica l'email!", html, message);
       })
       
-
-      const message = `${process.env.BASE_URL}/verify/${user.usrName}/${accessToken}`;
-      const html =
-        "<h2>Clicca il link per confermare l'email:</h2><a href='" + message +
-        "' target='_blank'>" + message + "</a>";
-      sendEmail(user.email, "Verifica l'email!", html, message);
     })
     .then(() => {
       res.render("auth/login", {
