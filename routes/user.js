@@ -67,4 +67,11 @@ router.post('/editUser', isAuth, isVerified, accessController.grantIfOwnProfile(
   userController.postEditUser
 );
 
+router.get('/myprofile/editpass', isAuth, isVerified, accessController.grantIfOwnProfile("updateOwn", "password"), userController.getEditPassword);
+router.post('/myprofile/editpass', isAuth, isVerified, accessController.grantIfOwnProfile("updateOwn", "password"),
+  [
+  ], 
+  userController.postEditPassword
+);
+
 module.exports = router; 

@@ -150,3 +150,126 @@ exports.postEditUser = (req, res, next) => {
     })
     .catch((err) => console.log(err));
 };
+
+exports.getEditPassword = (req, res, next) => {
+  const editMode = req.query.edit;
+  if (!editMode) {
+    return res.redirect("/");
+  }
+  const userName = req.session.user.usrName;
+  User.findOne({ usrName: userName })
+    .then((user) => {
+      res.render("user/editPass", {
+        pageTitle: "Edit Password",
+        path: "/myprofile/editpass",
+        editing: editMode,
+        user: user,
+        hasError: false,
+        errorMessage: null,
+        validationErrors: [],
+        oldInput: {
+          oldPassword: "",
+          newPassword: "",
+          confirmPassword: "",
+        },
+      });
+    })
+    .catch((err) => console.log(err));
+};
+
+exports.postEditPassword = (req, res, next) => {
+  const username = req.session.user.usrName;
+  const updOldPassword = req.body.oldPassword;
+  const updNewPassword = req.body.newPassword;
+  const updConfirmPassword = req.body.confirmPassword;
+  let errMsg = "Password non valida!";
+  const remoteAddress = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+  const logMessage ="'"+req.method+"' request to "+"'"+req.url+"' from (IP: "+remoteAddress+")";
+
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const logWarnMessage = "Username: "+username+" - errore modifica password.";
+    vault().then((data) => {
+      logger(data.MONGODB_URI_LOGS).then((logger) => {
+        logger.warn(logMessage + " " + logWarnMessage)
+      });
+    })
+    return res.status(422).render("user/editPass", {
+      pageTitle: "Edit Password",
+      path: "/myprofile/editpass",
+      editing: editMode,
+      hasError: true,
+      errorMessage: errMsg,
+      validationErrors: [],
+      oldInput: {
+        oldPassword: updOldPassword,
+        newPassword: updNewPassword,
+        confirmPassword: updConfirmPassword,
+      },
+    });
+  }
+
+  User.findOne({ usrName: username })
+  .then((user) => {
+    if (!user) {
+      const logWarnMessage = "Username: "+username+" - username non esistente."
+      vault().then((data) => {
+        logger(data.MONGODB_URI_LOGS).then((logger) => {
+          logger.warn(logMessage + " " + logWarnMessage)
+        });
+      })
+      return res.status(422).render("user/editPass", {
+        pageTitle: "Edit Password",
+        path: "/myprofile/editpass",
+        editing: editMode,
+        hasError: true,
+        errorMessage: errMsg,
+        validationErrors: [],
+        oldInput: {
+          oldPassword: updOldPassword,
+          newPassword: updNewPassword,
+          confirmPassword: updConfirmPassword,
+        },
+      });
+    }
+    bcrypt
+      .compare(updOldPassword, user.password)
+      .then((passOK) => {
+          if (passOK) {
+            bcrypt
+              .hash(updNewPassword, 12)
+              .then((hashedPassword) => {
+                user.password = hashedPassword
+                return user.save();
+              });
+            return res.render("user/profile", {
+              path: "/myprofile",
+              pageTitle: "My Profile",
+              message: "Password modificata con successo",
+              user: user,
+            });
+          }
+          return res.status(422).render("user/editPass", {
+            pageTitle: "Edit Password",
+            path: "/myprofile/editpass",
+            editing: editMode,
+            hasError: true,
+            errorMessage: "Old Password errata",
+            validationErrors: [],
+            oldInput: {
+              oldPassword: updOldPassword,
+              newPassword: updNewPassword,
+              confirmPassword: updConfirmPassword,
+            },
+          });
+      })
+      .catch((err) => {
+        console.log(err);
+        vault().then((data) => {
+          logger(data.MONGODB_URI_LOGS).then((logger) => {
+            logger.error(logMessage + " " + err)
+          });
+        })
+      })
+  })
+}

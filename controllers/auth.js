@@ -64,15 +64,11 @@ exports.postLogin = (req, res, next) => {
     .then((user) => {
       if (!user) {
         const logWarnMessage = "Username: " + usrName + " - username non esistente."
-
         vault().then((data) => {
           logger(data.MONGODB_URI_LOGS).then((logger) => {
             logger.warn(logMessage + " " + logWarnMessage)
           });
         })
-        
-
-
         return res.status(422).render("auth/login", {
           path: "/login",
           pageTitle: "Login",

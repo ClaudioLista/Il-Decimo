@@ -9,7 +9,8 @@ exports.roles = (function() {
     .updateOwn("matches",['*','!_id','hostUserId'])
     .deleteOwn("matches",['*','!_id','hostUserId'])
     .updateOwn("votes")
-    
+    .updateOwn("password")
+
     ac.grant("admin")
     .extend("user")
     .createAny("profile")
