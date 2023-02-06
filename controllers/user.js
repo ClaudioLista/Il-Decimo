@@ -146,7 +146,11 @@ exports.postEditUser = (req, res, next) => {
           logger.info(logMessage + " " + logInfoMessage)
         });
       })
-      res.redirect("/utente/"+updUsername);
+      if(req.session.user.role == "admin") {
+        res.redirect("/utente/"+updUsername);
+      } else {
+        res.redirect("/myprofile");
+      }
     })
     .catch((err) => console.log(err));
 };
