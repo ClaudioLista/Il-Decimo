@@ -9,6 +9,7 @@ const passport = require("passport");
 const toobusy = require('toobusy-js');
 const hpp = require('hpp');
 const helmet = require('helmet')
+const csp = require('helmet-csp');
 
 require("dotenv").config();
 
@@ -41,6 +42,19 @@ vault().then((data) => {
   });
 
   app.use(helmet.hsts());
+  app.use(helmet.noSniff());
+  app.use(helmet.hidePoweredBy());
+  app.use(csp({
+    directives: {
+        defaultSrc: ["'self'"],  // default value for all directives that are absent
+        scriptSrc: ["'self'", 'unpkg.com', "'unsafe-inline'"],   // helps prevent XSS attacks
+        connectSrc: ["'self'", 'assets1.lottiefiles.com'],
+        frameAncestors: ["'none'"],  // helps prevent Clickjacking attacks
+        imgSrc: ["'self'", , 'cdn3.iconfinder.com'],
+        fontSrc: ["'self'", 'fonts.gstatic.com', 'cdnjs.cloudflare.com'],
+        styleSrc: ["'self'", 'fonts.googleapis.com', 'cdnjs.cloudflare.com', "'unsafe-inline'"],
+     }
+ }))
   app.use(hpp())
   app.use(bodyParser.urlencoded({ extended: false }));
   app.use(express.json());
@@ -54,7 +68,8 @@ vault().then((data) => {
       cookie: {
         maxAge: 7200000, //la sessione si cancella dopo 2h
         httpOnly: true,
-        //secure: true  //solo in fase di deploy
+        //secure: true,  //solo in fase di deploy
+        //sameSite: true
       },
     })
   );

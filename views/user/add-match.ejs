@@ -53,7 +53,6 @@
                         <span class="label-input100">Quando?</span>
                         <input
 							class="<%= validationErrors.find(e => e.param == 'time') ? 'input100-invalid' : 'input100' %>"
-                            onfocus="showDate()"
                             placeholder="Giorno e Ora"
                             value="<% if (hasError) { %><%= match.time %><% } %>"
                             name="time" type="datetime-local" id="time" required>
@@ -95,9 +94,6 @@
         </div>
     </main>
 
-    <script>
-        today = new Date().toISOString().split(":")[0]+":00";
-        document.getElementById("time").setAttribute("min",today)
-    </script>
+    <script src="/js/today.js"></script>
     
 <%- include('../includes/end.ejs') %>

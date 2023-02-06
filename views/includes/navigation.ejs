@@ -1,5 +1,7 @@
 <div class="backdrop"></div>
 
+<script src="/js/logoutButton.js"></script>
+
 <header class="main-header">
     <button id="side-menu-toggle">Menù</button>
     <nav class="main-header__nav">
@@ -41,7 +43,7 @@
                     <a class="<%= path === '/profile' ? 'active' : '' %>" href="/myprofile">My Profile</a>
                 </li>
                 <li class="main-header__item">
-                    <button onclick="popup()" id="logoutButton">Logout</button>
+                    <button id="logoutButton">Logout</button>
                 </li>
             <% } %>
         </ul>
@@ -49,7 +51,7 @@
     <div>
         <form action="/logout" method="POST">
             <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-            <button style="display: none;" id="confirmLogout" class="btnLogout" type="submit">Conferma Logout</button>
+            <button id="confirmLogout" class="btnLogout" type="submit">Conferma Logout</button>
         </form>
     </div>
 </header>
@@ -101,26 +103,3 @@
         </form>
     </div>
 </nav>
-
-<script>
-    function popup() {
-        console.log("click")
-        const logoutButton = document.getElementById("confirmLogout")
-        logoutButton.style.display = "block";
-        setTimeout(closePopUp, 5000);
-    }
-    function closePopUp() {
-        const logoutButton = document.getElementById("confirmLogout")
-        logoutButton.style.display = "none";
-    }
-    function popup2() {
-        console.log("click")
-        const logoutButton = document.getElementById("confirmLogout2")
-        logoutButton.style.display = "block";
-        setTimeout(closePopUp2, 5000);
-    }
-    function closePopUp2() {
-        const logoutButton = document.getElementById("confirmLogout2")
-        logoutButton.style.display = "none";
-    }
-</script>

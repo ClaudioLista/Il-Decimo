@@ -438,3 +438,7 @@ pa {
 .font-weight-bold {
   font-weight: 600 !important;
 }
+
+.btnLogout {
+  display: none;
+}
