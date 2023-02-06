@@ -20,6 +20,7 @@ exports.roles = (function() {
     .readAny("matches")
     .updateAny("mathces")
     .deleteAny("matches")
+    .updateAny("role")
  
     return ac;
 })();

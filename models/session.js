@@ -19,60 +19,53 @@ const sessionSchema = new Schema({
     csrfSecret: {type: String},
     isLoggedIn: {type: Boolean},
     user: {
-        nome: {
-            type: String
-          },
-          cognome: {
-            type: String
-          },
-          usrName: {
-            type: String,
-          },
-          email: {
-            type: String,
-          },
-          numCell: {
-            type: String
-          },
-          password: {
-            type: String,
-          },
-          matchNum: {
-            type: Number,
-          },
-          matchList: {
-            matchId: {
-              type: Schema.Types.ObjectId,
-              ref: "Match",
-            },
-            vote: {
-              type: String,
-              default: "",
-            },
-            type: Array,
-          },
-          role: {
-            type: String,
-            default: "user",
-            enum: ["user", "admin"],
-          },
-          activeSessions: {
-            type: Number,
-            default: 0,
-          },
-          verified: {
-            type: Boolean,
-            default: false,
-          },
-          expireAt: { 
-            type: Date, 
-            default: null,
-          },
-          lastSession: { 
-            type: Date,
-          },
+      nome: {type: String},
+      cognome: {type: String},
+      usrName: {type: String},
+      email: {type: String},
+      password: {type: String},
+      role: {
+        type: String,
+        default: "user",
+        enum: ["user", "admin"],
       },
-      ipAddress: {type: String}
+      verified: {
+        type: Boolean,
+        default: false,
+      },
+      expireAt: { 
+        type: Date, 
+        default: null,
+      },
+      lastSession: {type: Date},
+      attribute: {
+        numTel: {type: String},
+        address: {
+          city: {type: String},
+          state: {type: String},
+        },
+        age: {type: Number},
+        playRole: {
+          type: String,
+          enum: ["Portiere", "Difensore", "Centrocampista", "Attaccante"],
+        },
+        bio: {type: String},
+        squad: {type: String},
+        foot: {
+          type: String,
+          enum: ["Sinistro", "Destro"],
+        },
+      },
+      matchList: {
+        type: Array,
+        matchId: {
+          type: Schema.Types.ObjectId,
+          ref: "Match",
+        },
+        vote: {type: String},
+      },
+    },
+    ipAddress: {type: String}
   },
 });
 

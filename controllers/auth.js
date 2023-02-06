@@ -283,7 +283,6 @@ exports.getSignup = (req, res, next) => {
       cognome: "",
       usrName: "",
       email: "",
-      numCell: "",
       password: "",
       confirmPassword: "",
     },
@@ -296,7 +295,6 @@ exports.postSignup = (req, res, next) => {
   const cognome = req.body.cognome;
   const usrName = req.body.usrName;
   const email = req.body.email;
-  const numCell = req.body.numCell;
   const password = req.body.password;
 
   const remoteAddress = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
@@ -321,7 +319,6 @@ exports.postSignup = (req, res, next) => {
         cognome: cognome,
         usrName: usrName,
         email: email,
-        numCell: numCell,
         password: password,
         confirmPassword: req.body.confirmPassword,
       },
@@ -339,7 +336,6 @@ exports.postSignup = (req, res, next) => {
         cognome: Cognome,
         usrName: usrName,
         email: email,
-        numCell: numCell,
         password: hashedPassword,
         matcheslist: {
           matches: [],
@@ -367,13 +363,12 @@ exports.postSignup = (req, res, next) => {
           logger.warn(logMessage + " " + logWarnMessage)
         });
   
-        const message = `${process.env.BASE_URL}/verify/${user.usrName}/${accessToken}`;
+        const message = `${process.env.BASE_URL}verify/${user.usrName}/${accessToken}`;
         const html =
           "<h2>Clicca il link per confermare l'email:</h2><a href='" + message +
           "' target='_blank'>" + message + "</a>";
         sendEmail(user.email, "Verifica l'email!", html, message);
       })
-      
     })
     .then(() => {
       res.render("auth/login", {

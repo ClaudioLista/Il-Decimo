@@ -1,0 +1,148 @@
+<%- include('../includes/head.ejs') %>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet">
+    <link rel="stylesheet" href="/css/profilo.css">
+    <link rel="stylesheet" href="/css/login.css">
+</head>
+
+<body>
+    <%- include('../includes/navigation.ejs') %>
+    <div class="main-content">
+        <!-- Header -->
+        <div class="header pb-8 pt-5 pt-lg-8 d-flex align-items-center" style="min-height: 600px; background-image: url('../img/background.jpg'); background-size: cover; background-position: center top;">
+        <!-- Mask -->
+            <span class="mask bg-gradient-default opacity-7"></span>
+            <!-- Page content -->
+            <div class="container-fluid mt--7">
+                <div class="row justify-content-center">
+                    <div class="col-xl-4 order-xl-1 mb-5 mb-xl-0">
+                        <div class="card card-profile shadow">
+                            <div class="row justify-content-center">
+                                <div class="col-lg-3 order-lg-2">
+                                    <div class="card-profile-image">
+                                    <a title="football icons">
+                                        <img src="../img/football-players.png" class="rounded-circle">
+                                    </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <form action="/editUser" method="POST">
+                                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                <input type="hidden" value="<%= user._id %>" name="userId">
+                                <input type="hidden" value="<%= user.usrName %>" name="userName">
+                                <div class="card-header text-center border-0 pt-8 pt-md-4 pb-0 pb-md-4">
+                                    <div class="d-flex justify-content-between">
+                                        <button class="btn btn-sm btn-primary" type="reset">Annulla<br />Modifiche</button>
+                                        <button class="btn btn-sm btn-primary" type="submit">Conferma<br />Modifiche</button>
+                                    </div>
+                                </div>
+                                <div class="card-body pt-0 pt-md-4">
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="card-profile-stats d-flex justify-content-center mt-md-5">
+                                                <div>
+                                                    <span class="heading"></span>
+                                                    <span class="description"></span>
+                                                </div>
+                                                <% if (errorMessage) { %>
+                                                    <div class="flex-c-m">
+                                                        <div class="popout error-message"><%= errorMessage %></div>
+                                                    </div>
+                                                <% } %>
+                                                <div>
+                                                    <span class="heading"></span>
+                                                    <span class="description"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="wrap-input100 validate-input m-b-23">
+                                            <span class="label-input100">Username</span>
+                                            <input
+                                                class="<%= (errorMessage) ? 'input100-invalid' : 'input100' %>"
+                                                value="<% if (editing || hasError) { %><%= user.usrName %><% } %>"
+                                                type="text" name="usrName" id="usrName" required>
+                                        </div>
+                                        <div class="wrap-input100 validate-input m-b-23">
+                                            <span class="label-input100">Nome</span>
+                                            <input
+                                                class="<%= (errorMessage) ? 'input100-invalid' : 'input100' %>"
+                                                value="<% if (editing || hasError) { %><%= user.nome %><% } %>"
+                                                type="text" name="nome" id="nome" required>
+                                        </div>
+                                        <div class="wrap-input100 validate-input m-b-23">
+                                            <span class="label-input100">Cognome</span>
+                                            <input
+                                                class="<%= (errorMessage) ? 'input100-invalid' : 'input100' %>"
+                                                value="<% if (editing || hasError) { %><%= user.cognome %><% } %>"
+                                                type="text" name="cognome" id="cognome" required>
+                                        </div>
+                                        <div class="wrap-input100 validate-input m-b-23">
+                                            <span class="label-input100">Telefono</span>
+                                            <input
+                                                class="<%= (errorMessage) ? 'input100-invalid' : 'input100' %>"
+                                                value="<% if (editing || hasError) { %><%= user.numTel %><% } %>"
+                                                type="tel" name="numTel" id="numTel">
+                                        </div>
+                                        <div class="wrap-input100 validate-input m-b-23">
+                                            <span class="label-input100">Età</span>
+                                            <input
+                                                class="<%= (errorMessage) ? 'input100-invalid' : 'input100' %>"
+                                                value="<% if (editing || hasError) { %><%= user.age %><% } %>"
+                                                type="text" name="age" id="age">
+                                        </div>
+                                        <div class="wrap-input100 validate-input m-b-23">
+                                            <span class="label-input100">Città</span>
+                                            <input
+                                                class="<%= (errorMessage) ? 'input100-invalid' : 'input100' %>"
+                                                value="<% if (editing || hasError) { %><%= user.city %><% } %>"
+                                                type="text" name="city" id="city">
+                                        </div>
+                                        <div class="wrap-input100 validate-input m-b-23">
+                                            <span class="label-input100">Nazione</span>
+                                            <input
+                                                class="<%= (errorMessage) ? 'input100-invalid' : 'input100' %>"
+                                                value="<% if (editing || hasError) { %><%= user.state %><% } %>"
+                                                type="text" name="state" id="state">
+                                        </div>
+                                        <div class="wrap-input100 validate-input m-b-23">
+                                            <legend class="label-input100">Ruolo</legend>
+                                            <select type="string" name="playRole" id="playRole">
+                                                <option value="Portiere">Portiere</option>
+                                                <option value="Difensore">Difensore</option>
+                                                <option value="Centrocampista">Centrocampista</option>
+                                                <option value="Attaccante">Attaccante</option>
+                                            </select>
+                                        </div>
+                                        <div class="wrap-input100 validate-input m-b-23">
+                                            <legend class="label-input100">Piede preferito</legend>
+                                            <select type="string" name="foot" id="foot">
+                                                <option value="Sinistro">Sinistro</option>
+                                                <option value="Destro">Destro</option>
+                                            </select>
+                                        </div>
+                                        <div class="wrap-input100 validate-input m-b-23">
+                                            <span class="label-input100">Squadra del cuore</span>
+                                            <input
+                                                class="<%= (errorMessage) ? 'input100-invalid' : 'input100' %>"
+                                                value="<% if (editing || hasError) { %><%= user.squad %><% } %>"
+                                                type="text" name="squad" id="squad">
+                                        </div>
+                                        <div class="wrap-input100 validate-input m-b-23">
+                                            <span class="label-input100">Bio</span>
+                                            <input
+                                                class="<%= (errorMessage) ? 'input100-invalid' : 'input100' %>"
+                                                value="<% if (editing || hasError) { %><%= user.bio %><% } %>"
+                                                type="text" name="bio" id="bio">
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>  
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<%- include('../includes/end.ejs') %>

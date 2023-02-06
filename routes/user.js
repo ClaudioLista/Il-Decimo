@@ -1,8 +1,11 @@
 const express = require('express');
 const { body } = require('express-validator');
+const { Promise, Error } = require('sequelize');
 
 const userController = require('../controllers/user');
 const accessController = require('../controllers/accessControl');
+
+const User = require('../models/user');
 
 const isAuth = require('../middleware/is-auth');
 const isVerified = require('../middleware/is-verified');
@@ -13,47 +16,55 @@ router.get('/', userController.getIndex);
 
 router.get('/terms', userController.getTerms);
 
-router.get('/profile/:username', isAuth, isVerified, accessController.grantIfOwnProfile("readOwn", "profile"), userController.getUserProfile);
+router.get('/myprofile', isAuth, isVerified, accessController.grantIfOwnProfile("readOwn", "profile"), userController.getUserProfile);
 
-router.get('/matches', userController.getMatches);
-
-router.get('/matches/:matchId', isAuth, isVerified, accessController.grantAccess("readAny", "matches"), userController.getMatch);
-
-router.get('/add-match', isAuth, isVerified, userController.getAddMatch);
-router.post('/add-match', isAuth, isVerified,
+router.get('/editUser/:username', isAuth, isVerified, accessController.grantIfOwnProfile("updateOwn", "profile"), userController.getEditUser);
+router.post('/editUser', isAuth, isVerified, accessController.grantIfOwnProfile("updateOwn", "profile"),
   [
-    body('title', 'Inserisci un nome valido').isString().isLength({ min: 3 }).trim().escape(),
-    body('placeName', 'Inserisci un luogo valido').isString().isLength({ min: 3 }).trim().escape(),
-    body('address', 'Inserisci un indirizzo valido').isString().isLength({ min: 3 }).trim().escape(),
-    body('totalPlayers', 'Inserisci un numero di giocatori valido').isNumeric().escape(),
-    body('price', 'Inserisci un prezzo valido').isFloat().escape(),
-    body('description', 'Inserisci una descrizione valida').isLength({ min: 5, max: 250 }).trim().escape(),
-  ],
-  userController.postAddMatch
+    body('usrName', 'Perfavore inserisci un Username con almeno 6 caratteri, composto solo da lettere o numeri!')
+      .isLength({ min: 4, max: 60 })
+      .custom((value, { req }) => {
+        if(value == req.body.userName) {
+            return true
+        } else {
+            return User.findOne({ usrName: value }).then((userDoc) => {
+            if (userDoc) {
+                return Promise.reject('Username già utilizzato!')
+            }
+            })
+        }
+      })
+      .trim()
+      .escape(),
+    body('nome', 'Perfavore inserisci il tuo Nome correttamente!')
+      .isLength({ min: 1, max: 28 })
+      .isString()
+      .trim()
+      .escape(),
+    body('cognome', 'Perfavore inserisci il tuo Cognome correttamente!')
+      .isLength({ min: 1, max: 28 })
+      .isString()
+      .trim()
+      .escape(),
+    body('numTel', 'Perfavore inserisci un Numero telefonico valido, o non inserirlo')
+      .trim()
+      .custom((value) => {
+        if (!value) {
+            return true
+        } else if (value.length == 10) {
+            return true
+        } else {
+            throw new Error('Perfavore inserisci un Numero telefonico valido, o non inserirlo')
+        }
+      })
+      .escape(),
+    body('age', 'Inserisci un età valida, o non inserirla').trim().escape(),
+    body('city', 'Inserisci una città valida, o non inserirla').trim().escape(),
+    body('state', 'Inserisci una nazione valida, o non inserirla').trim().escape(),
+    body('squad', 'Inserisci una squadra valida, o non inserirla').trim().escape(),
+    body('bio', 'Inserisci una bio valita, o non inserirla').trim().escape(),
+  ], 
+  userController.postEditUser
 );
 
-router.get('/edit-match/:matchId', isAuth, isVerified, accessController.grantIfOwnMatch("updateOwn", "matches"), userController.getEditMatch);
-router.post('/edit-match', isAuth, accessController.grantIfOwnMatch("updateOwn", "matches"),
-  [
-    body('title', 'Inserisci un nome valido').isString().isLength({ min: 3 }).trim().escape(),
-    body('placeName', 'Inserisci un luogo valido').isString().isLength({ min: 3 }).trim().escape(),
-    body('address', 'Inserisci un indirizzo valido').isString().isLength({ min: 3 }).trim().escape(),
-    body('totalPlayers', 'Inserisci un numero di giocatori valido').isNumeric().escape(),
-    body('price', 'Inserisci un prezzo valido').isFloat().escape(),
-    body('description', 'Inserisci una descrizione valida').isLength({ min: 5, max: 250 }).trim().escape(),
-  ],
-  userController.postEditMatch
-);
-
-router.post('/vote-match', isAuth, isVerified, accessController.grantIfIsInMatch("updateOwn","votes"), userController.postVoteMatch);
-router.get('/mymatches', isAuth, isVerified, userController.getUserMatches);
-
-router.get('/matches/:matchId/join', isAuth, isVerified, accessController.grantAccess("readAny", "matches"), userController.getJoinMatch);
-router.post('/matches/:matchId/join', isAuth, isVerified, accessController.grantAccess("readAny", "matches"), userController.postJoinMatch);
-
-router.get('/matches/:matchId/unjoin', isAuth, isVerified, accessController.grantIfIsInMatch("updateOwn", "matches"), userController.getUnJoinMatch);
-router.post('/matches/:matchId/unjoin', isAuth, isVerified, accessController.grantIfIsInMatch("updateOwn", "matches"), userController.postUnJoinMatch);
-
-router.post('/delete-match', isAuth, isVerified, accessController.grantIfOwnMatch("deleteOwn", "matches"), userController.postDeleteMatch);
-
-module.exports = router;
+module.exports = router; 

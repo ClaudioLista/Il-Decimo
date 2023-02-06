@@ -1,5 +1,5 @@
 const express = require('express');
-const bcrypt = require("bcryptjs");
+const bcrypt = require('bcryptjs');
 var generatePass = require('password-generator');
 var passport = require('passport');
 var GoogleStrategy = require('passport-google-oidc');
@@ -11,7 +11,7 @@ const FederateUser = require('../models/federateUser');
 const User = require('../models/user');
 const Session = require('../models/session');
 const { vault } = require('../util/vault')
-const { logger } = require("../util/logger");
+const { logger } = require('../util/logger');
 
 router.get('/login/federated/google', passport.authenticate('google', {
     scope: [

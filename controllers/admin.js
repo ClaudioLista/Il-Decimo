@@ -1,6 +1,9 @@
 const Match = require("../models/match");
 const User = require("../models/user");
 
+const { logger } = require("../util/logger");
+const { vault } = require("../util/vault");
+
 const ELEM_PER_PAGE = 10;
 
 exports.getListMatch = (req, res, next) => {
@@ -11,8 +14,8 @@ exports.getListMatch = (req, res, next) => {
     .then((numMatches) => {
       totalMatches = numMatches;
       return Match.find()
-      .skip((page - 1) * ELEM_PER_PAGE)
-      .limit(ELEM_PER_PAGE)
+        .skip((page - 1) * ELEM_PER_PAGE)
+        .limit(ELEM_PER_PAGE)
     })   
     .then((matches) => {
       res.render("admin/listMatch", {
@@ -38,8 +41,8 @@ exports.getListUser = (req, res, next) => {
     .then((numUsers) => {
       totalUsers = numUsers;
       return User.find()
-      .skip((page - 1) * ELEM_PER_PAGE)
-      .limit(ELEM_PER_PAGE)
+        .skip((page - 1) * ELEM_PER_PAGE)
+        .limit(ELEM_PER_PAGE)
     })   
     .then((users) => {
       res.render("admin/listUser", {
@@ -56,3 +59,51 @@ exports.getListUser = (req, res, next) => {
     })
     .catch((err) => console.log(err));
 };
+
+exports.getUserProfile = (req, res, next) => {
+  const userName = req.params.username;
+  User.findOne({ usrName: userName })
+    .then((user) => {
+      res.render("admin/profileUser", {
+        pageTitle: "Profilo utente",
+        path: "/utente/:username",
+        user: user,
+      });
+    })
+    .catch((err) => console.log(err));
+};
+
+exports.getEditRole = (req, res, next) => {
+  const userName = req.params.username;
+  User.findOne({ usrName: userName })
+    .then((user) => {
+      res.render("admin/editRole", {
+        pageTitle: "Editing ruolo utente",
+        path: "/editRole/:username",
+        user: user,
+      });
+    })
+    .catch((err) => console.log(err));
+}
+
+exports.postEditRole = (req, res, next) => {
+  const userName = req.body.usrName;
+  const updatedRole = req.body.role;
+  const remoteAddress = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+  const logMessage ="'"+req.method+"' request to "+"'"+req.url+"' from " + req.session.user.usrName + " (IP: "+remoteAddress+")";
+  User.findOne({ usrName: userName })
+    .then((user) => {
+      user.role = updatedRole;
+      return user.save();
+    })
+    .then(() => {
+      const logInfoMessage = "Username: "+req.session.user.usrName+" - modifica al ruolo di: "+userName;
+      vault().then((data) => {
+        logger(data.MONGODB_URI_LOGS).then((logger) => {
+          logger.info(logMessage + " " + logInfoMessage)
+        });
+      })
+      res.redirect("/utente/"+userName);
+    })
+    .catch((err) => console.log(err));
+}

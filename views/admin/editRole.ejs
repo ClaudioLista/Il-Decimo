@@ -1,0 +1,59 @@
+<%- include('../includes/head.ejs') %>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet">
+    <link rel="stylesheet" href="/css/profilo.css">
+</head>
+
+<body>
+    <%- include('../includes/navigation.ejs') %>
+    <div class="main-content">
+        <!-- Header -->
+        <div class="header pb-8 pt-5 pt-lg-8 d-flex align-items-center" style="min-height: 600px; background-image: url('../img/background.jpg'); background-size: cover; background-position: center top;">
+        <!-- Mask -->
+            <span class="mask bg-gradient-default opacity-7"></span>
+            <!-- Page content -->
+            <div class="container-fluid mt--7">
+                <div class="row justify-content-center">
+                    <div class="col-xl-4 order-xl-1 mb-5 mb-xl-0">
+                        <div class="card card-profile shadow">
+                            <div class="row justify-content-center">
+                                <div class="col-lg-3 order-lg-2">
+                                    <div class="card-profile-image">
+                                        <a title="football icons">
+                                            <img src="../img/football-players.png" class="rounded-circle">
+                                        </a>
+                                    </div>
+                                </div>
+                                <br>
+                                <br>
+                                <br>
+                                <br>
+                            </div>
+                            <div class="card-body pt-0 pt-md-4">
+                                <div class="text-center">
+                                    <h3><%= user.role %></h3>
+                                    <form class="card-form" action="/editRole" method="POST">
+                                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                        <input type="hidden" value="<%= user.usrName %>" name="usrName">
+                                        <div class="wrap-input100 validate-input m-b-23">                                            
+                                            <legend>Seleziona ruolo</legend>
+                                            <select type="string" name="role" id="role" required>
+                                                <option value="user" selected="selected">User</option>
+                                                <option value="admin">Admin</option>
+                                            </select>
+                                        </div>
+                                        <div class="action">
+                                            <button class="action-button" type="submit">Update Role</button>
+                                        </div>
+                                        <br>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<%- include('../includes/end.ejs') %>
+

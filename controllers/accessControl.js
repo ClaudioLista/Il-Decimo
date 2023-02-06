@@ -59,11 +59,7 @@ exports.grantIfOwnMatch = function (action, resource) {
 
       Match.findById(matchId)
         .then((match) => {
-          if (
-            !permission.granted ||
-            (!match.hostUserId.equals(req.user._id) &&
-              !(req.user.role == "admin"))
-          ) {
+          if (!permission.granted || (!match.hostUserId.equals(req.user._id) && !(req.user.role == "admin"))) {
             return res.status(401).json({
               error: "You don't have enough permission to perform this action",
             });
@@ -81,13 +77,10 @@ exports.grantIfOwnProfile = function (action, resource) {
   return async (req, res, next) => {
     try {
       const permission = roles.can(req.user.role)[action](resource);
-      const username = req.params.username;
+      const username = req.session.user.usrName;
       User.findOne({ usrName: username })
         .then((user) => {
-          if (
-            !permission.granted ||
-            (!user._id.equals(req.user._id) && !(req.user.role == "admin"))
-          ) {
+          if (!permission.granted || (!user._id.equals(req.user._id) && !(req.user.role == "admin"))) {
             return res.status(401).json({
               error: "You don't have enough permission to perform this action",
             });

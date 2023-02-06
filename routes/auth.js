@@ -64,10 +64,6 @@ router.post('/signup', isLog,
       })
       .normalizeEmail()
       .escape(),
-    body('numCell', 'Perfavore inserisci un Numero telefonico valido!')
-      .isLength(10)
-      .isMobilePhone()
-      .escape(),
     body('password', passErr)
       .isLength({ min: 8, max: 50 })
       .isStrongPassword({

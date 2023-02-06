@@ -25,6 +25,7 @@ const app = express();
 const csrfProtection = csrf();
 
 const userRoutes = require("./routes/user");
+const matchRoutes = require("./routes/match");
 const authRoutes = require("./routes/auth");
 const federateRoutes = require("./routes/federate");
 const adminRoutes = require("./routes/admin");
@@ -81,7 +82,7 @@ vault().then((data) => {
         logger(data.MONGODB_URI_LOGS).then((logger) => {
           logger.info(logMessage, " - Richiesta rifiutata perchè il server è impegnato.");
         });
-        res.send(503, "Server Too Busy");
+        res.status(503).send("Server Too Busy");
     } else {
     next();
     }
@@ -153,7 +154,22 @@ vault().then((data) => {
     next();
   });
 
+  app.use((req, res, next) => {
+    if (res.locals.isAuthenticated) {
+      res.locals.isAdministrator = false;
+      if (res.locals.user.role == "admin") {
+        res.locals.isAdministrator = true;
+      } else {
+        res.locals.isAdministrator = false;
+      }
+    } else {
+      res.locals.isAdministrator = false;
+    }
+    next();
+  });
+
   app.use(userRoutes);
+  app.use(matchRoutes);
   app.use(authRoutes);
   app.use(federateRoutes);
   app.use(adminRoutes);
