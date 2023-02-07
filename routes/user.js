@@ -12,6 +12,9 @@ const isVerified = require('../middleware/is-verified');
 
 const router = express.Router();
 
+const passErr = 'Perfavore inserisci una password valida! Deve contenere: almeno 8 caratteri,'+
+                ' almeno 1 lettera minuscola, almeno 1 lettera maiuscola, almeno 1 numero e almeno 1 simbolo';
+
 router.get('/', userController.getIndex);
 
 router.get('/terms', userController.getTerms);
@@ -70,6 +73,43 @@ router.post('/editUser', isAuth, isVerified, accessController.grantIfOwnProfile(
 router.get('/myprofile/editpass', isAuth, isVerified, accessController.grantIfOwnProfile("updateOwn", "password"), userController.getEditPassword);
 router.post('/myprofile/editpass', isAuth, isVerified, accessController.grantIfOwnProfile("updateOwn", "password"),
   [
+    body('oldPassword', 'Password errata')
+      .isLength({ min: 8, max: 50 })
+      .trim()
+      .escape(),
+    body('newPassword', passErr)
+      .isLength({ min: 8, max: 50 })
+      .isStrongPassword({
+        minLength: 8,
+        minLowercase: 1,
+        minUppercase: 1,
+        minNumbers: 1,
+        minSymbols: 1,
+        returnScore: false,
+        pointsPerUnique: 1,
+        pointsPerRepeat: 0.5,
+        pointsForContainingLower: 10,
+        pointsForContainingUpper: 10,
+        pointsForContainingNumber: 10,
+        pointsForContainingSymbol: 10,
+      })
+      .trim()
+      .custom((value, { req }) => {
+        if (value == req.body.oldPassword) {
+          throw new Error('La Nuova password deve essere diversa dalla Vecchia password!')
+        }
+        return true
+      })
+      .escape(),
+    body('confirmPassword')
+      .trim()
+      .custom((value, { req }) => {
+        if (value !== req.body.newPassword) {
+          throw new Error('La conferma password deve essere uguale alla Nuova password inserita!')
+        }
+        return true
+      })
+      .escape(),
   ], 
   userController.postEditPassword
 );

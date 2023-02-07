@@ -1,3 +1,4 @@
+const bcrypt = require("bcryptjs");
 const { validationResult } = require("express-validator");
 
 const User = require("../models/user");
@@ -156,19 +157,13 @@ exports.postEditUser = (req, res, next) => {
 };
 
 exports.getEditPassword = (req, res, next) => {
-  const editMode = req.query.edit;
-  if (!editMode) {
-    return res.redirect("/");
-  }
-  const userName = req.session.user.usrName;
+    const userName = req.session.user.usrName;
   User.findOne({ usrName: userName })
     .then((user) => {
       res.render("user/editPass", {
         pageTitle: "Edit Password",
         path: "/myprofile/editpass",
-        editing: editMode,
         user: user,
-        hasError: false,
         errorMessage: null,
         validationErrors: [],
         oldInput: {
@@ -201,10 +196,8 @@ exports.postEditPassword = (req, res, next) => {
     return res.status(422).render("user/editPass", {
       pageTitle: "Edit Password",
       path: "/myprofile/editpass",
-      editing: editMode,
-      hasError: true,
-      errorMessage: errMsg,
-      validationErrors: [],
+      errorMessage: errors.array()[0].msg,
+      validationErrors: errors.array(),
       oldInput: {
         oldPassword: updOldPassword,
         newPassword: updNewPassword,
@@ -215,27 +208,25 @@ exports.postEditPassword = (req, res, next) => {
 
   User.findOne({ usrName: username })
   .then((user) => {
-    if (!user) {
-      const logWarnMessage = "Username: "+username+" - username non esistente."
-      vault().then((data) => {
-        logger(data.MONGODB_URI_LOGS).then((logger) => {
-          logger.warn(logMessage + " " + logWarnMessage)
-        });
-      })
-      return res.status(422).render("user/editPass", {
-        pageTitle: "Edit Password",
-        path: "/myprofile/editpass",
-        editing: editMode,
-        hasError: true,
-        errorMessage: errMsg,
-        validationErrors: [],
-        oldInput: {
-          oldPassword: updOldPassword,
-          newPassword: updNewPassword,
-          confirmPassword: updConfirmPassword,
-        },
-      });
-    }
+    // if (!user) {
+    //   const logWarnMessage = "Username: "+username+" - username non esistente."
+    //   vault().then((data) => {
+    //     logger(data.MONGODB_URI_LOGS).then((logger) => {
+    //       logger.warn(logMessage + " " + logWarnMessage)
+    //     });
+    //   })
+    //   return res.status(422).render("user/editPass", {
+    //     pageTitle: "Edit Password",
+    //     path: "/myprofile/editpass",
+    //     errorMessage: errMsg,
+    //     validationErrors: [],
+    //     oldInput: {
+    //       oldPassword: updOldPassword,
+    //       newPassword: updNewPassword,
+    //       confirmPassword: updConfirmPassword,
+    //     },
+    //   });
+    // }
     bcrypt
       .compare(updOldPassword, user.password)
       .then((passOK) => {
@@ -256,10 +247,8 @@ exports.postEditPassword = (req, res, next) => {
           return res.status(422).render("user/editPass", {
             pageTitle: "Edit Password",
             path: "/myprofile/editpass",
-            editing: editMode,
-            hasError: true,
             errorMessage: "Old Password errata",
-            validationErrors: [],
+            validationErrors: errors.array(),
             oldInput: {
               oldPassword: updOldPassword,
               newPassword: updNewPassword,

@@ -294,7 +294,7 @@ exports.postSignup = (req, res, next) => {
   const password = req.body.password;
 
   const remoteAddress = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
-  const logMessage ="'" + req.method + "' request to " + "'" + req.url + "' from (IP: " +  remoteAddress + ")"
+  const logMessage ="'"+req.method+"' request to "+"'"+req.url+"' from (IP: "+remoteAddress+")"
 
   const errors = validationResult(req);
   if (!errors.isEmpty()) {

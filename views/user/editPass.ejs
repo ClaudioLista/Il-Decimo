@@ -35,8 +35,13 @@
                             </div>
                             <div class="card-body pt-0 pt-md-4">
                                 <div class="text-center">
-                                    <form class="login100-form validate-form" action="/signup" method="POST">
+                                    <form class="login100-form validate-form" action="/myprofile/editpass" method="POST">
                                         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                        <% if (errorMessage) { %>
+                                            <div class="flex-c-m">
+                                                <div class="popout error-message"><%= errorMessage %></div>
+                                            </div>
+                                        <% } %>
                                         <div class="wrap-input100 validate-input m-b-23">
                                             <span class="label-input100">Old Password</span>
                                             <input
@@ -60,6 +65,12 @@
                                                 placeholder="Confirm the New password" required
                                                 type="password" name="confirmPassword" id="confirmPassword" required value="<%= oldInput.confirmPassword %>">
                                             <span class="focus-input100" data-symbol="&#xf190;"></span>
+                                        </div>
+                                        <div class="container-login100-form-btn">
+                                            <div class="wrap-login100-form-btn">
+                                                <div class="login100-form-bgbtn"></div>
+                                                <button class="login100-form-btn">Conferma Modifica</button>
+                                            </div>
                                         </div>
                                     </form>
                                 </div>
