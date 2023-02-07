@@ -25,7 +25,7 @@
                     <div class="wrap-input100 validate-input m-b-23">
                         <span class="label-input100">Titolo della partita</span>
                         <input
-							class="<%= (errorMessage) ? 'input100-invalid' : 'input100' %>"
+							class="<%= validationErrors.find(e => e.param == 'title') ? 'input100-invalid' : 'input100' %>"
                             value="<% if (editing || hasError) { %><%= match.title %><% } %>"
                             type="text" name="title" id="title" required>
                         <span class="focus-input100" data-symbol="&#xf187;"></span>
@@ -33,7 +33,7 @@
                     <div class="wrap-input100 validate-input m-b-23">
                         <span class="label-input100">Luogo</span>
                         <input
-							class="<%= (errorMessage) ? 'input100-invalid' : 'input100' %>"
+							class="<%= validationErrors.find(e => e.param == 'placeName') ? 'input100-invalid' : 'input100' %>"
                             value="<% if (editing || hasError) { %><%= match.placeName %><% } %>"
                             type="text" name="placeName" id="placeName" required>
                         <span class="focus-input100" data-symbol="&#xf299;"></span>
@@ -41,7 +41,7 @@
                     <div class="wrap-input100 validate-input m-b-23">
                         <span class="label-input100">Indirizzo</span>
                         <input
-							class="<%= (errorMessage) ? 'input100-invalid' : 'input100' %>"
+							class="<%= validationErrors.find(e => e.param == 'address') ? 'input100-invalid' : 'input100' %>"
                             value="<% if (editing || hasError) { %><%= match.address %><% } %>"
                             type="text" name="address" id="address" required>
                         <span class="focus-input100" data-symbol="&#xf196;"></span>
@@ -49,7 +49,7 @@
                     <div class="wrap-input100 validate-input m-b-23">
                         <span class="label-input100">Quando?</span>
                         <input
-							class="<%= (errorMessage) ? 'input100-invalid' : 'input100' %>"
+							class="<%= validationErrors.find(e => e.param == 'time') ? 'input100-invalid' : 'input100' %>"
                             value="<% if (editing || hasError) { %><%= match.time %><% } %>"
                             name="time" id="time" required>
                         <span class="focus-input100" data-symbol="&#xf32e;"></span>
@@ -57,7 +57,7 @@
                     <div class="wrap-input100 validate-input m-b-23">
                         <span class="label-input100">Numero di giocatori</span>
                         <input
-							class="<%= (errorMessage) ? 'input100-invalid' : 'input100' %>"
+							class="<%= validationErrors.find(e => e.param == 'totalPlayers') ? 'input100-invalid' : 'input100' %>"
                             value="<% if (editing || hasError) { %><%= match.totalPlayers %><% } %>"
                             type="number" name="totalPlayers" id="totalPlayers" step="1" required>
                         <span class="focus-input100" data-symbol="&#xf212;"></span>
@@ -65,7 +65,7 @@
                     <div class="wrap-input100 validate-input m-b-23">
                         <span class="label-input100">Prezzo</span>
                         <input
-							class="<%= (errorMessage) ? 'input100-invalid' : 'input100' %>"
+							class="<%= validationErrors.find(e => e.param == 'price') ? 'input100-invalid' : 'input100' %>"
                             value="<% if (editing || hasError) { %><%= match.price %><% } %>"
                             type="number" name="price" id="price" step="0.10" required>
                         <span class="focus-input100" data-symbol="&#xf19a;"></span>
@@ -73,7 +73,7 @@
                     <div class="wrap-input100 validate-input m-b-23">
                         <span class="label-input100">Descrizione</span>
                         <input
-							class="<%= (errorMessage) ? 'input100-invalid' : 'input100' %>"
+							class="<%= validationErrors.find(e => e.param == 'description') ? 'input100-invalid' : 'input100' %>"
                             value="<% if (editing || hasError) { %><%= match.description %><% } %>"
                             type="text" name="description" id="description" required>
                         <span class="focus-input100" data-symbol="&#xf262;"></span>

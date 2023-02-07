@@ -69,7 +69,8 @@ vault().then((data) => {
                   const federateUser = new FederateUser({
                     userId: user._id,
                     provider: issuer,
-                    subject: profile.id
+                    subject: profile.id,
+                    passModified: false
                   })
                   federateUser.save().then(() => {
                     return cb(null, user)
@@ -153,7 +154,8 @@ passport.use(
                 const federateUser = new FederateUser({
                   userId: user._id,
                   provider: 'https://www.facebook.com',
-                  subject: profile.id
+                  subject: profile.id,
+                  passModified: false
                 })
                 federateUser.save().then(() => {
                   return cb(null, user)
@@ -161,7 +163,7 @@ passport.use(
                 const logInfoMessage = "Utente: "+user._id+" creato con successo dal profilo Facebook!";
                 vault().then((data) => {
                   logger(data.MONGODB_URI_LOGS).then((logger) => {
-                    logger.info(logMessage + " " + logInfoMessage);
+                    logger.info(logInfoMessage);
                   });
                 })
               })
@@ -176,7 +178,7 @@ passport.use(
                   const logWarnMessage = "LOGIN FALLITO - Utente: "+user.usrName+" ha troppe sessioni attive!";
                   vault().then((data) => {
                     logger(data.MONGODB_URI_LOGS).then((logger) => {
-                      logger.warn(logMessage + " " + logWarnMessage);
+                      logger.warn(logWarnMessage);
                     });
                   })
                   return cb(null, null)
@@ -184,7 +186,7 @@ passport.use(
                   const logInfoMessage = "Utente: "+user.usrName+" - LOGIN EFFETTUATO con Facebook";
                   vault().then((data) => {
                     logger(data.MONGODB_URI_LOGS).then((logger) => {
-                      logger.info(logMessage + " " + logInfoMessage);
+                      logger.info(logInfoMessage);
                     });
                   })
                   return cb(null, user)

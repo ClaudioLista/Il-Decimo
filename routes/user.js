@@ -73,8 +73,7 @@ router.post('/editUser', isAuth, isVerified, accessController.grantIfOwnProfile(
 router.get('/myprofile/editpass', isAuth, isVerified, accessController.grantIfOwnProfile("updateOwn", "password"), userController.getEditPassword);
 router.post('/myprofile/editpass', isAuth, isVerified, accessController.grantIfOwnProfile("updateOwn", "password"),
   [
-    body('oldPassword', 'Password errata')
-      .isLength({ min: 8, max: 50 })
+    body('oldPassword')
       .trim()
       .escape(),
     body('newPassword', passErr)

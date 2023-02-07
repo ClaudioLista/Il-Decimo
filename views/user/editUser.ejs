@@ -59,50 +59,50 @@
                                         <div class="wrap-input100 validate-input m-b-23">
                                             <span class="label-input100">Username</span>
                                             <input
-                                                class="<%= (errorMessage) ? 'input100-invalid' : 'input100' %>"
+                                                class="<%= validationErrors.find(e => e.param == 'usrName') ? 'input100-invalid' : 'input100' %>"
                                                 value="<% if (editing || hasError) { %><%= user.usrName %><% } %>"
                                                 type="text" name="usrName" id="usrName" required>
                                         </div>
                                         <div class="wrap-input100 validate-input m-b-23">
                                             <span class="label-input100">Nome</span>
                                             <input
-                                                class="<%= (errorMessage) ? 'input100-invalid' : 'input100' %>"
+                                                class="<%= validationErrors.find(e => e.param == 'nome') ? 'input100-invalid' : 'input100' %>"
                                                 value="<% if (editing || hasError) { %><%= user.nome %><% } %>"
                                                 type="text" name="nome" id="nome" required>
                                         </div>
                                         <div class="wrap-input100 validate-input m-b-23">
                                             <span class="label-input100">Cognome</span>
                                             <input
-                                                class="<%= (errorMessage) ? 'input100-invalid' : 'input100' %>"
+                                                class="<%= validationErrors.find(e => e.param == 'cognome') ? 'input100-invalid' : 'input100' %>"
                                                 value="<% if (editing || hasError) { %><%= user.cognome %><% } %>"
                                                 type="text" name="cognome" id="cognome" required>
                                         </div>
                                         <div class="wrap-input100 validate-input m-b-23">
                                             <span class="label-input100">Telefono</span>
                                             <input
-                                                class="<%= (errorMessage) ? 'input100-invalid' : 'input100' %>"
-                                                value="<% if (editing || hasError) { %><%= user.numTel %><% } %>"
+                                                class="<%= validationErrors.find(e => e.param == 'numTel') ? 'input100-invalid' : 'input100' %>"
+                                                value="<% if (editing || hasError) { %><%= user.attribute.numTel %><% } %>"
                                                 type="tel" name="numTel" id="numTel">
                                         </div>
                                         <div class="wrap-input100 validate-input m-b-23">
                                             <span class="label-input100">Età</span>
                                             <input
-                                                class="<%= (errorMessage) ? 'input100-invalid' : 'input100' %>"
-                                                value="<% if (editing || hasError) { %><%= user.age %><% } %>"
+                                                class="<%= validationErrors.find(e => e.param == 'age') ? 'input100-invalid' : 'input100' %>"
+                                                value="<% if (editing || hasError) { %><%= user.attribute.age %><% } %>"
                                                 type="text" name="age" id="age">
                                         </div>
                                         <div class="wrap-input100 validate-input m-b-23">
                                             <span class="label-input100">Città</span>
                                             <input
-                                                class="<%= (errorMessage) ? 'input100-invalid' : 'input100' %>"
-                                                value="<% if (editing || hasError) { %><%= user.city %><% } %>"
+                                                class="<%= validationErrors.find(e => e.param == 'city') ? 'input100-invalid' : 'input100' %>"
+                                                value="<% if (editing || hasError) { %><%= user.attribute.address.city %><% } %>"
                                                 type="text" name="city" id="city">
                                         </div>
                                         <div class="wrap-input100 validate-input m-b-23">
                                             <span class="label-input100">Nazione</span>
                                             <input
-                                                class="<%= (errorMessage) ? 'input100-invalid' : 'input100' %>"
-                                                value="<% if (editing || hasError) { %><%= user.state %><% } %>"
+                                                class="<%= validationErrors.find(e => e.param == 'state') ? 'input100-invalid' : 'input100' %>"
+                                                value="<% if (editing || hasError) { %><%= user.attribute.address.state %><% } %>"
                                                 type="text" name="state" id="state">
                                         </div>
                                         <div class="wrap-input100 validate-input m-b-23">
@@ -112,6 +112,7 @@
                                                 <option value="Difensore">Difensore</option>
                                                 <option value="Centrocampista">Centrocampista</option>
                                                 <option value="Attaccante">Attaccante</option>
+                                                <option value="<%= user.attribute.playRole %>" selected><%= user.attribute.playRole %></option>
                                             </select>
                                         </div>
                                         <div class="wrap-input100 validate-input m-b-23">
@@ -119,20 +120,21 @@
                                             <select type="string" name="foot" id="foot">
                                                 <option value="Sinistro">Sinistro</option>
                                                 <option value="Destro">Destro</option>
+                                                <option value="<%= user.attribute.foot %>" selected><%= user.attribute.foot %></option>
                                             </select>
                                         </div>
                                         <div class="wrap-input100 validate-input m-b-23">
                                             <span class="label-input100">Squadra del cuore</span>
                                             <input
-                                                class="<%= (errorMessage) ? 'input100-invalid' : 'input100' %>"
-                                                value="<% if (editing || hasError) { %><%= user.squad %><% } %>"
+                                                class="<%= validationErrors.find(e => e.param == 'squad') ? 'input100-invalid' : 'input100' %>"
+                                                value="<% if (editing || hasError) { %><%= user.attribute.squad %><% } %>"
                                                 type="text" name="squad" id="squad">
                                         </div>
                                         <div class="wrap-input100 validate-input m-b-23">
                                             <span class="label-input100">Bio</span>
                                             <input
-                                                class="<%= (errorMessage) ? 'input100-invalid' : 'input100' %>"
-                                                value="<% if (editing || hasError) { %><%= user.bio %><% } %>"
+                                                class="<%= validationErrors.find(e => e.param == 'bio') ? 'input100-invalid' : 'input100' %>"
+                                                value="<% if (editing || hasError) { %><%= user.attribute.bio %><% } %>"
                                                 type="text" name="bio" id="bio">
                                         </div>
                                     </div>

@@ -3,6 +3,7 @@ const { validationResult } = require("express-validator");
 
 const User = require("../models/user");
 const LogSession = require("../models/logSession");
+const FederateUser = require('../models/federateUser');
 
 const { logger } = require("../util/logger");
 const { vault } = require("../util/vault");
@@ -157,21 +158,28 @@ exports.postEditUser = (req, res, next) => {
 };
 
 exports.getEditPassword = (req, res, next) => {
-    const userName = req.session.user.usrName;
+  const userName = req.session.user.usrName;
   User.findOne({ usrName: userName })
     .then((user) => {
-      res.render("user/editPass", {
-        pageTitle: "Edit Password",
-        path: "/myprofile/editpass",
-        user: user,
-        errorMessage: null,
-        validationErrors: [],
-        oldInput: {
-          oldPassword: "",
-          newPassword: "",
-          confirmPassword: "",
-        },
-      });
+      const userID = user._id;
+      FederateUser.findOne({ userId: userID })
+      .then((federate) => { 
+        const primaModifica = federate.passModified;
+        res.render("user/editPass", {
+          pageTitle: "Edit Password",
+          path: "/myprofile/editpass",
+          user: user,
+          primaModifica: primaModifica,
+          errorMessage: null,
+          validationErrors: [],
+          oldInput: {
+            oldPassword: "",
+            newPassword: "",
+            confirmPassword: "",
+          },
+        });
+      })
+      .catch((err) => console.log(err));
     })
     .catch((err) => console.log(err));
 };
@@ -181,7 +189,6 @@ exports.postEditPassword = (req, res, next) => {
   const updOldPassword = req.body.oldPassword;
   const updNewPassword = req.body.newPassword;
   const updConfirmPassword = req.body.confirmPassword;
-  let errMsg = "Password non valida!";
   const remoteAddress = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
   const logMessage ="'"+req.method+"' request to "+"'"+req.url+"' from (IP: "+remoteAddress+")";
 
@@ -196,6 +203,7 @@ exports.postEditPassword = (req, res, next) => {
     return res.status(422).render("user/editPass", {
       pageTitle: "Edit Password",
       path: "/myprofile/editpass",
+      primaModifica: req.body.primaModifica,
       errorMessage: errors.array()[0].msg,
       validationErrors: errors.array(),
       oldInput: {
@@ -208,25 +216,28 @@ exports.postEditPassword = (req, res, next) => {
 
   User.findOne({ usrName: username })
   .then((user) => {
-    // if (!user) {
-    //   const logWarnMessage = "Username: "+username+" - username non esistente."
-    //   vault().then((data) => {
-    //     logger(data.MONGODB_URI_LOGS).then((logger) => {
-    //       logger.warn(logMessage + " " + logWarnMessage)
-    //     });
-    //   })
-    //   return res.status(422).render("user/editPass", {
-    //     pageTitle: "Edit Password",
-    //     path: "/myprofile/editpass",
-    //     errorMessage: errMsg,
-    //     validationErrors: [],
-    //     oldInput: {
-    //       oldPassword: updOldPassword,
-    //       newPassword: updNewPassword,
-    //       confirmPassword: updConfirmPassword,
-    //     },
-    //   });
-    // }
+    const userID = user._id;
+    FederateUser.findOne({ userId: userID })
+    .then((federate) => {
+      if (federate) {
+        if (!federate.passModified) {
+          bcrypt
+            .hash(updNewPassword, 12)
+            .then((hashedPassword) => {
+              user.password = hashedPassword
+              federate.passModified = true;
+              federate.save();
+              return user.save();
+            });
+            return res.render("user/profile", {
+              path: "/myprofile",
+              pageTitle: "My Profile",
+              message: "Password modificata con successo",
+              user: user,
+            });
+        }
+      }
+    });
     bcrypt
       .compare(updOldPassword, user.password)
       .then((passOK) => {
@@ -247,6 +258,7 @@ exports.postEditPassword = (req, res, next) => {
           return res.status(422).render("user/editPass", {
             pageTitle: "Edit Password",
             path: "/myprofile/editpass",
+            primaModifica: req.body.primaModifica,
             errorMessage: "Old Password errata",
             validationErrors: errors.array(),
             oldInput: {
@@ -265,4 +277,12 @@ exports.postEditPassword = (req, res, next) => {
         })
       })
   })
+  .catch((err) => {
+    console.log(err);
+    vault().then((data) => {
+      logger(data.MONGODB_URI_LOGS).then((logger) => {
+        logger.error(logMessage + " " + err)
+      });
+    })
+  });
 }

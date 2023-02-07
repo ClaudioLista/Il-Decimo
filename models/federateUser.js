@@ -15,6 +15,10 @@ const federateuserSchema = new Schema({
     type: String,
     required: false,
   },
+  passModified: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 module.exports = mongoose.model("FederateUser", federateuserSchema);
