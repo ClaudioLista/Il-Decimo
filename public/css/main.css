@@ -423,6 +423,10 @@ pa {
   text-align: right !important;
 }
 
+.text-left {
+  text-align: left !important;
+}
+
 .text-center {
   text-align: center !important;
 }

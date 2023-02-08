@@ -45,7 +45,7 @@ exports.getTerms = (req, res, next) => {
 };
 
 exports.getUserProfile = (req, res, next) => {
-  const userName = req.session.user.usrName; 
+  const userName = req.user.usrName; 
   User.findOne({ usrName: userName })
     .then((user) => {
       res.render("user/profile", {
@@ -158,7 +158,7 @@ exports.postEditUser = (req, res, next) => {
 };
 
 exports.getEditPassword = (req, res, next) => {
-  const userName = req.session.user.usrName;
+  const userName = req.user.usrName;
   User.findOne({ usrName: userName })
     .then((user) => {
       const userID = user._id;
@@ -185,7 +185,7 @@ exports.getEditPassword = (req, res, next) => {
 };
 
 exports.postEditPassword = (req, res, next) => {
-  const username = req.session.user.usrName;
+  const username = req.user.usrName;
   const updOldPassword = req.body.oldPassword;
   const updNewPassword = req.body.newPassword;
   const updConfirmPassword = req.body.confirmPassword;
@@ -237,8 +237,7 @@ exports.postEditPassword = (req, res, next) => {
             });
         }
       }
-    });
-    bcrypt
+      bcrypt
       .compare(updOldPassword, user.password)
       .then((passOK) => {
           if (passOK) {
@@ -276,6 +275,7 @@ exports.postEditPassword = (req, res, next) => {
           });
         })
       })
+    });
   })
   .catch((err) => {
     console.log(err);

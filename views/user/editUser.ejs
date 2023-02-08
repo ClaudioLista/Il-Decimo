@@ -31,7 +31,7 @@
                                 <input type="hidden" value="<%= user.usrName %>" name="userName">
                                 <div class="card-header text-center border-0 pt-8 pt-md-4 pb-0 pb-md-4">
                                     <div class="d-flex justify-content-between">
-                                        <button class="btn btn-sm btn-primary" type="reset">Annulla<br />Modifiche</button>
+                                        <button class="btn btn-sm btn-primary" type="reset" onclick="location.assign('/listUser')">Annulla<br />Modifiche</button>
                                         <button class="btn btn-sm btn-primary" type="submit">Conferma<br />Modifiche</button>
                                     </div>
                                 </div>
@@ -55,7 +55,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="text-center">
+                                    <div class="text-left">
                                         <div class="wrap-input100 validate-input m-b-23">
                                             <span class="label-input100">Username</span>
                                             <input
@@ -114,6 +114,8 @@
                                                 <option value="Attaccante">Attaccante</option>
                                                 <option value="<%= user.attribute.playRole %>" selected><%= user.attribute.playRole %></option>
                                             </select>
+                                            <br>
+                                            <br>
                                         </div>
                                         <div class="wrap-input100 validate-input m-b-23">
                                             <legend class="label-input100">Piede preferito</legend>
@@ -122,6 +124,8 @@
                                                 <option value="Destro">Destro</option>
                                                 <option value="<%= user.attribute.foot %>" selected><%= user.attribute.foot %></option>
                                             </select>
+                                            <br>
+                                            <br>
                                         </div>
                                         <div class="wrap-input100 validate-input m-b-23">
                                             <span class="label-input100">Squadra del cuore</span>

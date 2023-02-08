@@ -77,7 +77,7 @@ exports.grantIfOwnProfile = function (action, resource) {
   return async (req, res, next) => {
     try {
       const permission = roles.can(req.user.role)[action](resource);
-      const username = req.session.user.usrName;
+      const username = req.user.usrName;
       User.findOne({ usrName: username })
         .then((user) => {
           if (!permission.granted || (!user._id.equals(req.user._id) && !(req.user.role == "admin"))) {

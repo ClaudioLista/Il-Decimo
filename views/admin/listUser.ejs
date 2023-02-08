@@ -11,16 +11,11 @@
                 <% for (let users of us) { %>
                     <article class="card match-item" style="background-color: white;" onclick="location.assign('/utente/<%= users.usrName %>')">
                         <header class="card__header">
-                            <h1 class="match__title"><%= users.nome %></h1>
-                            <h2 class="match__playerCount" style="color: #513dff;"><%= users.cognome %></h2>
+                            <h1 class="match__title"><%= users.nome %> <%= users.cognome %></h1>
+                            <h2 class="match__playerCount" style="color: #513dff;"><%= users.usrName %></h2>
                         </header>
                         <div class="card__image">
                             <img src="../img/football-players.png" class="rounded-circle" alt="<%= users.usrName %>">
-                        </div>
-                        <div class="card__content">
-                            <h2 class="match__playerCount" style="color: #513dff;"><%= users.email %></h2>
-                            <h2 class="match__playerCount">Email!</h2>
-                            <br>
                         </div>
                         <div class="card__actions">
                             <a href="/utente/<%= users.usrName %>" class="btn">Profilo Utente</a>
