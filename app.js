@@ -68,8 +68,8 @@ vault().then((data) => {
       cookie: {
         maxAge: 7200000, //la sessione si cancella dopo 2h
         httpOnly: true,
-        //secure: true,  //solo in fase di deploy
-        //sameSite: true
+        secure: true,  //solo in fase di deploy
+        sameSite: true
       },
     })
   );
