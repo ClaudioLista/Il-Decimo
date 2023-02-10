@@ -13,7 +13,7 @@ const csp = require('helmet-csp');
 
 require("dotenv").config();
 
-const { logger, loggerrun } = require("./util/logger");
+const { logger } = require("./util/logger");
 
 const errorController = require("./controllers/error");
 
@@ -220,8 +220,7 @@ vault().then((data) => {
           io.in(room)
             .fetchSockets()
             .then((sockets) => {
-              numClients = sockets.length + 1;
-              //console.log(`Number of client: ${numClients} in room: ${room}`);      // TODO : modificare i nomi e/o togliere
+              numClients = sockets.length + 1;    // TODO : modificare i nomi e/o togliere
 
               if (numClients == 1) {
                 socket.join(room);

@@ -71,29 +71,6 @@ function sendMessage() {
     }
 }
 
-//Handle 'created' message
-// socket.on('created', (room) => {	 
-// 	console.log(`room ${room} has been created!`);
-// 	console.log('This peer is the initiator...');
-// });
-
-//Handle 'remotePeerJoining' message
-// socket.on('remotePeerJoining', (room) => {
-// 	console.log(`Request to join ${room}`);
-// 	console.log('You are the initiator!');
-// });
-
-//Handle 'broadcast: joined' message
-// socket.on('broadcast: joined', (msg) => {
-// 	console.log(`Broadcast message from server: ${msg}`);	  
-// });
-
-//Handle 'joined' message
-// socket.on('joined', (msg) => {
-// 	console.log(`You joined ${room}`);
-// 	console.log('You are the joiner!');
-// });
-
 //Handle 'message' message
 socket.on('message', (message) => {
 	// console.log(`Got message from other peer: ${message}`);

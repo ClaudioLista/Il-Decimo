@@ -1,6 +1,6 @@
 const { createLogger, format, transports } = require("winston");
 const path = require("path");
-require("winston-mongodb");
+//require("winston-mongodb");
 
 const { vault } = require("./vault");
 
