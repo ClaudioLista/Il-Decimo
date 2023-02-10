@@ -9,7 +9,7 @@
         <h1><%= m.title %></h1>
         <hr>
         <div class="image">
-            <img src="https://cdn3.iconfinder.com/data/icons/choosesport/png/512/football.png" alt="<%= m.title %>">
+            <img src="/img/field.png" alt="<%= m.title %>">
         </div>
         <% if (!playerIn && !is_full){ %>
             <form action="/matches/:matchId/join" method="POST">

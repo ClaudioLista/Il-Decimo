@@ -24,7 +24,22 @@ router.post('/login', rateLimit, isLog,
   authController.postLogin
 );
 
-router.post('/checkOTP', rateLimit, isLog, authController.postCheckOTP);
+router.post('/checkOTP', rateLimit, isLog, 
+  [
+    body('_csrf')
+    .isString()
+    .trim()
+    .escape(),
+    body('otp')
+    .isAlphanumeric()
+    .trim()
+    .escape(),
+    body('email')
+      .isEmail()
+      .normalizeEmail()
+      .escape(),
+  ]
+,authController.postCheckOTP);
 
 router.get('/signup', isLog, authController.getSignup);
 router.post('/signup', isLog,
@@ -104,6 +119,11 @@ router.post('/signup', isLog,
 
 router.get("/verify/:username/:token", isLog, authController.getVerify);
 
-router.post('/logout', isAuth, authController.postLogout);
+router.post('/logout', isAuth, 
+  body('_csrf')
+  .isString()
+  .trim()
+  .escape(), 
+authController.postLogout);
 
 module.exports = router;
