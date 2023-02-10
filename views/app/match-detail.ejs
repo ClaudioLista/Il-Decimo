@@ -6,10 +6,6 @@
 
 </head>
 
-<script>
-    var roomId = "<%= m._id %>";
-    var userChat = "<%= user %>";
-</script>
 <script src="/js/chatClient.js"></script>
 
 <body>
@@ -90,12 +86,15 @@
                         </div>
                         <div id="container" class="footer-chat">
                             <input type="text" class="write-message" id="chatMessage" name="chat-message" placeholder="Type your message here"></input>
-                            <i class="icon send fa fa-paper-plane-o clickable" onClick="sendMessage()" aria-hidden="true"></i>
+                            <i id="sendM" class="icon send fa fa-paper-plane-o clickable" aria-hidden="true"></i>
                         </div>
                     </div>
                 </article>
             <% } %>
         </div>
     </main>
+    <p id="roomId" class="dis-none"><%= m._id %></p>
+    <p id="userChat" class="dis-none"><%= user %></p>
+    <p id="isAuth" class="dis-none"><%= isAuthenticated %></p>
 
 <%- include('../includes/end.ejs') %>

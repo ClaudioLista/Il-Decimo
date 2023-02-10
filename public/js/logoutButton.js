@@ -4,6 +4,11 @@ window.addEventListener("load", () => {
         console.log("click")
         popup();
     })
+    const logoutButton2 = document.getElementById("logoutButton2")
+    logoutButton2.addEventListener("click", () => {
+        console.log("click")
+        popup2();
+    })
 })
 
 function popup() {
