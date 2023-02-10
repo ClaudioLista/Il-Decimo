@@ -17,3 +17,5 @@
 
 IMPORTANTE:
 1) CSURF deprecato (alternativa: https://www.npmjs.com/package/csrf)
+2) Dividere funzionalità user/admin
+3) Abilitare/disabilitare account
