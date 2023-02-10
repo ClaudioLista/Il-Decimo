@@ -9,6 +9,7 @@
     width: 23rem;
     max-width: 95%;
     margin: 1rem;
+    background-color: white;
 }
 
 .match__title {
@@ -53,11 +54,13 @@
 .match__playerCount {
     text-align: center;
     margin-bottom: 0.5rem;
+    color: #513dff;
 }
 
 .match__playerCount__in {
     text-align: center;
     margin-bottom: 0.5rem;
+    color: #513dff;
 }
 
 .match__price {

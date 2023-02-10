@@ -8,17 +8,17 @@
 <body>
     <%- include('../includes/navigation.ejs') %>
     <div class="section center ">
-      <h1 class="heading-3" style="text-shadow: 1px 1px 2px black;">Il Decimo</h1>
-      <h3 class="hero-subhead" style="text-shadow: 1px 1px 2px black;">
+      <h1 class="heading-3">Il Decimo</h1>
+      <h3 class="hero-subhead">
         Mancano poche ore alla partita di calcetto e ti mancano dei giocatori?<br> 
         Non riesci mai a trovare degli amici con cui giocare?
       </h3>
-      <h2 style="text-shadow: 1px 1px 2px black;">Questo è il posto giusto!</h2>
+      <h2 class="heading-2">Questo è il posto giusto!</h2>
       <% if (!isAuthenticated) { %>
-        <a href="/signup" class="button w-button" style="border-radius: 25px;">Registrati subito!</a>
+        <a href="/signup" class="button w-button">Registrati subito!</a>
       <% } else { %>
-        <a href="/add-match" class="button w-button" style="border-radius: 25px;">Crea una nuova partita!</a>
-        <a href="/matches" class="button w-button" style="border-radius: 25px;">Partecipa ad una partita!</a>
+        <a href="/add-match" class="button w-button">Crea una nuova partita!</a>
+        <a href="/matches" class="button w-button">Partecipa ad una partita!</a>
       <% } %>
     </div>
     <% if (message) { %>

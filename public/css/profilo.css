@@ -62,6 +62,13 @@
   section {
     display: block;
   }
+
+  .imageBackround {
+    min-height: 600px; 
+    background-image: url('../img/background.jpg'); 
+    background-size: cover; 
+    background-position: center top;
+  }
   
   body {
     font-family: Open Sans, sans-serif;

@@ -8,7 +8,7 @@
 <body>
    <%- include('../includes/navigation.ejs') %>
     <div class="limiter">
-		<div class="container-login100" style="background-image: linear-gradient(135deg, #2f1cbb, #0e3247)">
+		<div class="container-login100">
 			<div class="wrap-login100 p-l-55 p-r-55 p-t-60 p-b-54">
 				<form class="login100-form validate-form" action="/login" method="POST">
                     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
@@ -67,7 +67,7 @@
 					</div>
 					<div class="flex-col-c">
 						<span class="txt1 p-b-12">Or</span>
-						<a style="text-decoration: none;" href="/signup" class="txt2">Sign Up</a>
+						<a class="noTextDec" href="/signup" class="txt2">Sign Up</a>
 					</div>
 				</form>
 			</div>

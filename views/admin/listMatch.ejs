@@ -3,27 +3,27 @@
 
 </head>
 
-<body style="background-image: linear-gradient(125deg, #2f1cbb, #114766);">
+<body class="blueShade">
     <%- include('../includes/navigation.ejs') %>
     <main>
         <% if (ms.length > 0) { %>
             <div class="grid">
                 <% for (let match of ms) { %>
-                    <article class="card match-item" style="background-color: white;" onclick="location.assign('/matches/<%= match._id %>')">
+                    <article class="card match-item bgwhite" onclick="location.assign('/matches/<%= match._id %>')">
                         <header class="card__header">
                             <h1 class="match__title"><%= match.title %></h1>
-                            <h2 class="match__playerCount" style="color: #513dff;"><%= match.totalPlayers /2 %> vs <%= match.totalPlayers /2 %></h2>
+                            <h2 class="match__playerCount"><%= match.totalPlayers /2 %> vs <%= match.totalPlayers /2 %></h2>
                         </header>
                         <div class="card__image">
                             <img src="https://cdn3.iconfinder.com/data/icons/choosesport/png/512/football.png" alt="<%= match.title %>">
                         </div>
                         <div class="card__content">
                             <% if (match.currentPlayers == match.totalPlayers) { %>
-                                <h2 class="match__playerCount" style="color: #513dff;">The match is full!</h2>
+                                <h2 class="match__playerCount"">The match is full!</h2>
                             <% } else { %>
-                                <h2 class="match__playerCount">We search:</h2>
-                                <h2 class="match__playerCount__in" style="color: #513dff;"><%= match.totalPlayers - match.currentPlayers %></h2>
-                                <h2 class="match__playerCount">players!</h2>
+                                <h2 class="text-center">We search:</h2>
+                                <h2 class="match__playerCount__in"><%= match.totalPlayers - match.currentPlayers %></h2>
+                                <h2 class="text-center">players!</h2>
                             <% } %>
                             <br>
                             <h2 class="match__place"><%= match.placeName %></h2>

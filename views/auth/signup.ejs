@@ -8,7 +8,7 @@
 <body>
    <%- include('../includes/navigation.ejs') %>
     <div class="limiter">
-		<div class="container-login100" style="background-image: linear-gradient(135deg, #2f1cbb, #0e3247)">
+		<div class="container-login100">
 			<div class="wrap-login100 p-l-55 p-r-55 p-t-60 p-b-54">
 				<form class="login100-form validate-form" action="/signup" method="POST">
                     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
@@ -66,11 +66,11 @@
                             type="password" name="confirmPassword" id="confirmPassword" value="<%= oldInput.confirmPassword %>">
                         <span class="focus-input100" data-symbol="&#xf190;"></span>
                     </div>
-                    <div class="validate-input m-t-30" style="text-align: center;">
+                    <div class="validate-input m-t-30 text-center">
                         <input 
                             type="checkbox" name="acceptTerms" id="acceptTerms" required>
-                        <a class="<%= validationErrors.find(e => e.param == 'acceptTerms') ? 'invalid-checkbox' : '' %>" 
-                            style="text-decoration: none;" href="terms" target="_blank">
+                        <a class="noTextDec <%= validationErrors.find(e => e.param == 'acceptTerms') ? 'invalid-checkbox' : '' %>" 
+                            href="terms" target="_blank">
                             Accetta i termini e le condizioni!</a>
                     </div>
                     <br>
@@ -96,7 +96,7 @@
                     </div>
                     <div class="flex-col-c">
 						<span class="txt1 p-b-12">Or</span>
-						<a style="text-decoration: none;" href="/login" class="txt2">Login</a>
+						<a href="/login" class="txt2 noTextDec">Login</a>
 					</div>
                 </form>
             </div>

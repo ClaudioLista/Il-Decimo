@@ -176,6 +176,7 @@ iframe {
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover;
+  background-image: linear-gradient(135deg, #2f1cbb, #0e3247);
 }
 
 .wrap-login100 {
@@ -295,7 +296,6 @@ iframe {
   -moz-transition: all 0.4s;
   transition: all 0.4s;
 }
-
 
 .input100:focus + .focus-input100::before {
   width: 100%;

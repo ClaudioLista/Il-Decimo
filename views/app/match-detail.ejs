@@ -35,7 +35,7 @@
                         <% if (is_full && is_in) { %>
                             <a href="/matches/<%= m._id %>/unjoin" class="btn">UnJoin</a>
                         <% } else if(is_full && !is_in) { %>  
-                            <h1 style="color: #513dff;">The Match is full!</h1>
+                            <h1 class="text-purple">The Match is full!</h1>
                         <% } else { %>
                             <a href="/matches/<%= m._id %>/<% if (!is_in) { %>join<% } else { %>unjoin<% } %>" class="btn">
                                 <% if (!is_in) { %> Join <% } else { %> UnJoin <% } %> 

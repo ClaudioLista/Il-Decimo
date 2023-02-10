@@ -3,15 +3,15 @@
     <link rel="stylesheet" href="/css/main.css">
 </head>
 
-<body style="background-image: linear-gradient(125deg, #2f1cbb, #114766);">
+<body class="blueShade">
     <%- include('../includes/navigation.ejs') %>
     <main>
         <div>
-            <h1 class="match__title" style="color: white;">Matches you created:</h1>
+            <h1 class="match__title text-white">Matches you created:</h1>
             <% if (ms.length > 0) { %>
                 <div class="grid">
                     <% for (let match of ms) { %>
-                        <article class="card match-item" style="background-color: white;" onclick="location.assign('/matches/<%= match._id %>')">
+                        <article class="card match-item bgwhite" onclick="location.assign('/matches/<%= match._id %>')">
                             <header class="card__header">
                                 <h1 class="match__title"><%= match.title %></h1>
                             </header>
@@ -36,7 +36,7 @@
                 </div>
             <% } else { %>
                 <div class="wrapper">
-                    <a href="/add-match" style="text-decoration: none">
+                    <a class="noTextDec" href="/add-match">
                         <h1 class="btn">You have not created any games yet!</h1>
                     </a>
                 </div>
@@ -44,7 +44,7 @@
         </div>
         <hr>
         <div>
-            <h1 class="match__title" style="color: white;">Matches you joined:</h1>
+            <h1 class="match__title text-white">Matches you joined:</h1>
             <% if (jMatches.length > 0) { %>
                 <div class="grid">
                     <% for (let match of jMatches) { %>
@@ -69,7 +69,7 @@
                 </div>
             <% } else { %>
                 <div class="wrapper">
-                    <a href="/matches" style="text-decoration: none">
+                    <a class="noTextDec" href="/matches">
                         <h1 class="btn">Join in a new match!</h1>
                     </a>
                 </div>

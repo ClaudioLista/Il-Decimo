@@ -47,12 +47,12 @@ vault().then((data) => {
   app.use(csp({
     directives: {
         defaultSrc: ["'self'"],  // default value for all directives that are absent
-        scriptSrc: ["'self'", 'unpkg.com', "'unsafe-inline'"],   // helps prevent XSS attacks
+        scriptSrc: ["'self'", 'unpkg.com'],   // helps prevent XSS attacks
         connectSrc: ["'self'", 'assets1.lottiefiles.com'],
         frameAncestors: ["'none'"],  // helps prevent Clickjacking attacks
         imgSrc: ["'self'", , 'cdn3.iconfinder.com'],
         fontSrc: ["'self'", 'fonts.gstatic.com', 'cdnjs.cloudflare.com'],
-        styleSrc: ["'self'", 'fonts.googleapis.com', 'cdnjs.cloudflare.com', "'unsafe-inline'"],
+        styleSrc: ["'self'", 'fonts.googleapis.com', 'cdnjs.cloudflare.com'],
      }
  }))
   app.use(hpp())
@@ -68,8 +68,8 @@ vault().then((data) => {
       cookie: {
         maxAge: 7200000, //la sessione si cancella dopo 2h
         httpOnly: true,
-        //secure: true,  //solo in fase di deploy
-        //sameSite: true
+        secure: true,  //solo in fase di deploy
+        sameSite: true
       },
     })
   );

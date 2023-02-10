@@ -2229,6 +2229,7 @@
 /* ------------------------------------ */
 .text-white {color: white;}
 .text-black {color: black;}
+.text-purple {color: #513dff;}
 
 .text-hov-white:hover {color: white;}
 
@@ -2348,8 +2349,7 @@
 */
 .bgwhite {background-color: white;}
 .bgblack {background-color: black;}
-
-
+.blueShade {background-image: linear-gradient(125deg, #2f1cbb, #114766);}
 
 /*[ Wrap Picture ]
 -----------------------------------------------------------
@@ -2971,4 +2971,8 @@
 	position: absolute;
 	right: 0px;
 	bottom: 0px;
+}
+
+.noTextDec {
+	text-decoration: none;
 }

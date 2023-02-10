@@ -32,6 +32,11 @@ a {
 
 .heading-3 {
     font-size: 60pt;
+    text-shadow: 1px 1px 2px black;
+}
+
+.heading-2 {
+    text-shadow: 1px 1px 2px black;
 }
 
 .section {
@@ -71,6 +76,7 @@ body {
     color: #fff;
     font-size: 30px;
     line-height: 44px;
+    text-shadow: 1px 1px 2px black;
 }
 
 .button {
@@ -85,6 +91,7 @@ body {
     line-height: 26px;
     font-weight: 600;
     text-align: center;
+    border-radius: 25px;
 }
   
 .button:hover {

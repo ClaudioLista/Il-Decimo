@@ -18,7 +18,7 @@
         <div class="container">
             <div class="card">
                 <h2 class="card-heading">Edit this match!</h2>
-                <lottie-player src="https://assets1.lottiefiles.com/packages/lf20_VB3ALHSv6V.json"  background="transparent"  speed="0.2"  style="width: auto; height: auto;"  loop  autoplay></lottie-player>
+                <lottie-player src="https://assets1.lottiefiles.com/packages/lf20_VB3ALHSv6V.json"  background="transparent"  speed="0.2" loop  autoplay></lottie-player>
                 <form class="card-form" action="/edit-match" method="POST">
                     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                     <input type="hidden" value="<%= match._id %>" name="matchId">
