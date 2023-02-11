@@ -43,7 +43,7 @@ vault().then((data) => {
       {
         clientID: data.GOOGLE_CLIENT_ID,
         clientSecret: data.GOOGLE_CLIENT_SECRET,
-        callbackURL: '/oauth2/redirect/google',
+        callbackURL: 'https://ildecimo.it/oauth2/redirect/google',
         scope: ['profile']
       },
       function verify(issuer, profile, cb) {

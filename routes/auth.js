@@ -19,25 +19,17 @@ router.get('/login', isLog, authController.getLogin)
 router.post('/login', rateLimit, isLog,
   [
     body('usrName').isLength({ min: 4, max: 60 }).isAlphanumeric().trim().escape(),
-    body('password').isLength({ min: 8, max: 50 }).trim().escape()
+    body('password').isLength({ min: 8, max: 50 }).trim().escape(),
+    body('_csrf').isString().trim().escape(),
   ],
   authController.postLogin
 );
 
 router.post('/checkOTP', rateLimit, isLog, 
   [
-    body('_csrf')
-    .isString()
-    .trim()
-    .escape(),
-    body('otp')
-    .isAlphanumeric()
-    .trim()
-    .escape(),
-    body('email')
-      .isEmail()
-      .normalizeEmail()
-      .escape(),
+    body('_csrf').isString().trim().escape(),
+    body('otp').isAlphanumeric().trim().escape(),
+    body('email').isEmail().normalizeEmail().escape(),
   ]
 ,authController.postCheckOTP);
 
