@@ -24,6 +24,6 @@ window.onload = function () {
         message.style.display = "none";
     }, 5000);
     setTimeout(() => {
-        window.location.assign("http://localhost:5000/login");
+        window.location.assign("https://ildecimo.it/login");
     }, 115000)
 };

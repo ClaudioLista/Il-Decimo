@@ -1,6 +1,5 @@
 document.querySelectorAll(".feedback li").forEach((entry) =>
     entry.addEventListener("click", (e) => {
-      //console.log(entry);
       if (!entry.classList.contains("active")) {
         let activeNOW = document.querySelector(".feedback li.active");
         activeNOW.classList.remove("active");

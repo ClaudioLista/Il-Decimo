@@ -77,7 +77,6 @@ window.addEventListener("load", () => {
     
     //Handle 'message' message
     socket.on('message', (message) => {
-        // console.log(`Got message from other peer: ${message}`);
         let divMessageChat = document.createElement('div')
         divMessageChat.className = "messages-chat"
     
