@@ -37,18 +37,15 @@ router.post('/editUser', isAuth, isVerified, accessController.grantIfOwnProfile(
             })
         }
       })
-      .trim()
-      .escape(),
+      .trim(),
     body('nome', 'Perfavore inserisci il tuo Nome correttamente!')
       .isLength({ min: 1, max: 28 })
       .isString()
-      .trim()
-      .escape(),
+      .trim(),
     body('cognome', 'Perfavore inserisci il tuo Cognome correttamente!')
       .isLength({ min: 1, max: 28 })
       .isString()
-      .trim()
-      .escape(),
+      .trim(),
     body('numTel', 'Perfavore inserisci un Numero telefonico valido, o non inserirlo')
       .trim()
       .custom((value) => {
@@ -62,10 +59,10 @@ router.post('/editUser', isAuth, isVerified, accessController.grantIfOwnProfile(
       })
       .escape(),
     body('age', 'Inserisci un età valida, o non inserirla').trim().escape(),
-    body('city', 'Inserisci una città valida, o non inserirla').trim().escape(),
-    body('state', 'Inserisci una nazione valida, o non inserirla').trim().escape(),
-    body('squad', 'Inserisci una squadra valida, o non inserirla').trim().escape(),
-    body('bio', 'Inserisci una bio valita, o non inserirla').trim().escape(),
+    body('city', 'Inserisci una città valida, o non inserirla').trim(),
+    body('state', 'Inserisci una nazione valida, o non inserirla').trim(),
+    body('squad', 'Inserisci una squadra valida, o non inserirla').trim(),
+    body('bio', 'Inserisci una bio valita, o non inserirla').trim(),
   ], 
   userController.postEditUser
 );

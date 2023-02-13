@@ -39,13 +39,11 @@ router.post('/signup', isLog,
     body('nome', 'Perfavore inserisci il tuo Nome correttamente!')
       .isLength({ min: 1, max: 28 })
       .isString()
-      .trim()
-      .escape(),
+      .trim(),
     body('cognome', 'Perfavore inserisci il tuo Cognome correttamente!')
       .isLength({ min: 1, max: 28 })
       .isString()
-      .trim()
-      .escape(),
+      .trim(),
     body('usrName', 'Perfavore inserisci un Username con almeno 6 caratteri, composto solo da lettere o numeri!')
       .isLength({ min: 4, max: 60 })
       .isAlphanumeric()
@@ -56,8 +54,7 @@ router.post('/signup', isLog,
           }
         })
       })
-      .trim()
-      .escape(),
+      .trim(),
     body('email', 'Inserisci una E-mail valida!')
       .isEmail()
       .custom((value, { req }) => {

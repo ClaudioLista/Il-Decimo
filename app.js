@@ -204,9 +204,8 @@ vault().then((data) => {
       console.log("Listening on port ", port);
 
       io.on("connection", (socket) => {
-        // TODO : modificare i nomi
         socket.on("message", (message) => {
-          socket.to(message.room).emit("message", message); // TODO : modificare i nomi
+          socket.to(message.room).emit("message", message);
 
           ChatRoom.findOne({ matchId: message.room })
             .then((room) => {
@@ -216,23 +215,22 @@ vault().then((data) => {
         });
 
         socket.on("create or join", (room) => {
-          // TODO : modificare i nomi
           io.in(room)
             .fetchSockets()
             .then((sockets) => {
-              numClients = sockets.length + 1;    // TODO : modificare i nomi e/o togliere
+              numClients = sockets.length + 1;
 
               if (numClients == 1) {
                 socket.join(room);
-                socket.emit("created", room); // TODO : modificare i nomi
+                socket.emit("created", room); 
               } else {
-                io.to(room).emit("remotePeerJoining", room); // TODO : modificare i nomi
+                io.to(room).emit("remotePeerJoining", room);
                 socket.join(room);
                 socket.to(room).emit(
-                  "broadcast: joined", // TODO : modificare i nomi
-                  `client ${socket.id} joined room ${room}` // TODO : modificare i nomi
+                  "broadcast: joined",
+                  `client ${socket.id} joined room ${room}` 
                 );
-                socket.emit("joined", room); // TODO : modificare i nomi
+                socket.emit("joined", room);
               }
             });
         });

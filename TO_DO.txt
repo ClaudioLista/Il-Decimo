@@ -1,19 +1,6 @@
-0)  Modificare utilizzo di MATCHES e MYMATCHES durante la creazione dell'utente IMPORTANTE
-1)  Modifica in "Chat": adesso compare solo l'orario, necessaria anche la data del messaggio; DONE
-2)  Creazione vista "My Profile";
-3)  Implementazione "Modifica Password";
 4)  Decidere se lasciare le cose in inglese o passare tutto in italiano (Marcello vota italiano);
 5)  Chiudere connessione socket quando l'user si disconnette;
-6)  Implementazione votazione partita (lato server) DONE
-7)  Aggiustare MONGODB_URI in app.js DONE
-8)  Linee di codoice/commenti/consolelog da rimuovere cercando "togliere"
-9)  Aggiustare i dove sta scritto "TODO"
-10) Migliorare la user experience durante la signup DONE
-11) Implementazione verifica con OTP message per la creazione dell account DONE
 13) Miglioramento user experience generale del sistema
-14) Implementare eliminazione/archivio dei match passati
-15) Dare un username random se si registra qualcuno con lo stesso nome tramite Google DONE
-16) Gestire il decremento delle sessioni attive quando si chiude il browser oppure scade la sessione DONE
 
 IMPORTANTE:
 1) CSURF deprecato (alternativa: https://www.npmjs.com/package/csrf)

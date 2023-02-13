@@ -12,11 +12,12 @@ const MATCHES_PER_PAGE = 3;
 exports.getMatches = (req, res, next) => {
   const page = +req.query.page || 1;
   let totalMatches;
-  Match.find()
+  let currentDate = new Date();
+  Match.find({time: {$gte: currentDate}})
     .countDocuments()
     .then((numMatches) => {
       totalMatches = numMatches;
-      return Match.find()
+      return Match.find({time: {$gte: currentDate}})
         .skip((page - 1) * MATCHES_PER_PAGE)
         .limit(MATCHES_PER_PAGE);
     })

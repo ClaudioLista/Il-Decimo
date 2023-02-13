@@ -16,12 +16,12 @@ router.get('/matches/:matchId', isAuth, isVerified, accessController.grantAccess
 router.get('/add-match', isAuth, isVerified, matchController.getAddMatch);
 router.post('/add-match', isAuth, isVerified,
   [
-    body('title', 'Inserisci un nome valido').isString().isLength({ min: 3 }).trim().escape(),
-    body('placeName', 'Inserisci un luogo valido').isString().isLength({ min: 3 }).trim().escape(),
-    body('address', 'Inserisci un indirizzo valido').isString().isLength({ min: 3 }).trim().escape(),
+    body('title', 'Inserisci un nome valido').isString().isLength({ min: 3 }).trim(),
+    body('placeName', 'Inserisci un luogo valido').isString().isLength({ min: 3 }).trim(),
+    body('address', 'Inserisci un indirizzo valido').isString().isLength({ min: 3 }).trim(),
     body('totalPlayers', 'Inserisci un numero di giocatori valido').isNumeric().escape(),
     body('price', 'Inserisci un prezzo valido').isFloat().escape(),
-    body('description', 'Inserisci una descrizione valida').isLength({ min: 5, max: 250 }).trim().escape(),
+    body('description', 'Inserisci una descrizione valida').isLength({ min: 5, max: 250 }).trim(),
   ],
   matchController.postAddMatch
 );
@@ -29,12 +29,12 @@ router.post('/add-match', isAuth, isVerified,
 router.get('/edit-match/:matchId', isAuth, isVerified, accessController.grantIfOwnMatch("updateOwn", "matches"), matchController.getEditMatch);
 router.post('/edit-match', isAuth, isVerified, accessController.grantIfOwnMatch("updateOwn", "matches"),
   [
-    body('title', 'Inserisci un nome valido').isString().isLength({ min: 3 }).trim().escape(),
-    body('placeName', 'Inserisci un luogo valido').isString().isLength({ min: 3 }).trim().escape(),
-    body('address', 'Inserisci un indirizzo valido').isString().isLength({ min: 3 }).trim().escape(),
+    body('title', 'Inserisci un nome valido').isString().isLength({ min: 3 }).trim(),
+    body('placeName', 'Inserisci un luogo valido').isString().isLength({ min: 3 }).trim(),
+    body('address', 'Inserisci un indirizzo valido').isString().isLength({ min: 3 }).trim(),
     body('totalPlayers', 'Inserisci un numero di giocatori valido').isNumeric().escape(),
     body('price', 'Inserisci un prezzo valido').isFloat().escape(),
-    body('description', 'Inserisci una descrizione valida').isLength({ min: 5, max: 250 }).trim().escape(),
+    body('description', 'Inserisci una descrizione valida').isLength({ min: 5, max: 250 }).trim(),
   ],
   matchController.postEditMatch
 );
