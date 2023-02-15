@@ -9,6 +9,7 @@ const User = require('../models/user');
 
 const isAuth = require('../middleware/is-auth');
 const isVerified = require('../middleware/is-verified');
+const isEnabled = require('../middleware/is-enabled');
 
 const router = express.Router();
 
@@ -19,10 +20,10 @@ router.get('/', userController.getIndex);
 
 router.get('/terms', userController.getTerms);
 
-router.get('/myprofile', isAuth, isVerified, accessController.grantIfOwnProfile("readOwn", "profile"), userController.getUserProfile);
+router.get('/myprofile', isAuth, isEnabled, isVerified, accessController.grantIfOwnProfile("readOwn", "profile"), userController.getUserProfile);
 
-router.get('/editUser/:username', isAuth, isVerified, accessController.grantIfOwnProfile("updateOwn", "profile"), userController.getEditUser);
-router.post('/editUser', isAuth, isVerified, accessController.grantIfOwnProfile("updateOwn", "profile"),
+router.get('/editUser/:username', isAuth, isEnabled, isVerified, accessController.grantIfOwnProfile("updateOwn", "profile"), userController.getEditUser);
+router.post('/editUser', isAuth, isEnabled, isVerified, accessController.grantIfOwnProfile("updateOwn", "profile"),
   [
     body('usrName', 'Perfavore inserisci un Username con almeno 6 caratteri, composto solo da lettere o numeri!')
       .isLength({ min: 4, max: 60 })
@@ -67,8 +68,8 @@ router.post('/editUser', isAuth, isVerified, accessController.grantIfOwnProfile(
   userController.postEditUser
 );
 
-router.get('/myprofile/editpass', isAuth, isVerified, accessController.grantIfOwnProfile("updateOwn", "password"), userController.getEditPassword);
-router.post('/myprofile/editpass', isAuth, isVerified, accessController.grantIfOwnProfile("updateOwn", "password"),
+router.get('/myprofile/editpass', isAuth, isEnabled, isVerified, accessController.grantIfOwnProfile("updateOwn", "password"), userController.getEditPassword);
+router.post('/myprofile/editpass', isAuth, isEnabled, isVerified, accessController.grantIfOwnProfile("updateOwn", "password"),
   [
     body('oldPassword')
       .trim()

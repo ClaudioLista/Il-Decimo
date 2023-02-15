@@ -17,6 +17,10 @@ const userSchema = new Schema({
     type: Boolean,
     default: false,
   },
+  enabled: {
+    type: Boolean,
+    default: true,
+  },
   expireAt: { 
     type: Date, 
     default: null,

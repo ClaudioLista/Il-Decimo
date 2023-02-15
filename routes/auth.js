@@ -8,6 +8,7 @@ const User = require('../models/user');
 
 const isAuth = require('../middleware/is-auth');
 const isLog = require('../middleware/is-logged');
+const isEnabled = require('../middleware/is-enabled');
 const { rateLimit } = require('../middleware/login-rate-limit');
 
 const router = express.Router();

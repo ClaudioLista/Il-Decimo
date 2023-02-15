@@ -124,6 +124,18 @@ exports.postLogin = (req, res, next) => {
                     validationErrors: [],
                   });
                 }
+                if (!user.enabled) { 
+                  return res.status(422).render("auth/login", {
+                    path: "/login",
+                    pageTitle: "Login",
+                    errorMessage: "L'account è stato disabilitato!",
+                    oldInput: {
+                      usrName: usrName,
+                      password: password,
+                    },
+                    validationErrors: [],
+                  });
+                }
                 OTPVerification(user._id, user.email, res);
                 return res.render("auth/checkOTP", {
                   path: "/checkOTP",

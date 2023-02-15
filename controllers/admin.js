@@ -107,3 +107,45 @@ exports.postEditRole = (req, res, next) => {
     })
     .catch((err) => console.log(err));
 }
+
+exports.postDisableUser = (req, res, next) => {
+  const userName = req.body.usrName;
+  const remoteAddress = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+  const logMessage ="'"+req.method+"' request to "+"'"+req.url+"' from " + req.session.user.usrName + " (IP: "+remoteAddress+")";
+  User.findOne({ usrName: userName })
+    .then((user) => {
+      user.enabled = false;
+      return user.save();
+    })
+    .then(() => {
+      const logInfoMessage = "Username: " + req.user.usrName + " ha disattivato l'utente: "+ userName;
+      vault().then((data) => {
+        logger(data.MONGODB_URI_LOGS).then((logger) => {
+          logger.info(logMessage + " " + logInfoMessage)
+        });
+      })
+      res.redirect("/listUser");
+    })
+    .catch((err) => console.log(err));
+}
+
+exports.postEnableUser = (req, res, next) => {
+  const userName = req.body.usrName;
+  const remoteAddress = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+  const logMessage ="'"+req.method+"' request to "+"'"+req.url+"' from " + req.session.user.usrName + " (IP: "+remoteAddress+")";
+  User.findOne({ usrName: userName })
+    .then((user) => {
+      user.enabled = true;
+      return user.save();
+    })
+    .then(() => {
+      const logInfoMessage = "Username: " + req.user.usrName + " ha disattivato l'utente: "+ userName;
+      vault().then((data) => {
+        logger(data.MONGODB_URI_LOGS).then((logger) => {
+          logger.info(logMessage + " " + logInfoMessage)
+        });
+      })
+      res.redirect("/listUser");
+    })
+    .catch((err) => console.log(err));
+}

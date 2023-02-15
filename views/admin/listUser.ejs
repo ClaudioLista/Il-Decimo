@@ -19,6 +19,19 @@
                         </div>
                         <div class="card__actions">
                             <a href="/utente/<%= users.usrName %>" class="btn">Profilo Utente</a>
+                            <% if (users.enabled === true) { %>
+                                <form action="/disattiva-utente" method="POST">
+                                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                    <input type="hidden" value="<%= users.usrName %>" name="usrName">
+                                    <button class="btn" type="submit">Disattiva Utente</button>
+                                </form>
+                            <% } else { %>
+                                <form action="/attiva-utente" method="POST">
+                                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                    <input type="hidden" value="<%= users.usrName %>" name="usrName">
+                                    <button class="btn" type="submit">Attiva Utente</button>
+                                </form>
+                            <% } %>
                         </div>
                         <br>
                     </article>
