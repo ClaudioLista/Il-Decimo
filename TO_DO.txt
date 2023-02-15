@@ -1,8 +1,0 @@
-4)  Decidere se lasciare le cose in inglese o passare tutto in italiano (Marcello vota italiano);
-5)  Chiudere connessione socket quando l'user si disconnette;
-13) Miglioramento user experience generale del sistema
-
-IMPORTANTE:
-1) CSURF deprecato (alternativa: https://www.npmjs.com/package/csrf)
-2) Dividere funzionalità user/admin
-3) Abilitare/disabilitare account
