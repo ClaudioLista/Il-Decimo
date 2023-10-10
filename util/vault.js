@@ -14,7 +14,10 @@ const run = async () => {
   SESSION_SECRET:process.env.SESSION_SECRET,
   GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
-  MONGODB_URI_LOGS: process.env.MONGODB_URI_LOGS
+  MONGODB_URI_LOGS: process.env.MONGODB_URI_LOGS,
+  USER_EMAIL:process.env.USER_EMAIL,
+  PASS_EMAIL:process.env.PASS_EMAIL,
+  JWT_SECRET:process.env.JWT_SECRET
 
   }
 
