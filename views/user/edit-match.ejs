@@ -17,7 +17,7 @@
         <% } %>
         <div class="container">
             <div class="card">
-                <h2 class="card-heading">Edit this match!</h2>
+                <h2 class="card-heading">Modifica la partita!</h2>
                 <lottie-player src="https://assets1.lottiefiles.com/packages/lf20_VB3ALHSv6V.json"  background="transparent"  speed="0.2" loop  autoplay></lottie-player>
                 <form class="card-form" action="/edit-match" method="POST">
                     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
@@ -79,7 +79,7 @@
                         <span class="focus-input100" data-symbol="&#xf262;"></span>
                     </div>
                     <div class="action">
-                        <button class="action-button" type="submit">Update Match</button>
+                        <button class="action-button" type="submit">Modifica la partita</button>
                     </div>
                     <br>
                 </form>

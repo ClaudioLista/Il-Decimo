@@ -7,7 +7,7 @@
     <%- include('../includes/navigation.ejs') %>
     <main>
         <div>
-            <h1 class="match__title text-white">Matches you created:</h1>
+            <h1 class="match__title text-white">Partite che hai creato:</h1>
             <% if (ms.length > 0) { %>
                 <div class="grid">
                     <% for (let match of ms) { %>
@@ -37,14 +37,14 @@
             <% } else { %>
                 <div class="wrapper">
                     <a class="noTextDec" href="/add-match">
-                        <h1 class="btn">You have not created any games yet!</h1>
+                        <h1 class="btn">Non hai ancora creato nessuna partita!</h1>
                     </a>
                 </div>
             <% } %>
         </div>
         <hr>
         <div>
-            <h1 class="match__title text-white">Matches you joined:</h1>
+            <h1 class="match__title text-white">Partite a cui partecipi:</h1>
             <% if (jMatches.length > 0) { %>
                 <div class="grid">
                     <% for (let match of jMatches) { %>
@@ -60,8 +60,8 @@
                                 <h2 class="match__place"><%= match.time.getDate().toString()+"-"+(match.time.getMonth()+1).toString()+"-"+match.time.getFullYear().toString() %></h2>
                             </div>
                             <div class="card__actions">
-                                <a href="/matches/<%= match._id %>" class="btn" id="details">Details</a>
-                                <a href="/matches/<%= match._id %>/unjoin" class="btn">UnJoin</a>
+                                <a href="/matches/<%= match._id %>" class="btn" id="details">Dettagli partita</a>
+                                <a href="/matches/<%= match._id %>/unjoin" class="btn">Esci dalla partita</a>
                             </div>
                             <br>
                         </article>
@@ -70,7 +70,7 @@
             <% } else { %>
                 <div class="wrapper">
                     <a class="noTextDec" href="/matches">
-                        <h1 class="btn">Join in a new match!</h1>
+                        <h1 class="btn">Entra in una nuova partita!</h1>
                     </a>
                 </div>
             <% } %>

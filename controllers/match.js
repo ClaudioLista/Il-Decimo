@@ -377,7 +377,7 @@ exports.getUnJoinMatch = (req, res, next) => {
       if (result !== undefined) is_in = true;
       let matchDate = new Date(match.time);
       let diffInSec = matchDate / 60000 - currentDate / 60000;
-      if (diffInSec > 1440) can_unjoin = true;
+      if (diffInSec > 240) can_unjoin = true;
       res.render("app/unjoin-match", {
         m: match,
         pageTitle: "Join Match",

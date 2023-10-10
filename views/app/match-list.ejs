@@ -32,7 +32,7 @@
                             <p class="match__description"><%= match.description %></p>
                         </div>
                         <div class="card__actions">
-                            <a href="/matches/<%= match._id %>" class="btn">Details</a>
+                            <a href="/matches/<%= match._id %>" class="btn">Dettagli partita</a>
                             <% if (isAuthenticated) { %>
                                 <% if (match.currentPlayers != match.totalPlayers) { %>
                                     <a href="/matches/<%= match._id %>/join" class="btn">Aggiungiti alla partita</a>

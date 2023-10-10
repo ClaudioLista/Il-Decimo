@@ -10,18 +10,18 @@
                 <a class="<%= path === '/' ? 'active' : '' %>" href="/">Home</a>
             </li>
             <li class="main-header__item">
-                <a class="<%= path === '/matches' ? 'active' : '' %>" href="/matches">Matches</a>
+                <a class="<%= path === '/matches' ? 'active' : '' %>" href="/matches">Visualizza partite</a>
             </li>
             <% if (isAuthenticated) { %>
                 <li class="main-header__item">
-                    <a class="<%= path === '/add-match' ? 'active' : '' %>" href="/add-match">Add Match</a>
+                    <a class="<%= path === '/add-match' ? 'active' : '' %>" href="/add-match">Crea una nuova partita</a>
                 </li>
                 <li class="main-header__item">
-                    <a class="<%= path === '/mymatches' ? 'active' : '' %>" href="/mymatches">My Matches</a>
+                    <a class="<%= path === '/mymatches' ? 'active' : '' %>" href="/mymatches">Le mie partite</a>
                 </li>
                 <% if (isAdministrator) { %>
                     <li class="main-header__item">
-                        <a class="<%= path === '/listMatch' ? 'active' : '' %>" href="/listMatch">All Matches</a>
+                        <a class="<%= path === '/listMatch' ? 'active' : '' %>" href="/listMatch">Tutte le partite </a>
                     </li>
                     <li class="main-header__item">
                         <a class="<%= path === '/listUser' ? 'active' : '' %>" href="/listUser">All Users</a>
@@ -36,11 +36,11 @@
                     <a class="<%= path === '/login' ? 'active' : '' %>" href="/login">Login</a>
                 </li>
                 <li class="main-header__item">
-                    <a class="<%= path === '/signup' ? 'active' : '' %>" href="/signup">Signup</a>
+                    <a class="<%= path === '/signup' ? 'active' : '' %>" href="/signup">Registrati</a>
                 </li>
             <% } else { %>
                 <li class="main-header__item">
-                    <a class="<%= path === '/profile' ? 'active' : '' %>" href="/myprofile">My Profile</a>
+                    <a class="<%= path === '/profile' ? 'active' : '' %>" href="/myprofile">Il mio profilo</a>
                 </li>
                 <li class="main-header__item">
                     <button id="logoutButton">Logout</button>
@@ -62,21 +62,21 @@
             <a class="<%= path === '/' ? 'active' : '' %>" href="/">Home</a>
         </li>
         <li class="mobile-nav__item">
-            <a class="<%= path === '/matches' ? 'active' : '' %>" href="/matches">Matches</a>
+            <a class="<%= path === '/matches' ? 'active' : '' %>" href="/matches">Visualizza partite</a>
         </li>
         <% if (isAuthenticated) { %>
             <li class="mobile-nav__item">
-                <a class="<%= path === '/add-match' ? 'active' : '' %>" href="/add-match">Add Match</a>
+                <a class="<%= path === '/add-match' ? 'active' : '' %>" href="/add-match">Crea una nuova partita</a>
             </li>
             <li class="mobile-nav__item">
-                <a class="<%= path === '/mymatches' ? 'active' : '' %>" href="/mymatches">My Matches</a>
+                <a class="<%= path === '/mymatches' ? 'active' : '' %>" href="/mymatches">Le mie partite</a>
             </li>
             <% if (isAdministrator) { %>
                 <li class="mobile-nav__item">
                     <a class="<%= path === '/listMatch' ? 'active' : '' %>" href="/listMatch">All Matches</a>
                 </li>
                 <li class="mobile-nav__item">
-                    <a class="<%= path === '/listUser' ? 'active' : '' %>" href="/listUser">All Users</a>
+                    <a class="<%= path === '/listUser' ? 'active' : '' %>" href="/listUser">Tutte le partite</a>
                 </li>
             <% } %>
         <% } %>
@@ -85,11 +85,11 @@
                 <a class="<%= path === '/login' ? 'active' : '' %>" href="/login">Login</a>
             </li>
             <li class="mobile-nav__item">
-                <a class="<%= path === '/signup' ? 'active' : '' %>" href="/signup">Signup</a>
+                <a class="<%= path === '/signup' ? 'active' : '' %>" href="/signup">Registrati</a>
             </li>
         <% } else { %>
             <li class="mobile-nav__item">
-                <a class="<%= path === '/profile' ? 'active' : '' %>" href="/myprofile">My Profile</a>
+                <a class="<%= path === '/profile' ? 'active' : '' %>" href="/myprofile">Il mio profilo</a>
             </li>
             <li class="mobile-nav__item">
                 <button id="logoutButton2" type="submit">Logout</button>
