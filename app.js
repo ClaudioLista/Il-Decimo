@@ -34,12 +34,15 @@ const { raw } = require("body-parser");
 
 app.set("view engine", "ejs");
 app.set("views", "views");
-
+console.log("prima");
 vault().then((data) => {
   const store = new MongoDBStore({
     uri: data.MONGODB_URI,
     collection: "sessions",
   });
+
+console.log("dopo")
+
 
   app.use(helmet.hsts());
   app.use(helmet.noSniff());
@@ -193,10 +196,11 @@ vault().then((data) => {
 
   mongoose.set("useCreateIndex", true);
   mongoose.set("useUnifiedTopology", true);
-
   mongoose
     .connect(data.MONGODB_URI, { useNewUrlParser: true })
     .then(() => {
+
+      
       const port = process.env.PORT || 5000;
       const server = app.listen(port);
 
@@ -238,5 +242,6 @@ vault().then((data) => {
     })
     .catch((err) => {
       console.log(err);
+      
     });
 });

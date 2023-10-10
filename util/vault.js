@@ -8,16 +8,17 @@ const roleId = process.env.ROLE_ID
 const secretId = process.env.SECRET_ID
 
 const run = async () => {
-  const result = await vault.approleLogin({
-    role_id: roleId,
-    secret_id: secretId,
-  });
+ 
+  const data = {
+  MONGODB_URI: process.env.MONGODB_URI,
+  SESSION_SECRET:process.env.SESSION_SECRET,
+  GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
+  MONGODB_URI_LOGS: process.env.MONGODB_URI_LOGS
 
-  vault.token = result.auth.client_token; // Add token to vault object for subsequent requests.
+  }
 
-  const { data } = await vault.read("secret/data/webapp"); // Retrieve the secret stored in previous steps.
-
-  return data.data
+  return data
 };
 
 exports.vault = run;

@@ -27,6 +27,8 @@ router.get('/oauth2/redirect/google', passport.authenticate('google', {
 );
 
 vault().then((data) => {
+
+  
   passport.use(
     new GoogleStrategy(
       {
