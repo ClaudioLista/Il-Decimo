@@ -16,25 +16,25 @@
         <div class="grid">
             <article class="card match-item">
                 <header class="card__header">
-                    <h1 class="match__title">Match Details</h1>
+                    <h1 class="match__title">Dettagli Partita</h1>
                 </header>
                 <hr>
                 <div class="card__content">
-                    <h2>Players left: <%= m.totalPlayers - m.currentPlayers %></h2><br>
-                    <h2 class="match__place">Where: <%= m.placeName %></h2><br>
-                    <h2 class="match__place">When: <%= m.time.getDate().toString() + "-" + (m.time.getMonth()+1).toString() + "-" + m.time.getFullYear().toString() %></h2><br>
+                    <h2>Giocatori mancanti: <%= m.totalPlayers - m.currentPlayers %></h2><br>
+                    <h2 class="match__place">Dove: <%= m.placeName %></h2><br>
+                    <h2 class="match__place">Quando: <%= m.time.getDate().toString() + "-" + (m.time.getMonth()+1).toString() + "-" + m.time.getFullYear().toString() %></h2><br>
                     <h2 class="match__price"><%= m.price %>€</h2><br>
                     <p class="match__description"><%= m.description %></p>
                 </div>
                 <div class="card__actions">
                     <% if (isAuthenticated) { %>
                         <% if (is_full && is_in) { %>
-                            <a href="/matches/<%= m._id %>/unjoin" class="btn">UnJoin</a>
+                            <a href="/matches/<%= m._id %>/unjoin" class="btn">Esci dalla partita</a>
                         <% } else if(is_full && !is_in) { %>  
-                            <h1 class="text-purple">The Match is full!</h1>
+                            <h1 class="text-purple">La partita è piena!</h1>
                         <% } else { %>
                             <a href="/matches/<%= m._id %>/<% if (!is_in) { %>join<% } else { %>unjoin<% } %>" class="btn">
-                                <% if (!is_in) { %> Join <% } else { %> UnJoin <% } %> 
+                                <% if (!is_in) { %> Aggiungiti <% } else { %> Esci dalla partita <% } %> 
                             </a>
                         <% }%>
                     <% } %>

@@ -19,11 +19,11 @@
                         </div>
                         <div class="card__content">
                             <% if (match.currentPlayers == match.totalPlayers) { %>
-                                <h2 class="match__playerCount">The match is full!</h2>
+                                <h2 class="match__playerCount">La partita è piena</h2>
                             <% } else { %>
-                                <h2 class="text-center">We search:</h2>
+                                <h2 class="text-center">Cerchiamo:</h2>
                                 <h2 class="match__playerCount__in"><%= match.totalPlayers - match.currentPlayers %></h2>
-                                <h2 class="text-center">players!</h2>
+                                <h2 class="text-center">giocatori!</h2>
                             <% } %>
                             <br>
                             <h2 class="match__place"><%= match.placeName %></h2>
@@ -35,7 +35,7 @@
                             <a href="/matches/<%= match._id %>" class="btn">Details</a>
                             <% if (isAuthenticated) { %>
                                 <% if (match.currentPlayers != match.totalPlayers) { %>
-                                    <a href="/matches/<%= match._id %>/join" class="btn">Join</a>
+                                    <a href="/matches/<%= match._id %>/join" class="btn">Aggiungiti alla partita</a>
                                 <% } %>
                             <% } %>
                         </div>
@@ -45,7 +45,7 @@
             </div>
             <%- include('../includes/pagination.ejs', {currentPage: currentPage, nextPage: nextPage, previousPage: previousPage, lastPage: lastPage, hasNextPage: hasNextPage, hasPreviousPage: hasPreviousPage}) %>
         <% } else { %>
-            <h1>No matches Found!</h1>
+            <h1>Nessuna partita trovata, creane una nuova</h1>
         <% } %>
     </main>
 

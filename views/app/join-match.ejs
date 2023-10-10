@@ -15,10 +15,10 @@
             <form action="/matches/:matchId/join" method="POST">
                 <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                 <input type="hidden" value="<%= m._id %>" name="matchId">
-                <button class="btn" type="submit">Confirm!</button>
+                <button class="btn" type="submit">Conferma!</button>
             </form>
         <% } else {%>
-            <h1 class="text-purple">You're already in!</h1>
+            <h1 class="text-purple">Se già dentro la partita!</h1>
             <br><br>
             <a class="btn" href="/matches">Torna alla lista dei match!</a>
         <% } %>
