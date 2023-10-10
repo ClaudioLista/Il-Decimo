@@ -9,7 +9,7 @@
 <script src="/js/chatClient.js"></script>
 
 <body>
-    <% const ore = (m.time.getHours() - 2);%>
+    <% const ore = m.time.getHours().toString().padStart(2, '0');%>
     <% const minuti = (m.time.getMinutes() ).toString().padStart(2, '0'); %>
     <%- include('../includes/navigation.ejs') %>
     <main class="centered">
@@ -26,7 +26,7 @@
                     <h2 class="match__place">Dove: <%= m.placeName %></h2><br>
                     <h2 class="match__place">Quando: <%= m.time.getDate().toString() + "-" + (m.time.getMonth()+1).toString() + "-" + m.time.getFullYear().toString() %></h2><br>
                     <h2 class="match__place">A che ora: <%= ore + ":"+ minuti %></h2><br>
-            
+                    <h2 class="match__place"> <%= m.time %></h2><br>
 
                     <h2 class="match__price"><%= m.price %>€</h2><br>
                     <p class="match__description"><%= m.description %></p>

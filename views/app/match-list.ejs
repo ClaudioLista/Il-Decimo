@@ -10,7 +10,7 @@
         <% if (ms.length > 0) { %>
             <div class="grid">
                 <% for (let match of ms) { %>
-                    <% const ore = (match.time.getHours() - 2);%>
+                    <% const ore = m.time.getHours().toString().padStart(2, '0');%>
                     <% const minuti = (match.time.getMinutes() ).toString().padStart(2, '0'); %>
                     <article class="card match-item" onclick="location.assign('/matches/<%= match._id %>')">
                         <header class="card__header">
