@@ -34,14 +34,12 @@ const { raw } = require("body-parser");
 
 app.set("view engine", "ejs");
 app.set("views", "views");
-console.log("prima");
 vault().then((data) => {
   const store = new MongoDBStore({
     uri: data.MONGODB_URI,
     collection: "sessions",
   });
 
-console.log("dopo")
 
 
   app.use(helmet.hsts());

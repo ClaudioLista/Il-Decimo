@@ -47,7 +47,7 @@ vault().then((data) => {
                 const user = new User({
                   nome: profile.name.givenName,
                   cognome: profile.name.familyName,
-                  usrName: 'g_' + profile.name.givenName + '_' + profile.name.familyName,
+                  usrName:profile.name.givenName + '_' + profile.name.familyName,
                   email: profile.emails[0].value,
                   password: hashedPassword,
                   matcheslist: {

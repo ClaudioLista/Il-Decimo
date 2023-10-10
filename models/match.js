@@ -63,14 +63,22 @@ const matchSchema = new Schema({
 matchSchema.methods.addPlayer = function(user) {
   const updatedMatchPlayers = [...this.listPlayers.players];
 
+  const result = updatedMatchPlayers.find(
+    (element) => element.userId == user.toString()
+  );
+if (result) {
+  
+} else {
   updatedMatchPlayers.push({ userId: user });
   
   const updatedMatch = { players: updatedMatchPlayers };
   
   this.listPlayers = updatedMatch;
   this.currentPlayers = this.currentPlayers+1;
-
   return this.save();
+}
+
+  
 };
 
 matchSchema.methods.RemovePlayer = function(userId){

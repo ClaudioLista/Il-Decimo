@@ -52,7 +52,7 @@
                 <div class="card__content">
                     <h2 class="player__list">
                         <% for (let players of m.listPlayers.players) { %>
-                            <h2><%= players.userId.usrName %></h2>
+                            <h2><%= players.userId.nome + ' ' + players.userId.cognome %></h2>
                         <% } %>
                     </h2>
                 </div>
