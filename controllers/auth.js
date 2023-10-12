@@ -31,6 +31,7 @@ exports.getLogin = (req, res, next) => {
 };
 
 exports.postLogin = (req, res, next) => {
+  const twoFF_on= false;
   const usrName = req.body.usrName;
   const password = req.body.password;
   let errMsg = "Username o Password non validi, riprova ad effettuare il login!";
@@ -136,7 +137,9 @@ exports.postLogin = (req, res, next) => {
                     validationErrors: [],
                   });
                 }
+                if(twoFF_on){
                 OTPVerification(user._id, user.email, res);
+
                 return res.render("auth/checkOTP", {
                   path: "/checkOTP",
                   pageTitle: "Check OTP",
@@ -148,6 +151,19 @@ exports.postLogin = (req, res, next) => {
                   email: user.email,
                   validationErrors: [],
                 });
+              }
+
+              req.session.isLoggedIn = true;
+              req.session.user = user;
+              var ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;    
+              const log = new LogSession({ userId: user._id, ipAddress: ip });
+              log.save();
+              req.session.ipAddress = ip;
+              user.lastSession = log.time;
+              user.save();
+              return req.session.save(() => {
+                res.redirect("/?info=true");
+              });
               }
               LoginAttempt.findOne({ usrName: user.usrName }).then((username) => {
                 if (!!username) {
