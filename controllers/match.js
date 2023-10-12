@@ -226,7 +226,8 @@ exports.postEditMatch = (req, res, next) => {
   const updatedTotalPlayers = req.body.totalPlayers;
   const remoteAddress = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
   const logMessage ="'"+req.method+"' request to "+"'"+req.url+"' from " + req.user.usrName + " (IP: "+remoteAddress+")";
-
+  const playersAdded = req.body.players;
+  const playersRemoved =req.body.removeplayer;
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     const logErrorMessage = "Username: "+req.session.user.usrName+" - fallito edit match.";
@@ -257,6 +258,7 @@ exports.postEditMatch = (req, res, next) => {
 
   Match.findById(matchId)
     .then((match) => {
+      id=match._id
       match.title = updatedTitle;
       match.placeName = updatedPlaceName;
       match.address = updatedAddress;
@@ -266,7 +268,82 @@ exports.postEditMatch = (req, res, next) => {
       match.price = updatedPrice;
       match.description = updatedDescription;
       match.totalPlayers = updatedTotalPlayers;
-      return match.save();
+
+
+      
+
+      return match.save().then(()=>
+      {
+        if(!!playersAdded)
+      {
+        
+        
+
+        if (match.currentPlayers != match.totalPlayers) {
+          User.find({usrName: playersAdded}).then((users) => {
+
+            
+            if(!!users[0]){
+            const id= users[0]._id
+            users[0].matchList.push({ matchId: match._id, vote: "" });
+            users[0].save().then((result)=> {
+              match.addPlayer(id);
+              const logInfoMessage = "Username: "+playersAdded+" - aggiunto al match: "+match._id+".";
+          
+          vault().then((data) => {
+            logger(data.MONGODB_URI_LOGS).then((logger) => {
+              logger.info(logMessage + " " + logInfoMessage);
+            });
+          })
+            })
+            
+          
+          
+        } });
+          
+        } else {
+          const logErrorMessage = "Username: "+playersAdded+" - ERRORE aggiunta al match: "+match._id+".";
+          vault().then((data) => {
+            logger(data.MONGODB_URI_LOGS).then((logger) => {
+              logger.error(logMessage + " " + logErrorMessage);
+            });
+          })
+        }
+      
+      }
+
+      if(!!playersRemoved){
+        if (match.currentPlayers > 0) {
+          User.find({usrName: playersRemoved}).then((users) => {
+            
+            if(!!users[0]){
+            const id= users[0]._id
+            
+              match.RemovePlayer(id);
+              const logInfoMessage = "Username: "+playersAdded+" - rimosso dal match: "+match._id+".";
+          
+          vault().then((data) => {
+            logger(data.MONGODB_URI_LOGS).then((logger) => {
+              logger.info(logMessage + " " + logInfoMessage);
+            });
+          })
+            
+            
+          
+          
+        } });
+          
+        } else {
+          const logErrorMessage = "Username: "+playersAdded+" - ERRORE rimozione al match: "+match._id+".";
+          vault().then((data) => {
+            logger(data.MONGODB_URI_LOGS).then((logger) => {
+              logger.error(logMessage + " " + logErrorMessage);
+            });
+          })
+        }
+      }
+    
+      })
     })
     .then(() => {
       const logInfoMessage = "Username: "+req.session.user.usrName+" - edit match completato con successo."

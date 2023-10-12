@@ -69,12 +69,13 @@ matchSchema.methods.addPlayer = function(user) {
 if (result) {
   
 } else {
+  
   updatedMatchPlayers.push({ userId: user });
   
   const updatedMatch = { players: updatedMatchPlayers };
-  
   this.listPlayers = updatedMatch;
   this.currentPlayers = this.currentPlayers+1;
+  
   return this.save();
 }
 
