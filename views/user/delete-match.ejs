@@ -1,0 +1,27 @@
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/match.css">
+    
+</head>
+
+<body>
+    <%- include('../includes/navigation.ejs') %>
+    <main class="centered">
+        <h1><%= m.title %></h1>
+        <hr>
+        <div class="image">
+            <img src="/img/field.png" alt="<%= m.title %>">
+        </div>
+        <% if (can_delete){ %>
+            <form action="/delete-match/" method="POST">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <input type="hidden" value="<%= m._id %>" name="matchId">
+                <button class="btn" type="submit">Conferma cancellazione partita</button>
+            </form>
+            <br><br>
+        <% } else { %>
+            <h1 class="text-purple">Non puoi cancellare questa partita!</h1>
+        <% } %>  
+       
+    </main>
+    
+<%- include('../includes/end.ejs') %>

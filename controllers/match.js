@@ -559,6 +559,28 @@ exports.postVoteMatch = (req, res, next) => {
     .catch((err) => console.log(err));
 };
 
+
+exports.getDeleteMatch = (req, res, next) => {
+  const matchId = req.params.matchId;
+  let can_delete = false;
+  Match.findById(matchId)
+    .then((match) => {
+      
+      if(req.session.user.role == "admin" || req.session.user._id==match.hostUserId)
+      {
+      can_delete = true;
+      return res.render("user/delete-match", {
+        m: match,
+        pageTitle: "Delete Match",
+        path: "/matches/:matchId/delete",
+        can_delete: can_delete,
+      });
+    }
+    else res.redirect("/");
+    })
+    .catch((err) => console.log(err));
+};
+
 exports.postDeleteMatch = (req, res, next) => {
   const matchId = req.body.matchId;
   const remoteAddress = req.headers["x-forwarded-for"] || req.socket.remoteAddress;

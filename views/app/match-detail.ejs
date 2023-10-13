@@ -35,12 +35,10 @@
                 <div class="card__actions">
                     <% if (isAdministrator) { %>
                         <div class="card__actions">
-                            <a href="/edit-match/<%= m._id %>?edit=true" class="btn">Edit</a>
-                            <form action="/delete-match/" method="POST">
-                                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                                <input type="hidden" value="<%= m._id %>" name="matchId">
-                                <button class="btn" type="submit">Delete</button>
-                            </form>
+                            <a href="/edit-match/<%= m._id %>?edit=true" class="btn">Modifica la partita</a>                           
+                        </div>
+                        <div class="card__actions">
+                            <a href="/matches/<%= m._id %>/delete" class="btn">Elimina la partita</a>
                         </div>
                     <% } %>
                     <% if (isAuthenticated) { %>

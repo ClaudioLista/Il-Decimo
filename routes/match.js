@@ -49,6 +49,8 @@ router.post('/matches/:matchId/unjoin', isAuth, isVerified, accessController.gra
 
 router.post('/vote-match', isAuth, isVerified, accessController.grantIfIsInMatch("updateOwn","votes"), matchController.postVoteMatch);
 
+router.get('/matches/:matchId/delete', isAuth, isVerified, accessController.grantIfOwnMatch("deleteOwn", "matches"), matchController.getDeleteMatch);
 router.post('/delete-match', isAuth, isVerified, accessController.grantIfOwnMatch("deleteOwn", "matches"), matchController.postDeleteMatch);
+
 
 module.exports = router; 
