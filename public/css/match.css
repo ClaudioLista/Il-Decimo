@@ -80,3 +80,7 @@
 .backlink__:hover {
     font-size: 1.4rem;
 }
+
+.text-left {
+    text-align: left;
+  }

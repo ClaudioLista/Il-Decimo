@@ -14,6 +14,7 @@
     <% const giorniSettimana = ["Domenica", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"]; %>
     <% const giorno = giorniSettimana[m.time.getDay()]; %>
     <%- include('../includes/navigation.ejs') %>
+    <% let index= 1; %>
     <main class="centered">
         <h1><%= m.title %></h1>
         <hr>
@@ -66,8 +67,8 @@
                 <div class="card__content">
                     <h2 class="player__list">
                         <% for (let players of m.listPlayers.players) { %>
-                            <h2><%= players.userId.nome + ' ' + players.userId.cognome %></h2>
-                        <% } %>
+                            <h2 class="text-left"><%= index + ') ' + players.userId.nome + ' ' + players.userId.cognome %></h2>
+                        <% index= index + 1} %>
                     </h2>
                 </div>
                 <br>

@@ -9,7 +9,7 @@
     text-decoration: none;
     color: black;
     padding: 0.5rem;
-    border: 2px solid rgb(0, 255, 0);
+    border: 2px solid rgb(255, 255, 255);
     margin: 0 1rem;
     background: white;
   }
@@ -17,6 +17,6 @@
   .pagination a:hover,
   .pagination a:active,
   .pagination a.active {
-    background: rgb(0, 255, 0);
-    color: white;
+    background: rgb(255, 255, 255);
+    color: rgb(0, 0, 0);
   }
